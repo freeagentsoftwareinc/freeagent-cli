@@ -46,7 +46,7 @@ const runOperationInIntractionMode = (opration) => prompt(get(questions, opratio
 const handleAction = (command, editMode, intractiveMode) => {
     const operationName = operations.get(command);
     if(editMode) {
-        runOperationInEditMode(operationName) 
+        return runOperationInEditMode(operationName) 
     }
     if(intractiveMode) {
         return runOperationInIntractionMode(operationName)
