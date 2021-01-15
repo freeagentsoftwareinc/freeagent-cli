@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const { program } = require('commander');
-const { handleAction_intialize, handleAction, exportChangeset } = require('./actions');
+const { handleAction, exportChangeset } = require('./actions');
 
 program
     .version('0.1')
@@ -12,8 +12,8 @@ program
 program
     .command('init')
     .description('intialize the changeset folder')
-    .action(() => {
-       handleAction_intialize(program.editmode, program.intractive)
+    .action((option) => {
+        handleAction(option._name, program.editmode, program.intractive)
     });
 
 program

@@ -5,7 +5,7 @@ const uuid  = require('node-uuid');
     value: arguments
 */
 const payloads = {
-    changeset:  {
+    addChangeset:  {
         name: '',
         description: '',
         transport_id: uuid.v4(),

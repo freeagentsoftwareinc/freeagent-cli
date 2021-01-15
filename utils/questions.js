@@ -27,7 +27,7 @@ const entityQuestion = [
 ];
 
 const questions = {
-    addChangeSet: changesetQuestion,
+    addChangeset: changesetQuestion,
     addEntity: entityQuestion
 }
 

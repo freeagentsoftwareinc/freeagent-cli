@@ -12,17 +12,18 @@ const questions = require('../utils/questions')
 const { operations, sucessMessages, errorMessages } = require('../utils/common');
 
 const runOperation = (operation, args={}) => {
-    if (!fs.existsSync(dir)){
+    const folderPath = initializeFolder(operation);
+    if (!folderPath) {
         console.log(get(errorMessages, operation)); 
         return;
     }
     const data = {...get(payloads, operation), ...args};
     const jsonData = JSON.stringify(data, null, 4);
     const file = `${Date.now()}_${operation}_${uuid.v4()}.json`;
-    const path = `${dir}/${file}`
-        fs.writeFileSync(`${path}`, jsonData);
+    const filePath = `${dir}/${file}`
+    fs.writeFileSync(`${filePath}`, jsonData);
     console.log(get(sucessMessages, operation));
-    return path;
+    return filePath;
 };
 
 const openFileInViEditor = (file) => {
@@ -43,52 +44,34 @@ const runOperationInEditMode = (opration) => {
 const runOperationInIntractionMode = (opration) => prompt(get(questions, opration))
         .then(answer => runOperation(opration, answer));
 
+
+const initializeFolder = (operation) => {
+    if (!fs.existsSync(dir) && operation === 'addChangeset') {
+        fs.mkdirSync(dir);
+        return true;
+    };
+
+    if (fs.existsSync(dir) && operation !== 'addChangeset'){
+        return true;
+    };
+    return false;
+};   
+
 const handleAction = (command, editMode, intractiveMode) => {
-    const operationName = operations.get(command);
-    if(editMode) {
-        return runOperationInEditMode(operationName) 
+    const operation = operations.get(command);
+    if (editMode) {
+        return runOperationInEditMode(operation) 
     }
-    if(intractiveMode) {
-        return runOperationInIntractionMode(operationName)
+    if (intractiveMode) {
+        return runOperationInIntractionMode(operation)
     };
-    return runOperation(operationName);
+    return runOperation(operation);
 };
-
-const initializeChangeSet = (editMode=false, args) => {
-    if (fs.existsSync(dir)){
-        console.log(global.messages.error.changeset_intialized);
-        return;
-    };
-    const changeset = {...payloads.changeset, ...args};
-    const data = JSON.stringify(changeset, null, 4);
-    const name = `${Date.now()}_changeset_${uuid.v4()}`;
-    fs.mkdirSync(dir);
-    fs.writeFileSync(`${dir}/${name}.json`, data);
-    if (editMode){
-        const child = child_process.spawn(editor, [`${dir}/${name}.json`], {
-            stdio: 'inherit'
-        });
-
-        child.on('exit', function (e, code) {
-            console.log(sucessMessages.changeset_intialized);
-        });
-        return;
-    }
-    console.log(sucessMessages.changeset_intialized);
-};
-
-const handleAction_intialize = (editMode, intractiveMode) => {
-
-    if(intractiveMode){
-        return prompt(questions.addChangeSet).then(answer => initializeChangeSet(editMode, answer));
-    }
-    initializeChangeSet(editMode);
-}
 
 const exportChangeset= () => {
     if (!fs.existsSync(dir)){
         console.log(errorMessages.app_created);
-        return;
+        return false;
     };
     const zipFolderName = "fa_changeset.zip";
     const archive = archiver('zip', { zlib: { level: 9 }});
@@ -102,11 +85,11 @@ const exportChangeset= () => {
     archive.finalize()
     .then(() => {
         console.log(sucessMessages.changeset_complete);
+        return true;
     });
 }
 
 module.exports = {
-    handleAction_intialize,
     handleAction,
     exportChangeset
-}
+};

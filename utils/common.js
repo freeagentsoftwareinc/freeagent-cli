@@ -2,6 +2,7 @@ const chalk = require('chalk');
 
 // map to map the commands and operaion
 const operations = new Map([
+    ['init', 'addChangeset'],
     ['add-app', 'addEntity'],
     ['add-field', 'addCustomField'],
     ['add-role', 'addRole']
@@ -12,7 +13,7 @@ const operations = new Map([
     value: arguments
 */
 const payloads = {
-    changeset:  {
+    addChangeset:  {
         name: '',
         description: '',
         created_at: new Date().toISOString()
@@ -103,7 +104,7 @@ const payloads = {
     value: string
 */
 const sucessMessages = {
-    changeset_intialized: chalk.green('changeset folder intialized'),
+    addChangeset: chalk.green('changeset folder intialized'),
     addEntity: chalk.green('app created'),
     changeset_complete: `${chalk.green('changeset completed, please find the folder at root')}: ${chalk.yellow('fa_changeset.zip')}`,
     addCustomField: chalk.green('field created'),
@@ -115,7 +116,7 @@ const sucessMessages = {
     value: string
 */
 const errorMessages = {
-    changeset_intialized: chalk.red('changeset folder already intialized, delete the exisitng folder first'),
+    addChangeset: chalk.red('changeset folder already intialized, delete the exisitng folder first'),
     addEntity: chalk.red('changeset dose not exist, please intialize changeset first'),
     addCustomField: chalk.red('changeset dose not exist, please intialize changeset first'),
 };
