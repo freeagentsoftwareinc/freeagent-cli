@@ -92,6 +92,23 @@ const payloads = {
         reference_custom_field_id: null,
         reference_qualifier_value: null,
         fa_related_field_config_id: null
+    },
+    addRole: {
+        transport_id: uuid.v4(),
+        name: '',
+        description: '',
+        right_to_access: '',
+        right_to_access_id: '',
+        unassigned: '',
+        import: false,
+        export: false,
+        bulk_edit: false,
+        bulk_delete: false,
+        task_delete: false,
+        is_admin: false,
+        deleted: false,
+        custom_fields: [],
+        is_qualifier: true
     }
 };
 

@@ -26,9 +26,23 @@ const entityQuestion = [
     }
 ];
 
+const roleQuestion = [
+    {
+        type: 'input',
+        name: 'name',
+        message: chalk.yellow('enter the role name or press enter')
+    },
+    {
+        type: 'input',
+        name: 'description',
+        message: chalk.yellow('enter the description for changeset or press enter')
+    }
+];
+
 const questions = {
     addChangeset: changesetQuestion,
-    addEntity: entityQuestion
+    addEntity: entityQuestion,
+    addRole: roleQuestion,
 }
 
 module.exports = questions

@@ -17,7 +17,7 @@ const runOperation = (operation, args={}) => {
         console.log(get(errorMessages, operation)); 
         return;
     }
-    const data = {...get(payloads, operation), ...args};
+    const data = {args: {...get(payloads, operation), ...args}};
     const jsonData = JSON.stringify(data, null, 4);
     const file = `${Date.now()}_${operation}_${uuid.v4()}.json`;
     const filePath = `${dir}/${file}`

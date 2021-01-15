@@ -36,6 +36,13 @@ program
     });
 
 program
+    .command('add-role')
+    .description('create new role')
+    .action((option) => {
+        handleAction(option._name, program.editmode, program.intractive)
+    });
+
+program
     .command('export')
     .description('zip the created changeset')
     .action(() => {
