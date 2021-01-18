@@ -13,12 +13,12 @@ const operations = new Map([
     value: string
 */
 const sucessMessages = {
-    addChangeset: chalk.green('changeset folder intialized'),
+    addChangeset: chalk.green('changeset folder initialized'),
     addEntity: chalk.green('app created'),
     changeset_complete: `${chalk.green('changeset completed, please find the folder at root')}: ${chalk.yellow('fa_changeset.zip')}`,
     addCustomField: chalk.green('field created'),
     addRole: chalk.green('new role created'),
-    editMode: chalk.green('field succesfully edited'),
+    editMode: chalk.green('field successfully edited'),
 };
 
 /*  define all the error messages
@@ -26,10 +26,10 @@ const sucessMessages = {
     value: string
 */
 const errorMessages = {
-    addChangeset: chalk.red('changeset folder already intialized, delete the exisitng folder first'),
-    addEntity: chalk.red('changeset dose not exist, please intialize changeset first'),
-    addCustomField: chalk.red('changeset dose not exist, please intialize changeset first'),
-    addRole: chalk.red('changeset dose not exist, please intialize changeset first'),
+    addChangeset: chalk.red('changeset folder already initialized, delete the existing folder first'),
+    addEntity: chalk.red('changeset dose not exist, please initialize the changeset first'),
+    addCustomField: chalk.red('changeset dose not exist, please initialize the changeset first'),
+    addRole: chalk.red('changeset dose not exist, please initialize the changeset first'),
 };
 
 module.exports ={

@@ -62,12 +62,12 @@ const initializeFolder = (operation) => {
     return false;
 };   
 
-const handleAction = (command, editMode, intractiveMode) => {
+const handleAction = (command, editMode, interactiveMode) => {
     const operation = operations.get(command);
     if (editMode) {
         return runOperationInEditMode(operation) 
     }
-    if (intractiveMode) {
+    if (interactiveMode) {
         return runOperationInIntractionMode(operation)
     };
     return runOperation(operation);

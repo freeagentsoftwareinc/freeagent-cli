@@ -6,12 +6,12 @@ Run `npm link`
 
 `opend new terminal window`
 
-Run `freeagent-cli init` To intialize the changset
+Run `freeagent-cli init` To initialize the changset
 
 # Options
-`-i  --intractive` To Run in intractive Mode
+`-i  --interactive` To Run command in interactive Mode
 
-`-e  --editmode` To Run in edit Mode, to edit file in `vi editor`
+`-e  --editmode` To Run command in edit Mode, to edit file in `vi editor`
 
 
 # commands
