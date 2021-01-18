@@ -11,14 +11,19 @@ const payloads = require('../utils/payloads');
 const questions = require('../utils/questions')
 const { operations, sucessMessages, errorMessages } = require('../utils/common');
 
+const getPayload = (operation, args) => {
+    const payload = {...get(payloads, operation)}
+    const data = { args: {...payload.args, ...args}, transport_ids: [ ...payload.transport_ids]};
+    return JSON.stringify(data, null, 4);
+};
+
 const runOperation = (operation, args={}) => {
     const folderPath = initializeFolder(operation);
     if (!folderPath) {
         console.log(get(errorMessages, operation)); 
         return;
     }
-    const data = {args: {...get(payloads, operation), ...args}};
-    const jsonData = JSON.stringify(data, null, 4);
+    const jsonData = getPayload(operation, args);
     const file = `${Date.now()}_${operation}_${uuid.v4()}.json`;
     const filePath = `${dir}/${file}`
     fs.writeFileSync(`${filePath}`, jsonData);
