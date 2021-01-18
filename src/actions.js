@@ -13,7 +13,7 @@ const { operations, sucessMessages, errorMessages } = require('../utils/common')
 
 const getPayload = (operation, args) => {
     const payload = {...get(payloads, operation)}
-    const data = { args: {...payload.args, ...args}, transport_ids: [ ...payload.transport_ids]};
+    const data = { args: {...payload.args, ...args}, transports: [ ...payload.transports]};
     return JSON.stringify(data, null, 4);
 };
 

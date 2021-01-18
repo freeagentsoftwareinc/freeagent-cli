@@ -11,7 +11,7 @@ const payloads = {
             description: '',
             created_at: new Date().toISOString()
         },
-        transport_ids:[{
+        transports:[{
             id: uuid.v4(),
             field: 'transport_id',
             model: 'changeset'
@@ -29,7 +29,7 @@ const payloads = {
             enforce_individual_access: true,
             fields_configuration_attachment_id: null,
         },
-        transport_ids:[{
+        transports:[{
             id: uuid.v4(),
             field: 'transport_id',
             model: 'fa_entity'
@@ -79,7 +79,7 @@ const payloads = {
             reference_qualifier_value: null,
             fa_related_field_config_id: null,
         },
-        transport_ids:[{
+        transports:[{
             id: uuid.v4(),
             field: 'transport_id',
             model: 'fa_field_config'
@@ -102,7 +102,7 @@ const payloads = {
             custom_fields: [],
             is_qualifier: true,
         },
-        transport_ids:[{
+        transports:[{
             id: uuid.v4(),
             field: 'transport_id',
             model: 'fa_role'
