@@ -18,16 +18,16 @@ const getPayload = (operation, args) => {
 };
 
 const runOperation = (operation, args={}) => {
-    const folderPath = initializeFolder(operation);
+    const folderPath = initializeFolder(operation.payload);
     if (!folderPath) {
-        console.log(get(errorMessages, operation)); 
+        console.log(get(errorMessages, operation.payload)); 
         return;
     }
-    const jsonData = getPayload(operation, args);
-    const file = `${Date.now()}_${operation}_${uuid.v4()}.json`;
+    const jsonData = getPayload(operation.payload, args);
+    const file = `${Date.now()}_${operation.api}_${uuid.v4()}.json`;
     const filePath = `${dir}/${file}`
     fs.writeFileSync(`${filePath}`, jsonData);
-    console.log(get(sucessMessages, operation));
+    console.log(get(sucessMessages, operation.payload));
     return filePath;
 };
 
@@ -41,8 +41,8 @@ const openFileInViEditor = (file) => {
     });
 };
 
-const runOperationInEditMode = (opration) => {
-   const filePath = runOperation(opration);
+const runOperationInEditMode = (opration, args) => {
+   const filePath = runOperation(opration, args);
    return openFileInViEditor(filePath);
 };
 
@@ -62,15 +62,15 @@ const initializeFolder = (operation) => {
     return false;
 };   
 
-const handleAction = (command, editMode, interactiveMode) => {
+const handleAction = (command, args={}, editMode, interactiveMode) => {
     const operation = operations.get(command);
     if (editMode) {
-        return runOperationInEditMode(operation) 
+        return runOperationInEditMode(operation, args) 
     }
     if (interactiveMode) {
-        return runOperationInIntractionMode(operation)
+        return runOperationInIntractionMode(operation, args)
     };
-    return runOperation(operation);
+    return runOperation(operation, args);
 };
 
 const exportChangeset= () => {

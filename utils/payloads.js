@@ -32,19 +32,33 @@ const payloads = {
         transports:[{
             id: uuid.v4(),
             field: 'transport_id',
-            model: 'fa_entity'
-        }]
+            model: 'fa_entity_config'
+        },
+        {
+            field_config_order_transport_id_map: {
+               1: uuid.v4(),
+               2: uuid.v4(),
+               3: uuid.v4(),
+               4: uuid.v4(),
+               5: uuid.v4(),
+               6: uuid.v4(),
+               7: uuid.v4(),
+               8: uuid.v4(),
+               9: uuid.v4(),
+               10: uuid.v4(),
+            }
+         }]
     },
     addCustomField: {
         args:{
             entity: '',
-            data_type: 'boolean',
+            data_type: '',
             help_text: null,
             is_unique: null,
             layout_id: null,
             date_field: null,
             hint_label: null,
-            name_label: 'isActive',
+            name_label: '',
             guess_field: null,
             is_required: null,
             is_immutable: null,
@@ -87,27 +101,277 @@ const payloads = {
     },
     addRole: {
         args:{
-            name: '',
-            description: '',
-            right_to_access: '',
-            right_to_access_id: '',
-            unassigned: '',
-            import: false,
-            export: false,
-            bulk_edit: false,
-            bulk_delete: false,
-            task_delete: false,
-            is_admin: false,
-            deleted: false,
-            custom_fields: [],
-            is_qualifier: true,
+            entity: 'fa_role',
+            field_values: {
+                name: '',
+                description: '',
+                fa_role_field_users: [],
+                bulk_delete: true,
+                bulk_edit: true,
+                export: true,
+                import: true,
+                is_qualifier: true,
+                task_delete: true,
+                unassigned: true,
+            }
         },
         transports:[{
             id: uuid.v4(),
             field: 'transport_id',
             model: 'fa_role'
         }]
-    }
+    },
+    updateRole: {
+        args:{
+            entity: 'fa_role',
+            id: '',
+            field_values: {
+                name: 'newRole4',
+                description: '',
+                fa_role_field_users: [],
+                bulk_delete: true,
+                bulk_edit: true,
+                export: true,
+                import: true,
+                is_qualifier: true,
+                task_delete: true,
+                unassigned: true,
+            }
+        },
+        transports:[{
+            id: '',
+            field: 'id',
+            model: 'fa_role'
+        }]
+    },
+    deactivateRole: {
+        args:{
+            entity: 'fa_role',
+            entity_value_id: '',
+            custom_fields: [['deleted', 'true']]
+        },
+        transports:[{
+            id: '',
+            field: 'entity_value_id',
+            model: 'fa_role'
+        }]
+    },
+    activateRole: {
+        args:{
+            entity: 'fa_role',
+            entity_value_id: '',
+            custom_fields: [['deleted', 'false']]
+        },
+        transports:[{
+            id: '',
+            field: 'entity_value_id',
+            model: 'fa_role'
+        }]
+    },
+    addSection: {
+        args:{
+            entity: 'layout',
+            field_values: {
+                title: '',
+                fa_entity_id: 'dee22db4-fb61-4ece-a82d-c1d68729685e',
+            }
+        },
+        transports:[{
+            id: uuid.v4(),
+            field: 'transport_id',
+            model: 'layout'
+        }]
+    },
+    updateSection: {
+        args:{
+            id: '',
+            entity: 'layout',
+            field_values: {
+                title: '',
+                is_visible: true,
+                fa_entity_id: 'dee22db4-fb61-4ece-a82d-c1d68729685e',
+            }
+        },
+        transports:[{
+            id: '',
+            field: 'id',
+            model: 'layout'
+        }]
+    },
+    activateSection: {
+        args:{
+            entity_value_id: '',
+            entity: 'layout',
+            custom_fields: [['deleted', 'false'], ['is_visible', 'true']]
+        },
+        transports:[{
+            id: '',
+            field: 'entity_value_id',
+            model: 'layout'
+        }]
+    },
+    deactivateSection: {
+        args:{
+            entity: 'layout',
+            entity_value_id: '',
+            custom_fields: [['deleted', 'false'], ['is_visible', 'false']]
+        },
+        transports:[{
+            id: '',
+            field: 'entity_value_id',
+            model: 'layout'
+        }]
+    },
+    addAction: {
+        args:{
+            entity: 'app_action',   
+            field_values: {
+                name: '',
+                description: '',
+                icon: null,
+                appearance_id: null,
+                roles: [],
+                placement: [],
+                type:'',
+                custom_code: null,
+                rule_set_id: null,
+                fa_entity_id: '',
+            }
+        },
+        transports:[{
+            id: uuid.v4(),
+            field: 'transport_id',
+            model: 'app_action'
+        },
+        {
+            id: '',
+            field: 'fa_entity_id',
+            model: 'fa_entities'
+        }]
+    },
+    updateAction: {
+        args:{
+            id: '',
+            entity: 'app_action',   
+            field_values: {
+                name: '',
+                description: '',
+                icon: null,
+                appearance_id: null,
+                roles: [],
+                placement: [],
+                type:'',
+                custom_code: null,
+                rule_set_id: null,
+                fa_entity_id: '',
+            }
+        },
+        transports:[{
+            id: '',
+            field: 'id',
+            model: 'app_action'
+        }]
+    },
+    activateAction: {
+        args:{
+            entity_value_id: '',
+            entity: 'app_action',   
+            custom_fields: [['is_visible', 'true']],
+        },
+        transports:[{
+            id: '',
+            field: 'entity_value_id',
+            model: 'app_action'
+        }]
+    },
+    deactivateAction: {
+        args:{
+            entity_value_id: '',
+            entity: 'app_action',   
+            custom_fields: [['is_visible', 'false']]
+        },
+        transports:[{
+            id: '',
+            field: 'entity_value_id',
+            model: 'app_action'
+        }]
+    },
+    addAcl: {
+        args:{
+            entity: 'fa_acl',   
+            field_values: {
+                operation: null,
+                fa_acl_field_roles: [],
+                fa_field_id: '',
+                target_entity_id: '',
+                active: true,
+                resource_type: 'field',
+                type: 'grant',
+            }
+        },
+        transports:[{
+            id: uuid.v4(),
+            field: 'transport_id',
+            model: 'app_action'
+        },
+        {
+            id: '',
+            field: 'target_entity_id',
+            model: 'fa_entities'
+        },
+        {
+            id: '',
+            field: 'fa_field_id',
+            model: 'fa_field_config'
+        }]
+    },
+    updateAcl: {
+        args:{
+            id: '',
+            entity: 'fa_acl',   
+            field_values: {
+                fa_acl_field_roles: [],
+                operation: null,
+                fa_field_id: '',
+                active: true,
+            }
+        },
+        transports:[{
+            id: '',
+            field: 'id',
+            model: 'fa_acl'
+        },
+        {
+            id: '',
+            field: 'fa_field_id',
+            model: 'fa_field_config'
+        }]
+    },
+    activateAcl: {
+        args:{
+            entity_value_id: '',
+            entity: 'fa_acl',   
+            custom_fields: [['deleted', 'false'], ['active', 'true']],
+        },
+        transports:[{
+            id: '',
+            field: 'entity_value_id',
+            model: 'fa_acl'
+        }]
+    },
+    deactivateAcl: {
+        args:{
+            entity_value_id: '',
+            entity: 'fa_acl',   
+            custom_fields: [['deleted', 'false'], ['active', 'false']]
+        },
+        transports:[{
+            id: '',
+            field: 'entity_value_id',
+            model: 'fa_acl'
+        }]
+    },
+    
 };
 
 module.exports = payloads;
