@@ -110,9 +110,9 @@ const sucessMessages = {
 */
 const errorMessages = {
     addChangeset: chalk.red('changeset folder already initialized, delete the existing folder first'),
-    addEntity: chalk.red('changeset dose not exist, please initialize the changeset first'),
-    addCustomField: chalk.red('changeset dose not exist, please initialize the changeset first'),
-    addRole: chalk.red('changeset dose not exist, please initialize the changeset first'),
+    addEntity: chalk.red('changeset does not exist, please initialize the changeset first'),
+    addCustomField: chalk.red('changeset does not exist, please initialize the changeset first'),
+    addRole: chalk.red('changeset does not exist, please initialize the changeset first'),
 };
 
 module.exports ={

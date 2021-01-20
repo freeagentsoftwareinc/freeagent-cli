@@ -22,27 +22,13 @@ const entityQuestion = [
     {
         type: 'input',
         name: 'label_plural',
-        message: chalk.yellow('enter the singular version of name for changeset or press enter')
-    }
-];
-
-const roleQuestion = [
-    {
-        type: 'input',
-        name: 'name',
-        message: chalk.yellow('enter the role name or press enter')
-    },
-    {
-        type: 'input',
-        name: 'description',
-        message: chalk.yellow('enter the description for changeset or press enter')
+        message: chalk.yellow('enter the plural version of name for the app or press enter')
     }
 ];
 
 const questions = {
     addChangeset: changesetQuestion,
-    addEntity: entityQuestion,
-    addRole: roleQuestion,
+    addEntity: entityQuestion
 }
 
 module.exports = questions
