@@ -174,17 +174,13 @@ const payloads = {
             field_values: {
                 title: '',
                 fa_entity_id: '',
+                entityName: '',
             }
         },
         transports:[{
             id: uuid.v4(),
             field: 'transport_id',
             model: 'layout'
-        },
-        {
-            id: '',
-            field: 'field_values.fa_entity_id',
-            model: 'fa_entity_config'
         }]
     },
     updateSection: {
@@ -195,17 +191,13 @@ const payloads = {
                 title: '',
                 is_visible: true,
                 fa_entity_id: '',
+                entityName: '',
             }
         },
         transports:[{
             id: '',
             field: 'id',
             model: 'layout'
-        },
-        {
-            id: '',
-            field: 'field_values.fa_entity_id',
-            model: 'fa_entity_config'
         }]
     },
     activateSection: {
@@ -246,17 +238,13 @@ const payloads = {
                 custom_code: null,
                 rule_set_id: null,
                 fa_entity_id: '',
+                entityName: '',
             }
         },
         transports:[{
             id: uuid.v4(),
             field: 'transport_id',
             model: 'app_action'
-        },
-        {
-            id: '',
-            field: 'field_values.fa_entity_id',
-            model: 'fa_entity_config'
         },
         {
             id: '',
@@ -279,17 +267,13 @@ const payloads = {
                 custom_code: null,
                 rule_set_id: null,
                 fa_entity_id: '',
+                entityName: '',
             }
         },
         transports:[{
             id: '',
             field: 'id',
             model: 'app_action'
-        },
-        {
-            id: '',
-            field: 'field_values.fa_entity_id',
-            model: 'rule_set'
         },
         {
             id: '',
@@ -332,17 +316,13 @@ const payloads = {
                 active: true,
                 resource_type: 'field',
                 type: 'grant',
+                entityName: '',
             }
         },
         transports:[{
             id: uuid.v4(),
             field: 'transport_id',
             model: 'app_action'
-        },
-        {
-            id: '',
-            field: 'field_values.target_entity_id',
-            model: 'fa_entities'
         },
         {
             id: '',
@@ -412,23 +392,14 @@ const payloads = {
             instance_id: null,
             parent_entity_id: '10913ac7-852e-516e-a2d7-3c24c34600d4',
             parent_fields: [
-                ['name', Math.random().toString()],
-                ['order_type', 'b672222d-f782-48d9-99bf-71608605d8de'],
+                ['name', ''],
+                ['order_type', ''],
                 ['allow_choice_creation', 'true'],
             ],
             children: [{
                 entity_id: '6fc34d02-c890-5661-a157-565d99a4fe37',
                 custom_fields: [
-                    ['name', 'bro'],
-                    ['icon', null],
-                    ['color', null],
-                    ['order', null]
-                ]
-            },
-            {
-                entity_id: '6fc34d02-c890-5661-a157-565d99a4fe37',
-                custom_fields: [
-                    ['name', 'done'],
+                    ['name', ''],
                     ['icon', null],
                     ['color', null],
                     ['order', null]
@@ -442,7 +413,7 @@ const payloads = {
             model: 'catalog_type'
         },
         {
-            id: [uuid.v4(), uuid.v4()],
+            id: [uuid.v4()],
             field: 'transport_id',
             model: 'catalog'
         }]
@@ -487,10 +458,10 @@ const payloads = {
             instance_id: null,
             parent_entity_id: "cf7de345-a40b-56cb-b70a-7fb707a5b4b0",
             parent_fields: [
-                ["name", Math.random().toString()],
-                ["fa_entity_id", "ac12096d-027b-57f5-b389-93c1920222a3"],
-                ["trigger", "9d02d813-fd95-48ba-8c78-2608a1c9f9a5"],
-                [{"field_name":"task_type","values":["2bd5151a-9db3-49c4-ad1a-7b482bd3acae"],"operator":"includes"}]    
+                ["name", ""],
+                ["fa_entity_id", ""],
+                ["trigger", ""],
+                ["filter_conditions", [{"field_name":"task_type","values":[""],"operator":"includes"}]]  
             ],
             children: [{
                 entity_id: "37a890a4-01c4-56a7-8be0-6466b65db0dd",
@@ -523,10 +494,10 @@ const payloads = {
             instance_id: null,
             parent_entity_id: "cf7de345-a40b-56cb-b70a-7fb707a5b4b0",
             parent_fields: [
-                ['name', Math.random().toString()],
-                ["fa_entity_id", "ac12096d-027b-57f5-b389-93c1920222a3"],
-                ["trigger", "9d02d813-fd95-48ba-8c78-2608a1c9f9a5"],
-                ["filter_conditions", [{"field_name":"full_name","values":["martin"],"operator":"contains"}]]    
+                ['name', ""],
+                ["fa_entity_id", ""],
+                ["trigger", ""],
+                ["filter_conditions", [{"field_name":"","values":[],"operator":""}]]    
             ],
             children: [{
                 entity_id: "37a890a4-01c4-56a7-8be0-6466b65db0dd",
@@ -559,20 +530,20 @@ const payloads = {
             instance_id: null,
             parent_entity_id: "2c05c9fa-568e-49e2-b435-b84f79fe1d32",
             parent_fields: [
-                ["fa_entity_id", "ac12096d-027b-57f5-b389-93c1920222a3"],
-                ["description", "testin rule"],
-                ["roles", "12"],
-                ["conditions", [{"field_name":"full_name","values":["martin"],"operator":"contains"}]]   
+                ["fa_entity_id", ""],
+                ["description", ""],
+                ["roles", ""],
+                ["conditions", [{"field_name":"","values":[],"operator":""}]]   
             ],
             children: [{
                 entity_id: "101328d1-3b44-4f19-a19e-9a645776761b",
                 custom_fields: [
                     ["field_name", null],
                     ["section_name", null],
-                    ["type", "1eb3aa53-4247-412c-a241-2e65acdef107"],
-                    ["app_action_id", "213c1c8b-ffc1-4719-a8a7-4c0fc532de9c"],
-                    ["operation", "2630fba4-3da4-44a3-b05e-eb74fe6acee0"],
-                    ["value", "a6e198ae-c959-431c-bb0d-4dfedea022ae"]
+                    ["type", ""],
+                    ["app_action_id", ""],
+                    ["operation", ""],
+                    ["value", ""]
                 ]
             }],
         },
