@@ -73,6 +73,30 @@ const operations = new Map([
     ['activate-acl', {
         payload: 'activateAcl',
         api: 'updateEntityValue'
+    }],
+    ['add-choicelist', {
+        payload: 'addChoiceList',
+        api: 'saveCompositeEntity'
+    }],
+    ['udpate-choicelist', {
+        payload: 'updateChoiceList',
+        api: 'saveCompositeEntity'
+    }],
+    ['add-automation', {
+        payload: 'addAutomation',
+        api: 'saveCompositeEntity'
+    }],
+    ['udpate-automation', {
+        payload: 'updateAutomation',
+        api: 'saveCompositeEntity'
+    }],
+    ['udpate-formrule', {
+        payload: 'updateFormRule',
+        api: 'saveCompositeEntity'
+    }],
+    ['add-formrule', {
+        payload: 'addFormRule',
+        api: 'saveCompositeEntity'
     }]
 ]);
 
@@ -90,8 +114,14 @@ const sucessMessages = {
     activateRole: chalk.green('role activated'),
     deactivateRole: chalk.green('role deactivated'),
     addSection: chalk.green('new section created'),
+    addChoiceList: chalk.green('new choice list created'),
+    addAutomation: chalk.green('new automation created'),
+    updateAutomation: chalk.green('automation updated'),
+    addFormRule: chalk.green('new form rule created'),
+    updateFormRule: chalk.green('form rule updated'),
     updateSection: chalk.green('section updated'),
-    activateSection: chalk.green('section activated'),
+    addChoiceList: chalk.green('new choice list created'),
+    updateChoiceList: chalk.green('update choice list'),
     deactivateSection: chalk.green('section deactivated'),
     addAction: chalk.green('new action created'),
     updateAction: chalk.green('action updated'),

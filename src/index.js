@@ -167,6 +167,49 @@ program
         handleAction(option._name, {}, program.editmode, program.interactive)
     });
 
+program
+    .command('add-choicelist')
+    .description('add choice list')
+    .action((option) => {
+        handleAction(option._name, {}, program.editmode, program.interactive)
+    });
+
+program
+    .command('udpate-choicelist')
+    .description('udpate choice list')
+    .action((option) => {
+        handleAction(option._name, {}, program.editmode, program.interactive)
+    });
+
+
+program
+    .command('add-automation')
+    .description('add automation')
+    .action((option) => {
+        handleAction(option._name, {}, program.editmode, program.interactive)
+    });
+
+program
+    .command('udpate-automation')
+    .description('update automation')
+    .action((option) => {
+        handleAction(option._name, {}, program.editmode, program.interactive)
+    });
+
+program
+    .command('add-formrule')
+    .description('add new form rule')
+    .action((option) => {
+        handleAction(option._name, {}, program.editmode, program.interactive)
+    });
+
+program
+    .command('udpate-formrule')
+    .description('update the form rule')
+    .action((option) => {
+        handleAction(option._name, {}, program.editmode, program.interactive)
+    });
+
 
 program
     .command('export')
