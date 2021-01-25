@@ -425,18 +425,18 @@ const payloads = {
             parent_entity_id: '10913ac7-852e-516e-a2d7-3c24c34600d4',
             parent_fields: [
                 ['id', ''],
-                ['name', 'import testing'],
-                ['order_type', 'b672222d-f782-48d9-99bf-71608605d8de'],
+                ['name', ''],
+                ['order_type', ''],
                 ['allow_choice_creation', 'true'],
             ],
             children: [{
                 entity_id: '6fc34d02-c890-5661-a157-565d99a4fe37',
                 custom_fields: [
                     ['id', '']
-                    ['name', 'bro'],
-                    ['icon', "null"],
-                    ['color', "null"],
-                    ['order', "null"]
+                    ['name', ''],
+                    ['icon', 'null'],
+                    ['color', 'null'],
+                    ['order', 'null']
                 ]
             }],
         },
@@ -456,19 +456,20 @@ const payloads = {
     addAutomation: {
         args: {
             instance_id: null,
-            parent_entity_id: "cf7de345-a40b-56cb-b70a-7fb707a5b4b0",
+            parent_entity_id: 'cf7de345-a40b-56cb-b70a-7fb707a5b4b0',
             parent_fields: [
-                ["name", ""],
-                ["fa_entity_id", ""],
-                ["trigger", ""],
-                ["filter_conditions", [{"field_name":"task_type","values":[""],"operator":"includes"}]]  
+                ['name', ''],
+                ['entityName', ''],
+                ['fa_entity_id', ''],
+                ['trigger', ''],
+                ['filter_conditions', [{'field_name':'task_type','values':[],'operator':'includes'}]]  
             ],
             children: [{
-                entity_id: "37a890a4-01c4-56a7-8be0-6466b65db0dd",
+                entity_id: '37a890a4-01c4-56a7-8be0-6466b65db0dd',
                 custom_fields: [
                     ['description', 'automation'],
                     ['type', 'custom_code'],
-                    ['custom_code', "(function(contact, context){↵  // You can define operations here↵  // Example:↵  // var a = 1, b = contact.myField;↵  // var c = a + b;↵  //↵  // Use 'CTRL + space' to display a list↵  // of fields and select one for your operation↵  //↵  // Return something for your function↵  // Example:↵  // return c;↵  return 0;↵}(contact, context));"],
+                    ['custom_code', ''],
                     ['delay', null],
                     ['working_calendar', 'false'],
                     ['due_date_field', 'false']
@@ -492,19 +493,20 @@ const payloads = {
     updateAutomation: {
         args: {
             instance_id: null,
-            parent_entity_id: "cf7de345-a40b-56cb-b70a-7fb707a5b4b0",
+            parent_entity_id: 'cf7de345-a40b-56cb-b70a-7fb707a5b4b0',
             parent_fields: [
-                ['name', ""],
-                ["fa_entity_id", ""],
-                ["trigger", ""],
-                ["filter_conditions", [{"field_name":"","values":[],"operator":""}]]    
+                ['name', ''],
+                ['entityName', ''],
+                ['fa_entity_id', ''],
+                ['trigger', ''],
+                ['filter_conditions', [{'field_name':'','values':[],'operator':''}]]    
             ],
             children: [{
-                entity_id: "37a890a4-01c4-56a7-8be0-6466b65db0dd",
+                entity_id: '37a890a4-01c4-56a7-8be0-6466b65db0dd',
                 custom_fields: [
                     ['description', 'automation'],
                     ['type', 'custom_code'],
-                    ['custom_code', "(function(contact, context){↵  // You can define operations here↵  // Example:↵  // var a = 1, b = contact.myField;↵  // var c = a + b;↵  //↵  // Use 'CTRL + space' to display a list↵  // of fields and select one for your operation↵  //↵  // Return something for your function↵  // Example:↵  // return c;↵  return 0;↵}(contact, context));"],
+                    ['custom_code', ''],
                     ['delay', null],
                     ['working_calendar', 'false'],
                     ['due_date_field', 'false']
@@ -528,22 +530,23 @@ const payloads = {
     addFormRule: {
         args: {
             instance_id: null,
-            parent_entity_id: "2c05c9fa-568e-49e2-b435-b84f79fe1d32",
+            parent_entity_id: '2c05c9fa-568e-49e2-b435-b84f79fe1d32',
             parent_fields: [
-                ["fa_entity_id", ""],
-                ["description", ""],
-                ["roles", ""],
-                ["conditions", [{"field_name":"","values":[],"operator":""}]]   
+                ['entityName', ''],
+                ['fa_entity_id', ''],
+                ['description', ''],
+                ['roles', ''],
+                ['conditions', [{'field_name':'','values':[],'operator':''}]]   
             ],
             children: [{
-                entity_id: "101328d1-3b44-4f19-a19e-9a645776761b",
+                entity_id: '101328d1-3b44-4f19-a19e-9a645776761b',
                 custom_fields: [
-                    ["field_name", null],
-                    ["section_name", null],
-                    ["type", ""],
-                    ["app_action_id", ""],
-                    ["operation", ""],
-                    ["value", ""]
+                    ['field_name', null],
+                    ['section_name', null],
+                    ['type', ''],
+                    ['app_action_id', ''],
+                    ['operation', ''],
+                    ['value', '']
                 ]
             }],
         },
@@ -563,22 +566,23 @@ const payloads = {
     updateFormRule: {
         args: {
             instance_id: null,
-            parent_entity_id: "2c05c9fa-568e-49e2-b435-b84f79fe1d32",
+            parent_entity_id: '2c05c9fa-568e-49e2-b435-b84f79fe1d32',
             parent_fields: [
-                ["fa_entity_id", "ac12096d-027b-57f5-b389-93c1920222a3"],
-                ["description", "testin rule"],
-                ["roles", "12"],
-                ["conditions", [{"field_name":"full_name","values":["martin"],"operator":"contains"}]]    
+                ['entityName', ''],
+                ['fa_entity_id', ''],
+                ['description', ''],
+                ['roles', ''],
+                ['conditions', [{'field_name':'','values':[],'operator':''}]]    
             ],
             children: [{
-                entity_id: "101328d1-3b44-4f19-a19e-9a645776761b",
+                entity_id: '101328d1-3b44-4f19-a19e-9a645776761b',
                 custom_fields: [
-                    ["field_name", null],
-                    ["section_name", null],
-                    ["type", "1eb3aa53-4247-412c-a241-2e65acdef107"],
-                    ["app_action_id", "213c1c8b-ffc1-4719-a8a7-4c0fc532de9c"],
-                    ["operation", "2630fba4-3da4-44a3-b05e-eb74fe6acee0"],
-                    ["value", "a6e198ae-c959-431c-bb0d-4dfedea022ae"]
+                    ['field_name', null],
+                    ['section_name', null],
+                    ['type', ''],
+                    ['app_action_id', ''],
+                    ['operation', ''],
+                    ['value', '']
                 ]
             }],
         },
