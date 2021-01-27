@@ -32,23 +32,68 @@ const payloads = {
         transports:[{
             id: uuid.v4(),
             field: 'transport_id',
-            model: 'fa_entity_config'
+            model: 'changeset'
         },
         {
-            field_config_order_transport_id_map: {
-               1: uuid.v4(),
-               2: uuid.v4(),
-               3: uuid.v4(),
-               4: uuid.v4(),
-               5: uuid.v4(),
-               6: uuid.v4(),
-               7: uuid.v4(),
-               8: uuid.v4(),
-               9: uuid.v4(),
-               10: uuid.v4(),
-            }
-         }]
+            order_transport_id_map: {
+                1: uuid.v4(),
+                2: uuid.v4(),
+                3: uuid.v4(),
+                4: uuid.v4(),
+                5: uuid.v4(),
+                6: uuid.v4(),
+                7: uuid.v4(),
+                8: uuid.v4(),
+                9: uuid.v4(),
+                10: uuid.v4()
+            },
+            model: 'fa_field_config'
+        },
+        {
+            order_transport_id_map: {
+                1: uuid.v4(),
+                2: uuid.v4()
+            },
+            model: 'app_action'
+        },
+        {
+            order_transport_id_map: {
+                1: uuid.v4(),
+                2: uuid.v4()
+            },
+            model: 'fa_related_list'
+        }]
     },
+    updateApp: {
+        args:{
+            label: '',
+            label_plural: '',
+            is_visible: true,
+            icon: '',
+            roles: [],
+            show_related_list: null,
+            enforce_individual_access: true,
+            info_segment_wide:'1 column',
+            landscape_mode: null,
+            template_file_url: '',
+            title_field_name: 'seq_id',
+            applet_config: null,
+            show_app_icon: null,
+            show_seq_id: null,
+            primary_action: null,
+            enable_quick_add: false,
+            quick_add_custom_code: null,
+            quick_add_hint: null,
+            description: '',
+            default_sorts: [],
+        },       
+        transports: [{
+            id: '',
+            field: 'id',
+            model: 'fa_entity_config'
+        }]
+    },
+
     addCustomField: {
         args:{
             entity: '',
@@ -87,6 +132,7 @@ const payloads = {
             reference_qualifier: null,
             reference_fa_field_id: null,
             parent_custom_field_id: null,
+            reference_entity_name: null,
             reference_fa_entity_id: null,
             related_list_name_plural: '',
             reference_custom_field_id: null,

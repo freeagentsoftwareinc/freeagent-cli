@@ -19,15 +19,15 @@ program
     });
 
 program
-    .command('add-app [label]')
+    .command('add-app <label_plural> [label]')
     .description('create new app')
-    .action((label, option) => {
+    .action((llabel_plural, label, option) => {
         /*
            option._name : command name 
            program.editmode : -e option
            program.interactive: -i option
         */
-       const args = { label, label_plural: label }
+       const args = { label: label_plural || label_plural, label_plural: label_plural }
         handleAction(option._name, args, program.editmode, program.interactive)
     });
 

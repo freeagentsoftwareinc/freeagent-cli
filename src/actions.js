@@ -11,6 +11,11 @@ const payloads = require('../utils/payloads');
 const questions = require('../utils/questions')
 const { operations, sucessMessages, errorMessages } = require('../utils/common');
 
+const low = require('lowdb')
+const FileSync = require('lowdb/adapters/FileSync')
+const adapter = new FileSync('db.json')
+const db = low(adapter)
+
 const getPayload = (operation, args) => {
     const payload = {...get(payloads, operation)}
     const data = { args: {...payload.args, ...args}, transports: [ ...payload.transports]};
