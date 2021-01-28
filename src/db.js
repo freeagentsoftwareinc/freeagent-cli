@@ -7,7 +7,7 @@ const adapter = new FileSync('db.json');
 const db = low(adapter);
 const uuid  = require('node-uuid');
 const dir = './fa_changeset';
-db.defaults({ app: {}, fields:[], role: {}, section: [] })
+db.defaults({ app: {}, fields:[], role: {}, section: [], action: [], acl: [] })
   .write();
 
 const updateArgs = (data, file) => {
@@ -140,42 +140,75 @@ const updateSection = (data, file) => {
     updateArgs(data, section.file);
 };
 
-const runQuery = (operation, args, file) => {
-    if(operation.api === 'addEntity'){
-        addApp(args, file)
-    }
 
-    if(operation.api === 'updateEntityConfig') {
-        updateApp(args, file)
-    }
+const addAppAction = (data, file) => {
+    const id = uuid.v4();
+    const obj = {
+        id,
+        field: 'transport_id',
+        model: 'app_action'
+    };
+    data.transports.push(obj);
+    db.get('action')
+    .push({ app: data.args.field_values.entityName, name: data.args.field_values.name, id, file })
+    .write();
+};
 
-    if(operation.api === 'addCustomField') {
-        addField(args, file);
-    }
-    
-    if(operation.api === 'updateFieldConfig'){
-        updateField(args, file)
-    }
+const updateAppAction = (data, file) => {
+    const action = db.get('action')
+        .find({ app: data.args.field_values.entityName, name: data.args.field_values.name })
+        .value();
+    const obj = {
+        id: action.id,
+        field: 'transport_id',
+        model: 'app_action'
+    };
+    data.transports.push(obj);
+    updateArgs(data, action.file);
+};
 
-    if(operation.api === 'deleteCustomField'){
-        deleteField(args)
-    }
+const addAcl = (data, file) => {
+    const id = uuid.v4();
+    const obj = {
+        id,
+        field: 'transport_id',
+        model: 'fa_acl'
+    };
+    data.transports.push(obj);
+    db.get('acl')
+    .push({ app: data.args.field_values.entityName, resource_type: data.args.field_values.resource_type, id, file })
+    .write();
+};
 
-    if(operation.api === 'createEntity' && operation.payload === 'addRole'){
-        addRole(args, file);
-    }
 
-    if(operation.api === 'updateEntity' && operation.payload === 'addRole'){
-        updateRole(args, file);
-    }
+const updateAcl = (data, file) => {
+    const acl = db.get('acl')
+        .find({ app: data.args.field_values.entityName, resource_type: data.args.field_values.resource_type })
+        .value();
+    const obj = {
+        id: acl.id,
+        field: 'transport_id',
+        model: 'app_action'
+    };
+    data.transports.push(obj);
+    updateArgs(data, acl.file);
+};
 
-    if(operation.api === 'createEntity' && operation.payload === 'addSection'){
-        addSection(args, file);
-    }
 
-    if(operation.api === 'updateEntity' && operation.payload === 'addSection'){
-        updateSection(args, file);
-    }
+const runQuery = {
+    addApp,
+    updateApp,
+    addField,
+    updateField,
+    deleteField,
+    addRole,
+    updateRole,
+    addSection,
+    updateSection,
+    addAppAction,
+    updateAppAction,
+    addAcl,
+    updateAcl
 }
 
 module.exports ={

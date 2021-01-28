@@ -4,153 +4,173 @@ const chalk = require('chalk');
 const operations = new Map([
     ['init', {
         payload: 'addChangeset',
-        api: 'changeset'
+        api: 'changeset',
+        sucessMessage: 'changeset folder initialized'
     }],
     ['add-app', {
         payload: 'addEntity',
-        api: 'addEntity'
+        api: 'addEntity',
+        query: 'addApp',
+        sucessMessage: 'created app successfully'
     }],
     ['update-app', {
         payload: 'updateApp',
-        api: 'updateEntityConfig'
+        api: 'updateEntityConfig',
+        query: 'updateApp',
+        sucessMessage: 'updated the app successfully'
     }],
     ['add-field', {
         payload: 'addCustomField',
-        api: 'addCustomField'
+        api: 'addCustomField',
+        query: 'addField',
+        sucessMessage: 'created new field successfully'
     }],
     ['update-field', {
         payload: 'addCustomField',
-        api: 'updateFieldConfig'
+        api: 'updateFieldConfig',
+        query: 'updateField',
+        sucessMessage: 'updated the field successfully'
     }],
     ['delete-field', {
         payload: 'deleteField',
-        api: 'deleteCustomField'
+        api: 'deleteCustomField',
+        query: 'deleteField',
+        sucessMessage: 'deleted the field successfully'
     }],
     ['add-role', {
         payload: 'addRole',
-        api: 'createEntity'
+        api: 'createEntity',
+        query: 'addRole',
+        sucessMessage: 'created the role successfully'
     }],
     ['update-role', {
         payload: 'addRole',
-        api: 'updateEntity'
+        api: 'updateEntity',
+        query: 'updateRole',
+        sucessMessage: 'updated the role successfully'
     }],
     ['deactivate-role', {
         payload: 'deactivateRole',
-        api: 'updateEntityValue'
+        api: 'updateEntityValue',
+        query: 'deactivateRole',
+        sucessMessage: 'deactivated the field successfully'
     }],
     ['activate-role', {
         payload: 'activateRole',
-        api: 'updateEntityValue'
+        api: 'updateEntityValue',
+        query: 'ActivateRole',
+        sucessMessage: 'activated the role successfully'
     }],
     ['add-section', {
         payload: 'addSection',
-        api: 'createEntity'
+        api: 'createEntity',
+        query: 'addSection',
+        sucessMessage: 'created the section successfully'
     }],
     ['update-section', {
         payload: 'addSection',
-        api: 'updateEntity'
+        api: 'updateEntity',
+        query: 'updateSection',
+        sucessMessage: 'updated the section successfully'
     }],
     ['deactivate-section', {
         payload: 'deactivateSection',
-        api: 'updateEntityValue'
+        api: 'updateEntityValue',
+        query: 'deactivateSection',
+        sucessMessage: 'deactivated the section successfully'
     }],
     ['activate-section', {
         payload: 'activateSection',
-        api: 'updateEntityValue'
+        api: 'updateEntityValue',
+        query: 'activateSection',
+        sucessMessage: 'activated the section successfully'
     }],
     ['add-action', {
         payload: 'addAction',
-        api: 'createEntity'
+        api: 'createEntity',
+        query: 'addAppAction',
+        sucessMessage: 'created the action successfully'
     }],
     ['update-action', {
         payload: 'addAction',
-        api: 'updateEntity'
+        api: 'updateEntity',
+        query: 'updateAppAction',
+        sucessMessage: 'updated the action successfully'
     }],
     ['activate-action', {
         payload: 'activateAction',
-        api: 'updateEntityValue'
+        api: 'updateEntityValue',
+        query: 'activateAppAction',
+        sucessMessage: 'activated the action successfully'
     }],
     ['deactivate-action', {
         payload: 'deactivateAction',
-        api: 'updateEntityValue'
+        api: 'updateEntityValue',
+        query: 'deactivateAppAction',
+        sucessMessage: 'deactivated the action successfully'
     }],
     ['add-acl', {
         payload: 'addAcl',
-        api: 'createEntity'
+        api: 'createEntity',
+        query: 'addAcl',
+        sucessMessage: 'created the acl successfully'
+    }],
+    ['update-acl', {
+        payload: 'addAcl',
+        api: 'createEntity',
+        query: 'updateAcl',
+        sucessMessage: 'created the acl successfully'
     }],
     ['deactivate-acl', {
         payload: 'deactivateAcl',
-        api: 'updateEntityValue'
+        api: 'updateEntityValue',
+        query: 'deactivateAcl',
+        sucessMessage: 'deactivated the acl successfully'
     }],
     ['activate-acl', {
         payload: 'activateAcl',
-        api: 'updateEntityValue'
+        api: 'updateEntityValue',
+        query: 'activateAcl',
+        sucessMessage: 'activate the acl successfully'
     }],
     ['add-choicelist', {
         payload: 'addChoiceList',
-        api: 'saveCompositeEntity'
+        api: 'saveCompositeEntity',
+        query: 'addChoiceList',
+        sucessMessage: 'created the choice list successfully'
     }],
     ['udpate-choicelist', {
         payload: 'updateChoiceList',
-        api: 'saveCompositeEntity'
+        api: 'saveCompositeEntity',
+        query: 'updateChoiceList',
+        sucessMessage: 'updated the choice list successfully'
     }],
     ['add-automation', {
         payload: 'addAutomation',
-        api: 'saveCompositeEntity'
+        api: 'saveCompositeEntity',
+        query: 'addAutomation',
+        sucessMessage: 'created the automation successfully'
     }],
     ['udpate-automation', {
         payload: 'updateAutomation',
-        api: 'saveCompositeEntity'
-    }],
-    ['udpate-formrule', {
-        payload: 'updateFormRule',
-        api: 'saveCompositeEntity'
+        api: 'saveCompositeEntity',
+        query: 'updateAutomation',
+        sucessMessage: 'updated the automation successfully'
     }],
     ['add-formrule', {
         payload: 'addFormRule',
-        api: 'saveCompositeEntity'
+        api: 'saveCompositeEntity',
+        query: 'addFormRule',
+        sucessMessage: 'created the field successfully'
+    }],
+    ['udpate-formrule', {
+        payload: 'updateFormRule',
+        api: 'saveCompositeEntity',
+        query: 'updateFormRule',
+        sucessMessage: 'updated the formrule successfully'
     }]
 ]);
 
-/*  define all the success messages
-    key: operantion i.e addCustomfield, addEnity etc
-    value: string
-*/
-const sucessMessages = {
-    addChangeset: chalk.green('changeset folder initialized'),
-    addEntity: chalk.green('app created'),
-    updateApp: chalk.green('app updated'),
-    changeset_complete: `${chalk.green('changeset completed, please find the folder at root')}: ${chalk.yellow('fa_changeset.zip')}`,
-    addCustomField: chalk.green('field created'),
-    addRole: chalk.green('new role created'),
-    updateRole: chalk.green('role updated'),
-    activateRole: chalk.green('role activated'),
-    deactivateRole: chalk.green('role deactivated'),
-    addSection: chalk.green('new section created'),
-    addChoiceList: chalk.green('new choice list created'),
-    addAutomation: chalk.green('new automation created'),
-    updateAutomation: chalk.green('automation updated'),
-    addFormRule: chalk.green('new form rule created'),
-    updateFormRule: chalk.green('form rule updated'),
-    updateSection: chalk.green('section updated'),
-    addChoiceList: chalk.green('new choice list created'),
-    updateChoiceList: chalk.green('update choice list'),
-    deactivateSection: chalk.green('section deactivated'),
-    addAction: chalk.green('new action created'),
-    updateAction: chalk.green('action updated'),
-    activateAction: chalk.green('action activated'),
-    deactivateAction: chalk.green('action deactivated'),
-    addAcl: chalk.green('new ACL created'),
-    updateAcl: chalk.green('ACL updated'),
-    activateAcl: chalk.green('ACL activated'),
-    deactivateAcl: chalk.green('ACL deactivated'),
-    editMode: chalk.green('field successfully edited'),
-};
-
-/*  define all the error messages
-    key: operantion i.e addCustomfield, addEnity etc
-    value: string
-*/
 const errorMessages = {
     addChangeset: chalk.red('changeset folder already initialized, delete the existing folder first'),
     addEntity: chalk.red('changeset does not exist, please initialize the changeset first'),
@@ -160,6 +180,5 @@ const errorMessages = {
 
 module.exports ={
     operations,
-    sucessMessages,
     errorMessages
 };

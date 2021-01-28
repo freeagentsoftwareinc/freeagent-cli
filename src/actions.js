@@ -8,7 +8,8 @@ const archiver = require('archiver');
 const { get } = require('lodash');
 const { prompt } = require('inquirer');
 const payloads = require('../utils/payloads');
-const questions = require('../utils/questions')
+const questions = require('../utils/questions');
+const chalk = require('chalk');
 const { operations, sucessMessages, errorMessages } = require('../utils/common');
 const { runQuery } = require('./db');
  
@@ -26,12 +27,11 @@ const runOperation = (operation, args={}) => {
     }
     const data = getPayload(operation.payload, args);
     const file = `${Date.now()}_${operation.api}_${uuid.v4()}.json`;
-    console.log("data..2 ", data)
-    runQuery(operation, data, file);    
+    runQuery[operation.query](data, file);
     const jsonData =  JSON.stringify(data, null, 4);
     const filePath = `${dir}/${file}`
     fs.writeFileSync(`${filePath}`, jsonData);
-    console.log(get(sucessMessages, operation.payload));
+    console.log(chalk.green(operation.sucessMessage));
     return filePath;
 };
 
@@ -67,9 +67,7 @@ const initializeFolder = (operation) => {
 };   
 
 const handleAction = (command, args={}, editMode, interactiveMode) => {
-    console.log("operation....2", command)
     const operation = operations.get(command);
-    console.log("operation....2", operation)
     if (editMode) {
         return runOperationInEditMode(operation, args) 
     }

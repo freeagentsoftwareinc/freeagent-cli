@@ -168,29 +168,7 @@ const payloads = {
         },
         transports:[]
     },
-    // updateRole: {
-    //     args:{
-    //         entity: 'fa_role',
-    //         id: '',
-    //         field_values: {
-    //             name: 'newRole4',
-    //             description: '',
-    //             fa_role_field_users: [],
-    //             bulk_delete: true,
-    //             bulk_edit: true,
-    //             export: true,
-    //             import: true,
-    //             is_qualifier: true,
-    //             task_delete: true,
-    //             unassigned: true,
-    //         }
-    //     },
-    //     transports:[{
-    //         id: '',
-    //         field: 'id',
-    //         model: 'fa_role'
-    //     }]
-    // },
+
     deactivateRole: {
         args:{
             entity: 'fa_role',
@@ -226,23 +204,7 @@ const payloads = {
         },
         transports:[]
     },
-    updateSection: {
-        args:{
-            id: '',
-            entity: 'layout',
-            field_values: {
-                title: '',
-                is_visible: true,
-                fa_entity_id: '',
-                entityName: '',
-            }
-        },
-        transports:[{
-            id: '',
-            field: 'id',
-            model: 'layout'
-        }]
-    },
+
     activateSection: {
         args:{
             entity_value_id: '',
@@ -255,6 +217,7 @@ const payloads = {
             model: 'layout'
         }]
     },
+
     deactivateSection: {
         args:{
             entity: 'layout',
@@ -267,6 +230,7 @@ const payloads = {
             model: 'layout'
         }]
     },
+
     addAction: {
         args:{
             entity: 'app_action',   
@@ -284,46 +248,14 @@ const payloads = {
                 entityName: '',
             }
         },
-        transports:[{
-            id: uuid.v4(),
-            field: 'transport_id',
-            model: 'app_action'
-        },
+        transports:[
         {
             id: '',
             field: 'field_values.rule_set_id',
             model: 'rule_set'
         }]
     },
-    updateAction: {
-        args:{
-            id: '',
-            entity: 'app_action',   
-            field_values: {
-                name: '',
-                description: '',
-                icon: null,
-                appearance_id: null,
-                roles: [],
-                placement: [],
-                type:'',
-                custom_code: null,
-                rule_set_id: null,
-                fa_entity_id: '',
-                entityName: '',
-            }
-        },
-        transports:[{
-            id: '',
-            field: 'id',
-            model: 'app_action'
-        },
-        {
-            id: '',
-            field: 'field_values.rule_set_id',
-            model: 'rule_set'
-        }]
-    },
+
     activateAction: {
         args:{
             entity_value_id: '',
@@ -348,6 +280,7 @@ const payloads = {
             model: 'app_action'
         }]
     },
+
     addAcl: {
         args:{
             entity: 'fa_acl',   
@@ -357,16 +290,12 @@ const payloads = {
                 fa_field_id: '',
                 fa_acl_field_roles: [],
                 active: true,
-                resource_type: 'field',
+                resource_type: '',
                 type: 'grant',
                 entityName: '',
             }
         },
-        transports:[{
-            id: uuid.v4(),
-            field: 'transport_id',
-            model: 'app_action'
-        },
+        transports:[
         {
             id: '',
             field: 'field_values.fa_field_id',
@@ -378,33 +307,7 @@ const payloads = {
             model: 'fa_role'
         }]
     },
-    updateAcl: {
-        args:{
-            id: '',
-            entity: 'fa_acl',   
-            field_values: {
-                fa_field_id: '',
-                fa_acl_field_roles: [],
-                operation: null,
-                active: true,
-            }
-        },
-        transports:[{
-            id: '',
-            field: 'id',
-            model: 'fa_acl'
-        },
-        {
-            id: '',
-            field: 'field_values.fa_field_id',
-            model: 'fa_field_config'
-        },
-        {
-            id: '',
-            field: 'field_values.fa_acl_field_roles',
-            model: 'fa_role'
-        }]
-    },
+
     activateAcl: {
         args:{
             entity_value_id: '',
