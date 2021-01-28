@@ -10,16 +10,12 @@ const { prompt } = require('inquirer');
 const payloads = require('../utils/payloads');
 const questions = require('../utils/questions')
 const { operations, sucessMessages, errorMessages } = require('../utils/common');
-
-const low = require('lowdb')
-const FileSync = require('lowdb/adapters/FileSync')
-const adapter = new FileSync('db.json')
-const db = low(adapter)
-
+const { runQuery } = require('./db');
+ 
 const getPayload = (operation, args) => {
     const payload = {...get(payloads, operation)}
     const data = { args: {...payload.args, ...args}, transports: [ ...payload.transports]};
-    return JSON.stringify(data, null, 4);
+    return data;
 };
 
 const runOperation = (operation, args={}) => {
@@ -28,8 +24,11 @@ const runOperation = (operation, args={}) => {
         console.log(get(errorMessages, operation.payload)); 
         return;
     }
-    const jsonData = getPayload(operation.payload, args);
+    const data = getPayload(operation.payload, args);
     const file = `${Date.now()}_${operation.api}_${uuid.v4()}.json`;
+    console.log("data..2 ", data)
+    runQuery(operation, data, file);    
+    const jsonData =  JSON.stringify(data, null, 4);
     const filePath = `${dir}/${file}`
     fs.writeFileSync(`${filePath}`, jsonData);
     console.log(get(sucessMessages, operation.payload));
@@ -68,7 +67,9 @@ const initializeFolder = (operation) => {
 };   
 
 const handleAction = (command, args={}, editMode, interactiveMode) => {
+    console.log("operation....2", command)
     const operation = operations.get(command);
+    console.log("operation....2", operation)
     if (editMode) {
         return runOperationInEditMode(operation, args) 
     }

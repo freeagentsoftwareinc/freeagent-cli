@@ -10,16 +10,28 @@ const operations = new Map([
         payload: 'addEntity',
         api: 'addEntity'
     }],
+    ['update-app', {
+        payload: 'updateApp',
+        api: 'updateEntityConfig'
+    }],
     ['add-field', {
         payload: 'addCustomField',
         api: 'addCustomField'
+    }],
+    ['update-field', {
+        payload: 'addCustomField',
+        api: 'updateFieldConfig'
+    }],
+    ['delete-field', {
+        payload: 'deleteField',
+        api: 'deleteCustomField'
     }],
     ['add-role', {
         payload: 'addRole',
         api: 'createEntity'
     }],
     ['update-role', {
-        payload: 'updateRole',
+        payload: 'addRole',
         api: 'updateEntity'
     }],
     ['deactivate-role', {
@@ -35,7 +47,7 @@ const operations = new Map([
         api: 'createEntity'
     }],
     ['update-section', {
-        payload: 'updateSection',
+        payload: 'addSection',
         api: 'updateEntity'
     }],
     ['deactivate-section', {
@@ -52,7 +64,7 @@ const operations = new Map([
     }],
     ['update-action', {
         payload: 'addAction',
-        api: 'createEntity'
+        api: 'updateEntity'
     }],
     ['activate-action', {
         payload: 'activateAction',
@@ -107,6 +119,7 @@ const operations = new Map([
 const sucessMessages = {
     addChangeset: chalk.green('changeset folder initialized'),
     addEntity: chalk.green('app created'),
+    updateApp: chalk.green('app updated'),
     changeset_complete: `${chalk.green('changeset completed, please find the folder at root')}: ${chalk.yellow('fa_changeset.zip')}`,
     addCustomField: chalk.green('field created'),
     addRole: chalk.green('new role created'),

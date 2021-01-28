@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const { program } = require('commander');
+const { array } = require('yargs');
 const payloads = require('../utils/payloads');
 const { handleAction, exportChangeset } = require('./actions');
 
@@ -21,13 +22,26 @@ program
 program
     .command('add-app <label_plural> [label]')
     .description('create new app')
-    .action((llabel_plural, label, option) => {
+    .action((label_plural, label, option) => {
         /*
            option._name : command name 
            program.editmode : -e option
            program.interactive: -i option
         */
-       const args = { label: label_plural || label_plural, label_plural: label_plural }
+       const args = { label: label_plural || label, label_plural: label_plural }
+        handleAction(option._name, args, program.editmode, program.interactive)
+    });
+
+program
+    .command('update-app <label> [new_label]')
+    .description('create new app')
+    .action((label, new_label, option) => {
+        /*
+           option._name : command name 
+           program.editmode : -e option
+           program.interactive: -i option
+        */
+       const args = { label: label, new_label }
         handleAction(option._name, args, program.editmode, program.interactive)
     });
 
@@ -40,7 +54,23 @@ program
     });
 
 program
-    .command('add-role [name]')
+    .command('update-field <targetApp> <name> [new_name]')
+    .description('update the Field')
+    .action((targetApp, name, new_name, option) => {
+        const args = { name_label: name, entity: targetApp }
+        handleAction(option._name, args, program.editmode, program.interactive)
+    });
+
+program
+    .command('delete-field <targetApp> <name>')
+    .description('update the Field')
+    .action((targetApp, name, option) => {
+        const args = { name_label: name, entity: targetApp }
+        handleAction(option._name, args, program.editmode, program.interactive)
+    });
+
+program
+    .command('add-role <name>')
     .description('Create New Role')
     .action((name, option) => {
         const args = { ...payloads.addRole.args }
@@ -49,10 +79,12 @@ program
     });
 
 program
-    .command('update-role')
-    .description('Update The Exisiting Role')
-    .action((option) => {
-        handleAction(option._name, {}, program.editmode, program.interactive)
+    .command('update-role <name>')
+    .description('Update the exisiting Role')
+    .action((name, option) => {
+        const args = { ...payloads.addRole.args }
+        args.field_values = { ...args.field_values, ...{ name: name || ''} };
+        handleAction(option._name, args, program.editmode, program.interactive)
     });
 
 program
@@ -70,21 +102,21 @@ program
     });
 
 program
-    .command('add-section <targetApp> [name]')
+    .command('add-section <targetApp> <name>')
     .description('Add New Section')
     .action((targetApp, name, option) => {
         const args = { ...payloads.addSection.args }
-        args.field_values = { ...args.field_values, title: name, entity: targetApp }
-        handleAction(option._name, program.editmode, program.interactive)
+        args.field_values = { ...args.field_values, ...{ title: name, entity: targetApp } }
+        handleAction(option._name, args, program.editmode, program.interactive)
     });
 
 program
-    .command('update-section <targetApp> [name]')
+    .command('update-section <targetApp> <name>')
     .description('Update Exisiting Section')
     .action((targetApp, name, option) => {
         const args = { ...payloads.addSection.args }
-        args.field_values = { ...args.field_values, title: name, entity: targetApp }
-        handleAction(option._name, program.editmode, program.interactive)
+        args.field_values = { ...args.field_values, ...{ title: name, entity: targetApp} }
+        handleAction(option._name, args, program.editmode, program.interactive)
     });
   
 program

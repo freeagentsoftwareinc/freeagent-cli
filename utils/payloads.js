@@ -17,6 +17,7 @@ const payloads = {
             model: 'changeset'
         }]
     },
+
     addEntity: {
         args: {
             icon: '',
@@ -29,11 +30,7 @@ const payloads = {
             enforce_individual_access: true,
             fields_configuration_attachment_id: null,
         },
-        transports:[{
-            id: uuid.v4(),
-            field: 'transport_id',
-            model: 'changeset'
-        },
+        transports:[
         {
             order_transport_id_map: {
                 1: uuid.v4(),
@@ -64,8 +61,9 @@ const payloads = {
             model: 'fa_related_list'
         }]
     },
+
     updateApp: {
-        args:{
+        args: {
             label: '',
             label_plural: '',
             is_visible: true,
@@ -73,25 +71,28 @@ const payloads = {
             roles: [],
             show_related_list: null,
             enforce_individual_access: true,
-            info_segment_wide:'1 column',
+            info_segment_wide: '1 column',
             landscape_mode: null,
             template_file_url: '',
             title_field_name: 'seq_id',
-            applet_config: null,
+            applet_config: {
+                width: '',
+                height: '',
+                url: '',
+                params:'',
+                applet_id:'',
+            },
             show_app_icon: null,
             show_seq_id: null,
             primary_action: null,
-            enable_quick_add: false,
-            quick_add_custom_code: null,
+            enable_quick_add: false,    
+            quick_add_custom_code: '',
             quick_add_hint: null,
             description: '',
             default_sorts: [],
-        },       
-        transports: [{
-            id: '',
-            field: 'id',
-            model: 'fa_entity_config'
-        }]
+            color: ''
+        },
+        transports: []
     },
 
     addCustomField: {
@@ -139,12 +140,16 @@ const payloads = {
             reference_qualifier_value: null,
             fa_related_field_config_id: null,
         },
-        transports:[{
-            id: uuid.v4(),
-            field: 'transport_id',
-            model: 'fa_field_config'
-        }]
+        transports:[]
     },
+
+    deleteField: {
+        args: {
+            id: ''
+        },
+        transports: []
+    },
+    
     addRole: {
         args:{
             entity: 'fa_role',
@@ -161,35 +166,31 @@ const payloads = {
                 unassigned: true,
             }
         },
-        transports:[{
-            id: uuid.v4(),
-            field: 'transport_id',
-            model: 'fa_role'
-        }]
+        transports:[]
     },
-    updateRole: {
-        args:{
-            entity: 'fa_role',
-            id: '',
-            field_values: {
-                name: 'newRole4',
-                description: '',
-                fa_role_field_users: [],
-                bulk_delete: true,
-                bulk_edit: true,
-                export: true,
-                import: true,
-                is_qualifier: true,
-                task_delete: true,
-                unassigned: true,
-            }
-        },
-        transports:[{
-            id: '',
-            field: 'id',
-            model: 'fa_role'
-        }]
-    },
+    // updateRole: {
+    //     args:{
+    //         entity: 'fa_role',
+    //         id: '',
+    //         field_values: {
+    //             name: 'newRole4',
+    //             description: '',
+    //             fa_role_field_users: [],
+    //             bulk_delete: true,
+    //             bulk_edit: true,
+    //             export: true,
+    //             import: true,
+    //             is_qualifier: true,
+    //             task_delete: true,
+    //             unassigned: true,
+    //         }
+    //     },
+    //     transports:[{
+    //         id: '',
+    //         field: 'id',
+    //         model: 'fa_role'
+    //     }]
+    // },
     deactivateRole: {
         args:{
             entity: 'fa_role',
@@ -223,11 +224,7 @@ const payloads = {
                 entityName: '',
             }
         },
-        transports:[{
-            id: uuid.v4(),
-            field: 'transport_id',
-            model: 'layout'
-        }]
+        transports:[]
     },
     updateSection: {
         args:{
