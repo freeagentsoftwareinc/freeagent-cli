@@ -1,6 +1,7 @@
 
 const { args } = require('commander');
 const fs = require('fs');
+const chalk = require('chalk');
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
 const adapter = new FileSync('db.json');
@@ -9,6 +10,10 @@ const uuid  = require('node-uuid');
 const dir = './fa_changeset';
 db.defaults({ app: {}, fields:[], role: {}, section: [], action: [], acl: [], choice: {} })
   .write();
+
+const notFoundEror = () => {
+    console.log(chalk.red('it is not the part of current changeset must be editing system one or from other changeset'))
+}
 
 const addChangeset = (data) => {
     return;
@@ -38,6 +43,9 @@ const addApp = (data, file) => {
 const updateApp = data => {
     let app =  db.get(`app.${data.args.label}`)
     .value();
+    if(!app){
+        return notFoundEror();
+    }
     const obj = {
         id: app.id,
         field: 'id',
@@ -64,6 +72,9 @@ const updateField = (data, file) => {
     const field =  db.get('fields')
         .find({ app: data.args.entity, name: data.args.name_label })
         .value();
+    if(!field){
+        return notFoundEror();
+    }
     const obj = {
         id: field.id,
         field: 'id',
@@ -74,12 +85,15 @@ const updateField = (data, file) => {
 };
 
 const deleteField = (data) => {
-    const app =  db.get('fields')
+    const field =  db.get('fields')
         .find({ app: data.args.entity, name: data.args.name_label })
         .value();
+    if(!field){
+        return notFoundEror();
+    }
     const obj = {
         delete_custom_field: {
-            id: app.id,
+            id: field.id,
             field: 'id',
             model: 'fa_field_config'
         }
@@ -109,18 +123,24 @@ const addRole = (data, file) => {
 const updateRole = (data, file) => {
     const role = db.get(`role.${data.args.field_values.name}`)
     .value();
+    if(!role){
+        return notFoundEror();
+    }
     const obj = {
         id: role.id,
         field: 'id',
         model: 'fa_role'
     };
     data.transports.push(obj);
-    updateArgs(data, app.file);
+    updateArgs(data, role.file);
 };
 
 const toggleRole = (data, file) => {
     const role = db.get(`role.${data.args.name}`)
     .value();
+    if(!role){
+        return notFoundEror();
+    }
     const obj = {
         id: role.id,
         field: 'entity_value_id',
@@ -147,6 +167,9 @@ const updateSection = (data, file) => {
     const section = db.get('section')
         .find({ app: data.args.field_values.entityName, title: data.args.field_values.title })
         .value();
+    if(!section){
+        return notFoundEror();
+    }
     const obj = {
         id: section.id,
         field: 'transport_id',
@@ -161,6 +184,9 @@ const toggleSection = (data, file) => {
     const section = db.get('section')
         .find({ app: data.args.targetApp, title: data.args.name })
         .value();
+    if(!section){
+        return notFoundEror();
+    }
     const obj = {
         id: section.id,
         field: 'entity_value_id',
@@ -188,6 +214,9 @@ const updateAppAction = (data, file) => {
     const action = db.get('action')
         .find({ app: data.args.field_values.entityName, name: data.args.field_values.name })
         .value();
+    if(!action){
+        return notFoundEror();
+    }
     const obj = {
         id: action.id,
         field: 'transport_id',
@@ -201,6 +230,9 @@ const toggleAction = (data, file) => {
     const action = db.get('action')
         .find({ app: data.args.targetApp, name: data.args.name })
         .value();
+    if(!action){
+        return notFoundEror();
+    }
     const obj = {
         id: action.id,
         field: 'entity_value_id',
@@ -220,13 +252,17 @@ const addAcl = (data, file) => {
         id,
         field: 'transport_id',
         model: 'fa_acl'
-    },
-    {
-        id: field.id,
-        field: 'field_values.fa_field_id',
-        model: 'fa_field_config'
     }];
-    data.transports.push(obj);
+    if(field){
+        obj.push({
+            id: field.id,
+            field: 'field_values.fa_field_id',
+            model: 'fa_field_config'
+        });
+    }else {
+        console.log(chalk.red('field is not the part of current changeset must be applying on system one or on other changeset'))
+    };
+    data.transports = data.transports.concat(obj);
     db.get('acl')
     .push({ app: data.args.field_values.entityName, field: data.args.field_values.fa_field_id, id, file })
     .write();
@@ -236,6 +272,9 @@ const updateAcl = (data, file) => {
     const acl = db.get('acl')
         .find({ app: data.args.field_values.entityName, field: data.args.field_values.fa_field_id })
         .value();
+    if(!acl){
+        return notFoundEror();
+    }
     const obj = {
         id: acl.id,
         field: 'transport_id',
@@ -249,6 +288,9 @@ const toggleAcl = (data, file) => {
     const acl = db.get('acl')
     .find({ app: data.args.targetApp, field: data.args.tragetField })
     .value();
+    if(!acl){
+        return notFoundEror();
+    }
     const obj = {
         id: acl.id,
         field: 'entity_value_id',
@@ -272,7 +314,7 @@ const addChoiceList = (data, ) => {
         field: 'transport_id',
         model: 'catalog'
     }];
-    data.transports.concat(arr);
+    data.transports = data.transports.concat(arr);
     db.set(`app.${data.args.label}`, {
         id,
         file

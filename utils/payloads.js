@@ -273,17 +273,7 @@ const payloads = {
                 entityName: '',
             }
         },
-        transports:[
-        {
-            id: '',
-            field: 'field_values.fa_field_id',
-            model: 'fa_field_config'
-        },
-        {
-            id: '',
-            field: 'field_values.fa_acl_field_roles',
-            model: 'fa_role'
-        }]
+        transports:[]
     },
 
     activateAcl: {

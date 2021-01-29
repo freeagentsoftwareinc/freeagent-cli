@@ -93,7 +93,7 @@ const exportChangeset= () => {
 
     archive.finalize()
     .then(() => {
-        console.log(chalk.green('please find changeset.zip in root'));
+        console.log(chalk.green('please find at root'),chalk.yellow(': changeset.zip'));
         return true;
     });
 }

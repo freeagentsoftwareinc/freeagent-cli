@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const { program } = require('commander');
-const { array } = require('yargs');
+const { set } = require('lodash');
 const payloads = require('../utils/payloads');
 const { handleAction, exportChangeset } = require('./actions');
 
@@ -22,7 +22,7 @@ program
 program
     .command('add-app <name> [pluralName]')
     .description('create new app')
-    .action((name, singularName, option) => {
+    .action((name, pluralName, option) => {
         /*
            option._name : command name 
            program.editmode : -e option
@@ -33,7 +33,7 @@ program
     });
 
 program
-    .command('update-app <label> [new_label]')
+    .command('update-app <label>')
     .description('update the app')
     .action((label, new_label, option) => {
         /*
@@ -46,7 +46,7 @@ program
     });
 
 program
-    .command('add-field <targetApp> [name]')
+    .command('add-field <targetApp> <name>')
     .description('create new field')
     .action((targetApp, name, option) => {
         const args = { name_label: name, entity: targetApp }
@@ -54,10 +54,10 @@ program
     });
 
 program
-    .command('update-field <targetApp> <name> [new_name]')
+    .command('update-field <targetApp> <name>')
     .description('update the Field')
-    .action((targetApp, name, new_name, option) => {
-        const args = { name_label: name, entity: targetApp }
+    .action((targetApp, name, option) => {
+        const args = { name_label: name, entity: targetApp };
         handleAction(option._name, args, program.editmode, program.interactive)
     });
 
@@ -65,7 +65,7 @@ program
     .command('delete-field <targetApp> <name>')
     .description('delete the Field')
     .action((targetApp, name, option) => {
-        const args = { name_label: name, entityName: targetApp }
+        const args = { name_label: name, entity: targetApp }
         handleAction(option._name, args, program.editmode, program.interactive)
     });
 
@@ -139,17 +139,17 @@ program
     .description('add new app action')
     .action((targetApp, name, option) => {
         const args = { ...payloads.addAction.args }
-        args.field_values = { ...args.field_values, name, entityName: targetApp }
-        handleAction(option._name, program.editmode, program.interactive)
+        args.field_values = { ...args.field_values, ...{ name, entityName: targetApp }}
+        handleAction(option._name, args, program.editmode, program.interactive)
     });
 
 program
-    .command('update-action <targetApp> [name]')
+    .command('update-action <targetApp> <name>')
     .description('update the app action')
     .action((targetApp, name, option) => {
         const args = { ...payloads.addAction.args }
-        args.field_values = { ...args.field_values, name, entityName: targetApp }
-        handleAction(option._name, program.editmode, program.interactive)
+        args.field_values = { ...args.field_values, ...{name, entityName: targetApp} }
+        handleAction(option._name, args, program.editmode, program.interactive)
     });
 
 program
