@@ -322,17 +322,7 @@ const payloads = {
                 ]
             }],
         },
-        transports:[
-        {
-            id: uuid.v4(),
-            field: 'transport_id',
-            model: 'catalog_type'
-        },
-        {
-            id: [uuid.v4()],
-            field: 'transport_id',
-            model: 'catalog'
-        }]
+        transports:[]
     },
 
     updateChoiceList: {

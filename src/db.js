@@ -7,7 +7,7 @@ const adapter = new FileSync('db.json');
 const db = low(adapter);
 const uuid  = require('node-uuid');
 const dir = './fa_changeset';
-db.defaults({ app: {}, fields:[], role: {}, section: [], action: [], acl: [] })
+db.defaults({ app: {}, fields:[], role: {}, section: [], action: [], acl: [], choice: {} })
   .write();
 
 const addChangeset = (data) => {
@@ -36,7 +36,7 @@ const addApp = (data, file) => {
 };
 
 const updateApp = data => {
-    const app =  db.get(`app.${data.args.label}`)
+    let app =  db.get(`app.${data.args.label}`)
     .value();
     const obj = {
         id: app.id,
@@ -259,6 +259,27 @@ const toggleAcl = (data, file) => {
     delete data.args.tragetField;
 };
 
+const addChoiceList = (data, ) => {
+    const id = uuid.v4();
+    const choiceIds = [uuid.v4()];
+    const arr = [{
+        id: uuid.v4(),
+        field: 'transport_id',
+        model: 'catalog_type'
+    },
+    {
+        id: choiceIds,
+        field: 'transport_id',
+        model: 'catalog'
+    }];
+    data.transports.concat(arr);
+    db.set(`app.${data.args.label}`, {
+        id,
+        file
+    })
+    .write();
+};
+
 const runQuery = {
     addChangeset,
     addApp,
@@ -277,7 +298,8 @@ const runQuery = {
     toggleAction,
     addAcl,
     updateAcl,
-    toggleAcl
+    toggleAcl,
+    addChoiceList
 }
 
 module.exports ={

@@ -20,7 +20,7 @@ program
     });
 
 program
-    .command('add-app <name> [singularName]')
+    .command('add-app <name> [pluralName]')
     .description('create new app')
     .action((name, singularName, option) => {
         /*
@@ -28,7 +28,7 @@ program
            program.editmode : -e option
            program.interactive: -i option
         */
-       const args = { label: singularName || name, label_plural: name }
+       const args = { label: name, label_plural: pluralName || name }
         handleAction(option._name, args, program.editmode, program.interactive)
     });
 
@@ -201,10 +201,10 @@ program
     });
 
 program
-    .command('add-choicelist')
+    .command('add-choicelist <name>')
     .description('add new choice list')
-    .action((option) => {
-        handleAction(option._name, {}, program.editmode, program.interactive)
+    .action((name, option) => {
+        handleAction(option._name, { name }, program.editmode, program.interactive)
     });
 
 program
