@@ -57,7 +57,7 @@ program
     .command('update-field <targetApp> <name> [new_name]')
     .description('update the Field')
     .action((targetApp, name, new_name, option) => {
-        const args = { name_label: name, entityName: targetApp }
+        const args = { name_label: name, entity: targetApp }
         handleAction(option._name, args, program.editmode, program.interactive)
     });
 

@@ -70,7 +70,7 @@ const updateField = (data, file) => {
         model: 'fa_field_config'
     };
     data.transports.push(obj);
-    updateArgs(data, app.file);
+    updateArgs(data, field.file);
 };
 
 const deleteField = (data) => {
