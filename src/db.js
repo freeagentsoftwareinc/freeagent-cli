@@ -7,8 +7,9 @@ const FileSync = require('lowdb/adapters/FileSync');
 const adapter = new FileSync('db.json');
 const db = low(adapter);
 const uuid  = require('node-uuid');
+const { drop, forEach } = require('lodash');
 const dir = './fa_changeset';
-db.defaults({ app: {}, fields:[], role: {}, section: [], action: [], acl: [], choice: {} })
+db.defaults({ app: {}, fields:[], role: {}, section: [], action: [], acl: [], choiceList: {} })
   .write();
 
 const notFoundEror = () => {
@@ -301,26 +302,89 @@ const toggleAcl = (data, file) => {
     delete data.args.tragetField;
 };
 
-const addChoiceList = (data, ) => {
+const addChoiceList = (data, file) => {
     const id = uuid.v4();
-    const choiceIds = [uuid.v4()];
-    const arr = [{
-        id: uuid.v4(),
+    const obj = [{
+        id,
         field: 'transport_id',
         model: 'catalog_type'
-    },
-    {
-        id: choiceIds,
-        field: 'transport_id',
-        model: 'catalog'
     }];
-    data.transports = data.transports.concat(arr);
-    db.set(`app.${data.args.label}`, {
+    data.transports.push(obj);
+    db.set(`choiceList.${data.args.name}`, {
         id,
         file
     })
     .write();
+    data.args.parent_fields.push(['name', data.args.name]);
+    delete data.args.name;
 };
+
+const mapTransportIds = (savedData, file, name, isUpdate=false) => {
+    const childTransprots = {
+        id: [],
+        field: 'transport_id',
+        model: 'catalog'
+    };
+    savedData.args.children.forEach(() => {
+        childTransprots.id.push(uuid.v4());
+    });
+    savedData.transports.push(childTransprots);
+    const jsonData =  JSON.stringify(savedData, null, 4);
+    const filePath = `${dir}/${file}`
+    fs.writeFileSync(`${filePath}`, jsonData);
+    if(isUpdate) {
+        db.set(`choiceList.${name}.update`, file)
+        .write();
+        db.set(`choiceList.${name}.child`, childTransprots.id)
+        .write();
+    }
+} 
+
+const updateChoiceList = (data, file) => {
+    const choiceList = db.get(`choiceList.${data.args.name}`)
+        .value();
+    if(!choiceList){
+      return;
+    }
+    const parentTransport = {
+        id: choiceList.id,
+        field: 'instance_id',
+        model: 'catalog_type'
+    };
+    const file = choiceList.file;
+    const fileData = fs.readFileSync(`${dir}/${file}`);
+    const savedData = JSON.parse(fileData);
+    if(savedData.args.children.length && savedData.transports.length < 2){
+        mapTransportIds(savedData, file, data, true);
+    };
+    data.args = savedData.args;
+    data.transports = [parentTransport]
+};
+
+const remapSaveComposite = async () => {
+    const choiceList = db.get('choiceList')
+    .value();
+    await Promise.all(
+        Object.keys(choiceList).map((name) => {
+            const choiceList = db.get(`choiceList.${name}`)
+            .value();
+            const file = choiceList.file;
+            if(!file){
+                return;
+            }
+            
+            if(!fs.existsSync(`${dir}/${file}`)){
+                return;
+            }
+            
+            const fileData = fs.readFileSync(`${dir}/${file}`);
+            const savedData = JSON.parse(fileData);
+            if(savedData.args.children.length && savedData.transports.length < 2){
+                mapTransportIds(savedData, file, name);
+            };
+        })
+    );
+}
 
 const runQuery = {
     addChangeset,
@@ -341,7 +405,9 @@ const runQuery = {
     addAcl,
     updateAcl,
     toggleAcl,
-    addChoiceList
+    addChoiceList,
+    updateChoiceList,
+    remapSaveComposite
 }
 
 module.exports ={

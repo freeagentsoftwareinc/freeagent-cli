@@ -140,7 +140,7 @@ const operations = new Map([
         query: 'addChoiceList',
         sucessMessage: 'created the choice list successfully'
     }],
-    ['udpate-choicelist', {
+    ['update-choicelist', {
         payload: 'updateChoiceList',
         api: 'saveCompositeEntity',
         query: 'updateChoiceList',
@@ -152,7 +152,7 @@ const operations = new Map([
         query: 'addAutomation',
         sucessMessage: 'created the automation successfully'
     }],
-    ['udpate-automation', {
+    ['update-automation', {
         payload: 'updateAutomation',
         api: 'saveCompositeEntity',
         query: 'updateAutomation',
@@ -164,7 +164,7 @@ const operations = new Map([
         query: 'addFormRule',
         sucessMessage: 'created the field successfully'
     }],
-    ['udpate-formrule', {
+    ['update-formrule', {
         payload: 'updateFormRule',
         api: 'saveCompositeEntity',
         query: 'updateFormRule',

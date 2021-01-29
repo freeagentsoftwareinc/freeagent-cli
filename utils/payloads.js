@@ -264,6 +264,7 @@ const payloads = {
             entity: 'fa_acl',   
             field_values: {
                 operation: null,
+                acl_type: '',
                 target_entity_id: '',
                 fa_field_id: '',
                 fa_acl_field_roles: [],
@@ -298,7 +299,6 @@ const payloads = {
             instance_id: null,
             parent_entity_id: '10913ac7-852e-516e-a2d7-3c24c34600d4',
             parent_fields: [
-                ['name', ''],
                 ['order_type', ''],
                 ['allow_choice_creation', 'true'],
             ],
@@ -336,17 +336,7 @@ const payloads = {
                 ]
             }],
         },
-        transports:[
-        {
-            id: '1f9a375b-fa81-4158-8b9a-add0889d4bec',
-            field: 'instance_id',
-            model: 'catalog_type'
-        },
-        {
-            id: '',
-            field: 'children[0].custom_fields[0][1]',
-            model: 'catalog'
-        }]
+        transports:[]
     },
 
     addAutomation: {

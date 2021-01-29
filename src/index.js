@@ -208,10 +208,10 @@ program
     });
 
 program
-    .command('udpate-choicelist')
+    .command('update-choicelist <name>')
     .description('udpate the choice list')
-    .action((option) => {
-        handleAction(option._name, {}, program.editmode, program.interactive)
+    .action((name, option) => {
+        handleAction(option._name, { name }, program.editmode, program.interactive)
     });
 
 
@@ -223,7 +223,7 @@ program
     });
 
 program
-    .command('udpate-automation')
+    .command('update-automation')
     .description('update the automation')
     .action((option) => {
         handleAction(option._name, {}, program.editmode, program.interactive)
@@ -237,7 +237,7 @@ program
     });
 
 program
-    .command('udpate-formrule')
+    .command('update-formrule')
     .description('update the form rule')
     .action((option) => {
         handleAction(option._name, {}, program.editmode, program.interactive)
