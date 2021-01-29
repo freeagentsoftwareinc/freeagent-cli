@@ -20,15 +20,15 @@ program
     });
 
 program
-    .command('add-app <label_plural> [label]')
+    .command('add-app <name> [singularName]')
     .description('create new app')
-    .action((label_plural, label, option) => {
+    .action((name, singularName, option) => {
         /*
            option._name : command name 
            program.editmode : -e option
            program.interactive: -i option
         */
-       const args = { label: label_plural || label, label_plural: label_plural }
+       const args = { label: singularName || name, label_plural: name }
         handleAction(option._name, args, program.editmode, program.interactive)
     });
 
@@ -49,7 +49,7 @@ program
     .command('add-field <targetApp> [name]')
     .description('create new field')
     .action((targetApp, name, option) => {
-        const args = { name_label: name, entityName: targetApp }
+        const args = { name_label: name, entity: targetApp }
         handleAction(option._name, args, program.editmode, program.interactive)
     });
 
@@ -88,17 +88,17 @@ program
     });
 
 program
-    .command('deactivate-role')
+    .command('deactivate-role <name>')
     .description('deactivate the Role')
-    .action((option) => {
-        handleAction(option._name, {}, program.editmode, program.interactive)
+    .action((name, option) => {
+        handleAction(option._name, { name }, program.editmode, program.interactive)
     });
 
 program
-    .command('activate-role')
-    .description('Activate The Role')
-    .action((option) => {
-        handleAction(option._name, {}, program.editmode, program.interactive)
+    .command('activate-role <name>')
+    .description('activate the Role')
+    .action((name, option) => {
+        handleAction(option._name, { name }, program.editmode, program.interactive)
     });
 
 program
@@ -120,21 +120,22 @@ program
     });
   
 program
-    .command('activate-section')
+    .command('activate-section  <targetApp> <name>')
     .description('cctivate the section')
-    .action((option) => {
-        handleAction(option._name, {}, program.editmode, program.interactive)
+    .action((targetApp, name, option) => {
+        handleAction(option._name, { targetApp, name }, program.editmode, program.interactive)
     });
    
    
 program
-    .command('deactivate-section')
+    .command('deactivate-section  <targetApp> <name>')
     .description('deactivate the section')
-    .action((option) => {
-        handleAction(option._name, {}, program.editmode, program.interactive)
+    .action((targetApp, name, option) => {
+        handleAction(option._name, { targetApp, name }, program.editmode, program.interactive)
     });
+
 program
-    .command('add-action <targetApp> [name]')
+    .command('add-action <targetApp> <name>')
     .description('add new app action')
     .action((targetApp, name, option) => {
         const args = { ...payloads.addAction.args }
@@ -152,51 +153,51 @@ program
     });
 
 program
-    .command('activate-action')
+    .command('activate-action <targetApp> <name>')
     .description('activate the app action')
-    .action((option) => {
-        handleAction(option._name, {}, program.editmode, program.interactive)
+    .action((targetApp, name, option) => {
+        handleAction(option._name, { targetApp, name }, program.editmode, program.interactive)
     });
    
    
 program
-    .command('deactivate-action')
+    .command('deactivate-action <targetApp> <name>')
     .description('deactivate the app action')
-    .action((option) => {
-        handleAction(option._name, {}, program.editmode, program.interactive)
+    .action((targetApp, name, option) => {
+        handleAction(option._name, { targetApp, name }, program.editmode, program.interactive)
     });
 
 program
-    .command('add-acl <targetApp> <type>')
+    .command('add-acl <targetApp> <tragetField>')
     .description('add new ACL')
-    .action((targetApp, type, option) => {
+    .action((targetApp, tragetField, option) => {
         const args = { ...payloads.addAcl.args }
-        args.field_values = { ...args.field_values, ...{ entityName: targetApp, resource_type: type }}
+        args.field_values = { ...args.field_values, ...{ entityName: targetApp, fa_field_id: tragetField }}
         handleAction(option._name, args, program.editmode, program.interactive)
     });
 
 program
-    .command('update-acl <targetApp> <type>')
+    .command('update-acl <targetApp> <tragetField>')
     .description('update the ACL')
-    .action((targetApp, type, option) => {
+    .action((targetApp, tragetField, option) => {
         const args = { ...payloads.addAcl.args }
-        args.field_values = { ...args.field_values, ...{ entityName: targetApp, resource_type: type }}
+        args.field_values = { ...args.field_values, ...{ entityName: targetApp, fa_field_id: tragetField }}
         handleAction(option._name, args, program.editmode, program.interactive)
     });
 
 program
-    .command('activate-acl')
+    .command('activate-acl  <targetApp> <tragetField>')
     .description('activate the ACL')
-    .action((option) => {
-        handleAction(option._name, {}, program.editmode, program.interactive)
+    .action((targetApp, tragetField, option) => {
+        handleAction(option._name, { targetApp, tragetField }, program.editmode, program.interactive)
     });
    
    
 program
-    .command('deactivate-acl')
+    .command('deactivate-acl  <targetApp> <tragetField>')
     .description('deactivate the ACL')
-    .action((option) => {
-        handleAction(option._name, {}, program.editmode, program.interactive)
+    .action((targetApp, tragetField, option) => {
+        handleAction(option._name, { targetApp, tragetField }, program.editmode, program.interactive)
     });
 
 program

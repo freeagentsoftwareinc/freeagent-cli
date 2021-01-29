@@ -5,6 +5,7 @@ const operations = new Map([
     ['init', {
         payload: 'addChangeset',
         api: 'changeset',
+        query: 'addChangeset',
         sucessMessage: 'changeset folder initialized'
     }],
     ['add-app', {
@@ -52,13 +53,13 @@ const operations = new Map([
     ['deactivate-role', {
         payload: 'deactivateRole',
         api: 'updateEntityValue',
-        query: 'deactivateRole',
+        query: 'toggleRole',
         sucessMessage: 'deactivated the field successfully'
     }],
     ['activate-role', {
         payload: 'activateRole',
         api: 'updateEntityValue',
-        query: 'ActivateRole',
+        query: 'toggleRole',
         sucessMessage: 'activated the role successfully'
     }],
     ['add-section', {
@@ -76,13 +77,13 @@ const operations = new Map([
     ['deactivate-section', {
         payload: 'deactivateSection',
         api: 'updateEntityValue',
-        query: 'deactivateSection',
+        query: 'toggleSection',
         sucessMessage: 'deactivated the section successfully'
     }],
     ['activate-section', {
         payload: 'activateSection',
         api: 'updateEntityValue',
-        query: 'activateSection',
+        query: 'toggleSection',
         sucessMessage: 'activated the section successfully'
     }],
     ['add-action', {
@@ -100,13 +101,13 @@ const operations = new Map([
     ['activate-action', {
         payload: 'activateAction',
         api: 'updateEntityValue',
-        query: 'activateAppAction',
+        query: 'toggleAction',
         sucessMessage: 'activated the action successfully'
     }],
     ['deactivate-action', {
         payload: 'deactivateAction',
         api: 'updateEntityValue',
-        query: 'deactivateAppAction',
+        query: 'toggleAction',
         sucessMessage: 'deactivated the action successfully'
     }],
     ['add-acl', {
@@ -124,13 +125,13 @@ const operations = new Map([
     ['deactivate-acl', {
         payload: 'deactivateAcl',
         api: 'updateEntityValue',
-        query: 'deactivateAcl',
+        query: 'toggleAcl',
         sucessMessage: 'deactivated the acl successfully'
     }],
     ['activate-acl', {
         payload: 'activateAcl',
         api: 'updateEntityValue',
-        query: 'activateAcl',
+        query: 'toggleAcl',
         sucessMessage: 'activate the acl successfully'
     }],
     ['add-choicelist', {

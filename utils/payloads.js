@@ -175,11 +175,7 @@ const payloads = {
             entity_value_id: '',
             custom_fields: [['deleted', 'true']]
         },
-        transports:[{
-            id: '',
-            field: 'entity_value_id',
-            model: 'fa_role'
-        }]
+        transports:[]
     },
     activateRole: {
         args:{
@@ -187,12 +183,9 @@ const payloads = {
             entity_value_id: '',
             custom_fields: [['deleted', 'false']]
         },
-        transports:[{
-            id: '',
-            field: 'entity_value_id',
-            model: 'fa_role'
-        }]
+        transports:[]
     },
+
     addSection: {
         args:{
             entity: 'layout',
@@ -211,11 +204,7 @@ const payloads = {
             entity: 'layout',
             custom_fields: [['deleted', 'false'], ['is_visible', 'true']]
         },
-        transports:[{
-            id: '',
-            field: 'entity_value_id',
-            model: 'layout'
-        }]
+        transports:[]
     },
 
     deactivateSection: {
@@ -224,11 +213,7 @@ const payloads = {
             entity_value_id: '',
             custom_fields: [['deleted', 'false'], ['is_visible', 'false']]
         },
-        transports:[{
-            id: '',
-            field: 'entity_value_id',
-            model: 'layout'
-        }]
+        transports:[]
     },
 
     addAction: {
@@ -262,23 +247,16 @@ const payloads = {
             entity: 'app_action',   
             custom_fields: [['is_visible', 'true']],
         },
-        transports:[{
-            id: '',
-            field: 'entity_value_id',
-            model: 'app_action'
-        }]
+        transports:[]
     },
+
     deactivateAction: {
         args:{
             entity_value_id: '',
             entity: 'app_action',   
             custom_fields: [['is_visible', 'false']]
         },
-        transports:[{
-            id: '',
-            field: 'entity_value_id',
-            model: 'app_action'
-        }]
+        transports:[]
     },
 
     addAcl: {
@@ -314,11 +292,7 @@ const payloads = {
             entity: 'fa_acl',   
             custom_fields: [['deleted', 'false'], ['active', 'true']],
         },
-        transports:[{
-            id: '',
-            field: 'entity_value_id',
-            model: 'fa_acl'
-        }]
+        transports:[]
     },
     deactivateAcl: {
         args:{
@@ -326,11 +300,7 @@ const payloads = {
             entity: 'fa_acl',   
             custom_fields: [['deleted', 'false'], ['active', 'false']]
         },
-        transports:[{
-            id: '',
-            field: 'entity_value_id',
-            model: 'fa_acl'
-        }]
+        transports:[]
     },
 
     addChoiceList: {
