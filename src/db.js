@@ -319,7 +319,7 @@ const addChoiceList = (data, file) => {
     delete data.args.name;
 };
 
-const mapTransportIds = (savedData, file, name, isUpdate=false) => {
+const mapTransportIds = (savedData, file) => {
     const childTransprots = {
         id: [],
         field: 'transport_id',
@@ -332,12 +332,7 @@ const mapTransportIds = (savedData, file, name, isUpdate=false) => {
     const jsonData =  JSON.stringify(savedData, null, 4);
     const filePath = `${dir}/${file}`
     fs.writeFileSync(`${filePath}`, jsonData);
-    if(isUpdate) {
-        db.set(`choiceList.${name}.update`, file)
-        .write();
-        db.set(`choiceList.${name}.child`, childTransprots.id)
-        .write();
-    }
+    return childTransprots;
 } 
 
 const updateChoiceList = (data, file) => {
@@ -351,14 +346,19 @@ const updateChoiceList = (data, file) => {
         field: 'instance_id',
         model: 'catalog_type'
     };
-    const file = choiceList.file;
-    const fileData = fs.readFileSync(`${dir}/${file}`);
+    const fileData = fs.readFileSync(`${dir}/${choiceList.file}`);
     const savedData = JSON.parse(fileData);
+    data.transports = [];
     if(savedData.args.children.length && savedData.transports.length < 2){
-        mapTransportIds(savedData, file, data, true);
+        const childTransprots = mapTransportIds(savedData, choiceList.file);
+        db.set(`choiceList.${data.args.name}.update`, file)
+        .write();
+        db.set(`choiceList.${data.args.name}.child`, childTransprots.id)
+        .write();
+        data.transports.push(childTransprots);
     };
     data.args = savedData.args;
-    data.transports = [parentTransport]
+    data.transports.push(parentTransport);
 };
 
 const remapSaveComposite = async () => {
@@ -380,7 +380,7 @@ const remapSaveComposite = async () => {
             const fileData = fs.readFileSync(`${dir}/${file}`);
             const savedData = JSON.parse(fileData);
             if(savedData.args.children.length && savedData.transports.length < 2){
-                mapTransportIds(savedData, file, name);
+                mapTransportIds(savedData, file);
             };
         })
     );
