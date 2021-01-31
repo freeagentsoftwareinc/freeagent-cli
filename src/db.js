@@ -7,18 +7,34 @@ const FileSync = require('lowdb/adapters/FileSync');
 const adapter = new FileSync('db.json');
 const db = low(adapter);
 const uuid  = require('node-uuid');
-const { drop, forEach } = require('lodash');
+const { set, filter, get, isArguments } = require('lodash');
+const { chdir } = require('process');
 const dir = './fa_changeset';
-db.defaults({ app: {}, fields:[], role: {}, section: [], action: [], acl: [], choiceList: {} })
+db.defaults({ app: {}, fields:[], role: {}, section: [], action: [], acl: [], catalog_type: {}, rule_set: {}, form_rule: {} })
   .write();
 
 const notFoundEror = () => {
     console.log(chalk.red('it is not the part of current changeset must be editing system one or from other changeset'))
-}
+};
+
+const modelsMap = new Map([
+    ['10913ac7-852e-516e-a2d7-3c24c34600d4', {
+        model: 'catalog_type',
+        childModel: 'catalog'
+    }],
+    ['cf7de345-a40b-56cb-b70a-7fb707a5b4b0', {
+        model: 'rule_set',
+        childModel: 'rule_action'
+    }],
+    ['2c05c9fa-568e-49e2-b435-b84f79fe1d32', {
+        model: 'form_rule',
+        childModel: 'form_action'
+    }]
+]);
 
 const addChangeset = (data) => {
     return;
-}
+};
 
 const updateArgs = (data, file) => {
     const fileData = fs.readFileSync(`${dir}/${file}`);
@@ -302,15 +318,16 @@ const toggleAcl = (data, file) => {
     delete data.args.tragetField;
 };
 
-const addChoiceList = (data, file) => {
+const addSaveComposite = (data, file) => {
+    const model = modelsMap.get(data.args.parent_entity_id).model;
     const id = uuid.v4();
     const obj = [{
         id,
         field: 'transport_id',
-        model: 'catalog_type'
+        model: model
     }];
     data.transports.push(obj);
-    db.set(`choiceList.${data.args.name}`, {
+    db.set(`${model}.${data.args.name}`, {
         id,
         file
     })
@@ -319,54 +336,95 @@ const addChoiceList = (data, file) => {
     delete data.args.name;
 };
 
-const mapTransportIds = (savedData, file) => {
+const reMapTransportIds = (data, model) => {
+    const newlyAddedTransports = filter(data.transports, (transport) => (transport.field === 'transport_id' || transport.field === 'instance_id')  );
+    const updatedChildren = [];
+    data.args.children.forEach((child, index) => {
+        if(!child.id){
+            return;
+        }
+        const id = get(child, 'id')
+        delete child.id;
+        updatedChildren.push({
+            id,
+            field:`children[${index}].custom_fields[0][1]`,
+            model
+        });
+    });
+    data.transports = [...newlyAddedTransports, ...updatedChildren];
+}
+
+const createTransportIdsForChildrend = (savedData, file, model) => {
+    const newlyAddedChildren = [];
+    const updatedChildren = [];
     const childTransprots = {
         id: [],
         field: 'transport_id',
-        model: 'catalog'
+        model
     };
-    savedData.args.children.forEach(() => {
+    savedData.args.children.forEach((child) => {
+        if(child.id){
+            return updatedChildren.push(child);
+        }
+        newlyAddedChildren.push(child);
         childTransprots.id.push(uuid.v4());
     });
+    savedData.args.children = [...newlyAddedChildren, ...updatedChildren];
     savedData.transports.push(childTransprots);
+    if(updatedChildren.length){
+        reMapTransportIds(savedData, model);
+    }
     const jsonData =  JSON.stringify(savedData, null, 4);
     const filePath = `${dir}/${file}`
     fs.writeFileSync(`${filePath}`, jsonData);
     return childTransprots;
-} 
+};
 
-const updateChoiceList = (data, file) => {
-    const choiceList = db.get(`choiceList.${data.args.name}`)
+const mapTransportIdsForUdpateChildren = (children, transportIds, model) => children.map((child, index) => {
+        const id = transportIds[index];
+        set(child, 'id', id)
+        child.custom_fields.unshift(['id', '']);
+        return {
+            id,
+            field:`children[${index}].custom_fields[0][1]`,
+            model
+        };
+    });
+
+const updateSaveComposite = (data, file) => {
+    const {model, childModel} = modelsMap.get(data.args.parent_entity_id);
+    const instance = db.get(`${model}.${data.args.name}`)
         .value();
-    if(!choiceList){
+    if(!instance){
       return;
     }
     const parentTransport = {
-        id: choiceList.id,
+        id: instance.id,
         field: 'instance_id',
-        model: 'catalog_type'
+        model
     };
-    const fileData = fs.readFileSync(`${dir}/${choiceList.file}`);
+    const fileData = fs.readFileSync(`${dir}/${instance.file}`);
     const savedData = JSON.parse(fileData);
-    data.transports = [];
     if(savedData.args.children.length && savedData.transports.length < 2){
-        const childTransprots = mapTransportIds(savedData, choiceList.file);
-        db.set(`choiceList.${data.args.name}.update`, file)
+        const childTransprots = createTransportIdsForChildrend(savedData, instance.file, childModel);
+
+        db.set(`${model}.${data.args.name}.update`, file)
         .write();
-        db.set(`choiceList.${data.args.name}.child`, childTransprots.id)
+        db.set(`${model}.${data.args.name}.child`, childTransprots.id)
         .write();
-        data.transports.push(childTransprots);
+        const mapedChildTransprots = mapTransportIdsForUdpateChildren(savedData.args.children, childTransprots.id, childModel);
+        data.transports = mapedChildTransprots;
     };
     data.args = savedData.args;
     data.transports.push(parentTransport);
 };
 
 const remapSaveComposite = async () => {
-    const choiceList = db.get('choiceList')
+    const choiceList = db.get('catalog_type')
     .value();
     await Promise.all(
         Object.keys(choiceList).map((name) => {
-            const choiceList = db.get(`choiceList.${name}`)
+            const choiceList = db.get(`catalog_type.${name}`)
             .value();
             const file = choiceList.file;
             if(!file){
@@ -379,8 +437,8 @@ const remapSaveComposite = async () => {
             
             const fileData = fs.readFileSync(`${dir}/${file}`);
             const savedData = JSON.parse(fileData);
-            if(savedData.args.children.length && savedData.transports.length < 2){
-                mapTransportIds(savedData, file);
+            if(savedData.args.children.length){
+                createTransportIdsForChildrend(savedData, file, 'catalog');
             };
         })
     );
@@ -405,8 +463,8 @@ const runQuery = {
     addAcl,
     updateAcl,
     toggleAcl,
-    addChoiceList,
-    updateChoiceList,
+    addSaveComposite,
+    updateSaveComposite,
     remapSaveComposite
 }
 

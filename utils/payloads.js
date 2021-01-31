@@ -315,30 +315,6 @@ const payloads = {
         transports:[]
     },
 
-    updateChoiceList: {
-        args: {
-            instance_id: null,
-            parent_entity_id: '10913ac7-852e-516e-a2d7-3c24c34600d4',
-            parent_fields: [
-                ['id', ''],
-                ['name', ''],
-                ['order_type', ''],
-                ['allow_choice_creation', 'true'],
-            ],
-            children: [{
-                entity_id: '6fc34d02-c890-5661-a157-565d99a4fe37',
-                custom_fields: [
-                    ['id', '']
-                    ['name', ''],
-                    ['icon', 'null'],
-                    ['color', 'null'],
-                    ['order', 'null']
-                ]
-            }],
-        },
-        transports:[]
-    },
-
     addAutomation: {
         args: {
             instance_id: null,
@@ -362,54 +338,7 @@ const payloads = {
                 ]
             }],
         },
-        transports:[
-        {
-            id: uuid.v4(),
-            field: 'transport_id',
-            model: 'rule_set'
-        },
-        {
-            id: [uuid.v4()],
-            field: 'transport_id',
-            model: 'rule_action'
-        }]
-        
-    },
-
-    updateAutomation: {
-        args: {
-            instance_id: null,
-            parent_entity_id: 'cf7de345-a40b-56cb-b70a-7fb707a5b4b0',
-            parent_fields: [
-                ['name', ''],
-                ['entityName', ''],
-                ['fa_entity_id', ''],
-                ['trigger', ''],
-                ['filter_conditions', [{'field_name':'','values':[],'operator':''}]]    
-            ],
-            children: [{
-                entity_id: '37a890a4-01c4-56a7-8be0-6466b65db0dd',
-                custom_fields: [
-                    ['description', 'automation'],
-                    ['type', 'custom_code'],
-                    ['custom_code', ''],
-                    ['delay', null],
-                    ['working_calendar', 'false'],
-                    ['due_date_field', 'false']
-                ]
-            }],
-        },
-        transports:[
-        {
-            id: uuid.v4(),
-            field: 'transport_id',
-            model: 'rule_set'
-        },
-        {
-            id: [uuid.v4()],
-            field: 'transport_id',
-            model: 'rule_action'
-        }]
+        transports:[]
         
     },
 
@@ -436,53 +365,7 @@ const payloads = {
                 ]
             }],
         },
-        transports:[
-        {
-            id: uuid.v4(),
-            field: 'transport_id',
-            model: 'form_rule'
-        },
-        {
-            id: [uuid.v4()],
-            field: 'transport_id',
-            model: 'form_action'
-        }]
-    },
-
-    updateFormRule: {
-        args: {
-            instance_id: null,
-            parent_entity_id: '2c05c9fa-568e-49e2-b435-b84f79fe1d32',
-            parent_fields: [
-                ['entityName', ''],
-                ['fa_entity_id', ''],
-                ['description', ''],
-                ['roles', ''],
-                ['conditions', [{'field_name':'','values':[],'operator':''}]]    
-            ],
-            children: [{
-                entity_id: '101328d1-3b44-4f19-a19e-9a645776761b',
-                custom_fields: [
-                    ['field_name', null],
-                    ['section_name', null],
-                    ['type', ''],
-                    ['app_action_id', ''],
-                    ['operation', ''],
-                    ['value', '']
-                ]
-            }],
-        },
-        transports:[
-        {
-            id: '',
-            field: 'instance_id',
-            model: 'form_rule'
-        },
-        {
-            id: '',
-            field: 'children[0].custom_fields[0][1]',
-            model: 'form_action'
-        }]
+        transports:[]
     },
 };
 

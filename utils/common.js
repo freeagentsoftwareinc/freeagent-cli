@@ -137,37 +137,37 @@ const operations = new Map([
     ['add-choicelist', {
         payload: 'addChoiceList',
         api: 'saveCompositeEntity',
-        query: 'addChoiceList',
+        query: 'addSaveComposite',
         sucessMessage: 'created the choice list successfully'
     }],
     ['update-choicelist', {
-        payload: 'updateChoiceList',
+        payload: 'addChoiceList',
         api: 'saveCompositeEntity',
-        query: 'updateChoiceList',
+        query: 'updateSaveComposite',
         sucessMessage: 'updated the choice list successfully'
     }],
     ['add-automation', {
         payload: 'addAutomation',
         api: 'saveCompositeEntity',
-        query: 'addAutomation',
+        query: 'addSaveComposite',
         sucessMessage: 'created the automation successfully'
     }],
     ['update-automation', {
-        payload: 'updateAutomation',
+        payload: 'addAutomation',
         api: 'saveCompositeEntity',
-        query: 'updateAutomation',
+        query: 'updateSaveComposite',
         sucessMessage: 'updated the automation successfully'
     }],
     ['add-formrule', {
         payload: 'addFormRule',
         api: 'saveCompositeEntity',
-        query: 'addFormRule',
+        query: 'addSaveComposite',
         sucessMessage: 'created the field successfully'
     }],
     ['update-formrule', {
-        payload: 'updateFormRule',
+        payload: 'addFormRule',
         api: 'saveCompositeEntity',
-        query: 'updateFormRule',
+        query: 'updateSaveComposite',
         sucessMessage: 'updated the formrule successfully'
     }]
 ]);
