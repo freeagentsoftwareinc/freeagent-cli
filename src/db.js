@@ -319,7 +319,7 @@ const toggleAcl = (data, file) => {
 };
 
 const addSaveComposite = (data, file) => {
-    const model = modelsMap.get(data.args.parent_entity_id).model;
+    const { model, childModel} = modelsMap.get(data.args.parent_entity_id);
     const id = uuid.v4();
     const obj = [{
         id,
@@ -329,7 +329,8 @@ const addSaveComposite = (data, file) => {
     data.transports.push(obj);
     db.set(`${model}.${data.args.name}`, {
         id,
-        file
+        file,
+        childModel
     })
     .write();
     data.args.parent_fields.push(['name', data.args.name]);
@@ -419,18 +420,14 @@ const updateSaveComposite = (data, file) => {
     data.transports.push(parentTransport);
 };
 
-const remapSaveComposite = async () => {
-    const choiceList = db.get('catalog_type')
-    .value();
-    await Promise.all(
-        Object.keys(choiceList).map((name) => {
-            const choiceList = db.get(`catalog_type.${name}`)
+const reWriteFiles = (instances, model) => {
+     Object.keys(instances).map((name) => {
+            const instance = db.get(`${model}.${name}`)
             .value();
-            const file = choiceList.file;
-            if(!file){
+            if(!instance){
                 return;
             }
-            
+            const file = instance.file;
             if(!fs.existsSync(`${dir}/${file}`)){
                 return;
             }
@@ -438,11 +435,28 @@ const remapSaveComposite = async () => {
             const fileData = fs.readFileSync(`${dir}/${file}`);
             const savedData = JSON.parse(fileData);
             if(savedData.args.children.length){
-                createTransportIdsForChildrend(savedData, file, 'catalog');
+                createTransportIdsForChildrend(savedData, file, instance.childModel);
             };
         })
-    );
 }
+
+const remapSaveComposite = async () => {
+    const choiceLists = db.get('catalog_type')
+    .value();
+    const automations = db.get('rule_set')
+    .value();
+    const formRules = db.get('form_rule')
+    .value();
+    try {
+        await Promise.all([
+            reWriteFiles(choiceLists, 'catalog_type'),
+            reWriteFiles(automations, 'rule_set'),
+            reWriteFiles(formRules, 'form_rule')
+        ]);
+    } catch(e) {
+        throw e;
+    }
+};
 
 const runQuery = {
     addChangeset,

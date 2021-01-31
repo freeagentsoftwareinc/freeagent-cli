@@ -320,7 +320,6 @@ const payloads = {
             instance_id: null,
             parent_entity_id: 'cf7de345-a40b-56cb-b70a-7fb707a5b4b0',
             parent_fields: [
-                ['name', ''],
                 ['entityName', ''],
                 ['fa_entity_id', ''],
                 ['trigger', ''],

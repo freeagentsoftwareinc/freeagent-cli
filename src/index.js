@@ -216,31 +216,31 @@ program
 
 
 program
-    .command('add-automation')
+    .command('add-automation <name>')
     .description('add new automation')
-    .action((option) => {
-        handleAction(option._name, {}, program.editmode, program.interactive)
+    .action((name, option) => {
+        handleAction(option._name, { name }, program.editmode, program.interactive)
     });
 
 program
-    .command('update-automation')
+    .command('update-automation <name>')
     .description('update the automation')
-    .action((option) => {
-        handleAction(option._name, {}, program.editmode, program.interactive)
+    .action((name, option) => {
+        handleAction(option._name, { name }, program.editmode, program.interactive)
     });
 
 program
-    .command('add-formrule')
+    .command('add-formrule <name>')
     .description('add new form rule')
-    .action((option) => {
-        handleAction(option._name, {}, program.editmode, program.interactive)
+    .action((name, option) => {
+        handleAction(option._name, { name }, program.editmode, program.interactive)
     });
 
 program
-    .command('update-formrule')
+    .command('update-formrule <name>')
     .description('update the form rule')
-    .action((option) => {
-        handleAction(option._name, {}, program.editmode, program.interactive)
+    .action((name, option) => {
+        handleAction(option._name, { name }, program.editmode, program.interactive)
     });
 
 
