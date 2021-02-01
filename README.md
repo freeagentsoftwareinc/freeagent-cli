@@ -13,6 +13,10 @@ Run `freeagent-cli init` To initialize the changset
 
 `-e  --editmode` To Run command in edit Mode, to edit file in `vi editor`
 
+`<option>` is mandatory to run the command
+
+`[optoin]` is optional to run the commnad
+
 
 # commands
   `init [name]`                                        initialize the changeset folder
