@@ -193,6 +193,12 @@ const operations = new Map([
         api: 'bulkUpdateOrder',
         query: 'updateOrder',
         sucessMessage: 'reorderd the lines successfully'
+    }],
+    ['update-cardconfig', {
+        payload: 'updateCardConfig',
+        api: 'updateCardConfig',
+        query: 'updateCardConfig',
+        sucessMessage: 'updated the card configuration successfully'
     }]
 ]);
 

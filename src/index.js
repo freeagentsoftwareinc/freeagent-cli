@@ -289,6 +289,13 @@ program
     });
 
 program
+    .command('update-cardconfig <targetApp>')
+    .description('update the card configuration')
+    .action((targetApp, option) => {
+        handleAction(option._name, { entity: targetApp }, program.editmode, program.interactive)
+    });
+
+program
     .command('export')
     .description('zip the created changeset')
     .action(() => {

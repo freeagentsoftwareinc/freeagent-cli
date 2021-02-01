@@ -1,4 +1,4 @@
-const uuid  = require('node-uuid');
+const { v4 }  = require('uuid');
 
 /*  define all the opration paylod
     key: operantion i.e addCustomfield, addEnity etc
@@ -12,7 +12,7 @@ const payloads = {
             created_at: new Date().toISOString()
         },
         transports:[{
-            id: uuid.v4(),
+            id: v4(),
             field: 'transport_id',
             model: 'changeset'
         }]
@@ -33,30 +33,30 @@ const payloads = {
         transports:[
         {
             order_transport_id_map: {
-                1: uuid.v4(),
-                2: uuid.v4(),
-                3: uuid.v4(),
-                4: uuid.v4(),
-                5: uuid.v4(),
-                6: uuid.v4(),
-                7: uuid.v4(),
-                8: uuid.v4(),
-                9: uuid.v4(),
-                10: uuid.v4()
+                1: v4(),
+                2: v4(),
+                3: v4(),
+                4: v4(),
+                5: v4(),
+                6: v4(),
+                7: v4(),
+                8: v4(),
+                9: v4(),
+                10: v4()
             },
             model: 'fa_field_config'
         },
         {
             order_transport_id_map: {
-                1: uuid.v4(),
-                2: uuid.v4()
+                1: v4(),
+                2: v4()
             },
             model: 'app_action'
         },
         {
             order_transport_id_map: {
-                1: uuid.v4(),
-                2: uuid.v4()
+                1: v4(),
+                2: v4()
             },
             model: 'fa_related_list'
         }]
@@ -377,6 +377,22 @@ const payloads = {
         },
         transports:[]
     },
+    updateCardConfig: {
+        args: {
+            entity: '',
+            card_config_mappings: {
+                still_looking: '',
+                card_title: '',
+                team_member: '',
+                first_line: '',
+                second_line: '',
+                third_line: '',
+                forth_line: '',
+                fifith_line: '',
+            }
+        },
+        transports: []
+    }
 };
 
 module.exports = payloads;

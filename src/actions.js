@@ -1,6 +1,6 @@
 
 const fs = require('fs');
-const uuid  = require('node-uuid');
+const {v4}  = require('uuid');
 const dir = './fa_changeset';
 const child_process = require('child_process');
 const editor = process.env.EDITOR || 'vi';
@@ -26,7 +26,7 @@ const runOperation = (operation, args={}) => {
         return;
     }
     const data = getPayload(operation.payload, args);
-    const file = `${Date.now()}_${operation.api}_${uuid.v4()}.json`;
+    const file = `${Date.now()}_${operation.api}_${v4()}.json`;
     runQuery[operation.query](data, file);
     const jsonData =  JSON.stringify(data, null, 4);
     const filePath = `${dir}/${file}`

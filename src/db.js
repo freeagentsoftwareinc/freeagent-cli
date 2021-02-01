@@ -6,9 +6,8 @@ const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
 const adapter = new FileSync('db.json');
 const db = low(adapter);
-const uuid  = require('node-uuid');
-const { set, filter, get, omit } = require('lodash');
-const { chdir } = require('process');
+const { v4, validate }  = require('uuid');
+const { set, filter, get, omit, defaultsDeep } = require('lodash');
 const dir = './fa_changeset';
 db.defaults({ 
     app: {}, 
@@ -21,6 +20,7 @@ db.defaults({
     rule_set: {},
     form_rule: {},
     reorder: [],
+    cards: []
 })
 .write();
 
@@ -43,6 +43,17 @@ const modelsMap = new Map([
     }]
 ]);
 
+const cardConfigFieldsId = {
+    still_looking: "3ee6c6c7-3a5e-4a53-9735-154300aebd4f",
+    card_title: "99250395-196f-46e9-8a72-046d497a06ca",
+    team_member:"2837a12e-d3ef-41ec-9a31-166b9aad1149",
+    first_line: "7d37035b-c3ac-4a6c-a468-1e1b42d5e2c5",
+    second_line: "407534b0-938e-4919-9223-1a9e922d5e0e",
+    third_line: "07762e81-a620-4a3a-a24f-905837797e1a",
+    forth_line: "d16ef822-d217-4020-bc20-2ff57a7bd757",
+    fifith_line: "e17e3d22-6c9e-41e8-ae12-1d93f84eeb24",
+};
+
 const addChangeset = (data) => {
     return;
 };
@@ -54,7 +65,7 @@ const updateArgs = (data, file) => {
 };
 
 const addApp = (data, file) => {
-    const id = uuid.v4();
+    const id = v4();
     const obj = {
         id,
         field: 'transport_id',
@@ -84,7 +95,7 @@ const updateApp = data => {
 };
 
 const addField = (data, file) => {
-    const id = uuid.v4();
+    const id = v4();
     const obj = {
         id,
         field: 'transport_id',
@@ -162,8 +173,60 @@ const reWriteUpdateOrderFiles = () => {
         .find({ entity: instance.entity, entityName: instance.entityName })
         .assign({ isExported: true })
         .write();
+    });
+};
+
+const updateCardConfig = (data, file) => {
+    db.get('cards')
+    .push({
+        file,
+        entity: data.args.entity,
+        isExport: false
     })
-}
+    .write();
+};
+
+const reWriteCardConfigFiles = () => {
+    const instances = db.get('cards').value();
+    instances.map(async (instance) => {
+        if(!instance){
+            return;
+        }
+        if(instance.isExported){
+            return;
+        }
+        const file = instance.file;
+        if(!fs.existsSync(`${dir}/${file}`)){
+            return;
+        }
+        const fileData = await fs.readFileSync(`${dir}/${file}`);
+        const savedData = JSON.parse(fileData);
+        const transports = {};
+        Object.keys(savedData.args.card_config_mappings).map((key)=> {
+            const value = get(savedData.args.card_config_mappings, `${key}`);
+            if(!validate(value)){
+                const field = db.get('fields')
+                .find({ app: savedData.args.entity, name: value })
+                .value();
+                if(field){
+                    set(transports, get(cardConfigFieldsId, key), field.id);
+                } else {
+                    set(savedData.args.card_config_mappings, get(cardConfigFieldsId, key), value);
+                }
+                delete savedData.args.card_config_mappings[key];
+            }
+        });
+        savedData.transports.push({
+            card_config_mappings: { ...transports }
+        });
+        const jsonData =  JSON.stringify(savedData, null, 4);
+        await fs.writeFileSync(`${dir}/${file}`, jsonData);
+        db.get('cards')
+        .find({ file: file })
+        .assign({ isExported: true })
+        .write();
+    });
+};
 
 const deleteField = (data) => {
     const field =  db.get('fields')
@@ -186,7 +249,7 @@ const deleteField = (data) => {
 };
 
 const addRole = (data, file) => {
-    const id = uuid.v4();
+    const id = v4();
     const obj = {
         id,
         field: 'transport_id',
@@ -232,7 +295,7 @@ const toggleRole = (data, file) => {
 };
 
 const addSection = (data, file) => {
-    const id = uuid.v4();
+    const id = v4();
     const obj = {
         id,
         field: 'transport_id',
@@ -279,7 +342,7 @@ const toggleSection = (data, file) => {
 };
 
 const addAppAction = (data, file) => {
-    const id = uuid.v4();
+    const id = v4();
     const obj = {
         id,
         field: 'transport_id',
@@ -325,7 +388,7 @@ const toggleAction = (data, file) => {
 };
 
 const addAcl = (data, file) => {
-    const id = uuid.v4();
+    const id = v4();
     const field =  db.get('fields')
     .find({ app: data.args.field_values.entityName, name: data.args.field_values.fa_field_id })
     .value();
@@ -384,7 +447,7 @@ const toggleAcl = (data, file) => {
 
 const addSaveComposite = (data, file) => {
     const { model, childModel} = modelsMap.get(data.args.parent_entity_id);
-    const id = uuid.v4();
+    const id = v4();
     const obj = {
         id,
         field: 'transport_id',
@@ -444,7 +507,7 @@ const createTransportIdsForChildren = async (savedData, file, model, isExport=fa
         if(child.id){
             return updatedChildren.push(child);
         }
-        const id = uuid.v4()
+        const id = v4()
         newChildren.push(child);
         newTransprotIds.id.push(id);
     });
@@ -525,7 +588,8 @@ const reWriteSaveCompositeEntityFiles = async (instances, model) => Promise.all(
 const remapSaveComposite =  () => {
     try {
         modelsMap.forEach((value) => reWriteSaveCompositeEntityFiles(db.get(value.model).value(), value.model));
-        reWriteUpdateOrderFiles()
+        reWriteUpdateOrderFiles();
+        reWriteCardConfigFiles();
     } catch(e) {
         throw e;
     }
@@ -554,6 +618,7 @@ const runQuery = {
     addSaveComposite,
     updateSaveComposite,
     remapSaveComposite,
+    updateCardConfig,
 }
 
 module.exports ={
