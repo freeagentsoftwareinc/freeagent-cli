@@ -420,45 +420,34 @@ const updateSaveComposite = (data, file, isExport=false) => {
     isExport && delete data.args.name;
 };
 
-const reWriteFiles = (instances, model) => {
-     Object.keys(instances).map((name) => {
-            const instance = db.get(`${model}.${name}`)
-            .value();
-            if(!instance){
-                return;
-            }
-            if(instance.isExported){
-                return;
-            }
-            const file = instance.update || instance.file;
-            if(!fs.existsSync(`${dir}/${file}`)){
-                return;
-            }
-            const fileData = fs.readFileSync(`${dir}/${file}`);
-            const savedData = JSON.parse(fileData);
-            if(savedData.args.children.length){
-                instance.update ? updateSaveComposite(savedData, file, true) : 
-                createTransportIdsForChildren(savedData, file, instance.childModel, true);
-                db.set(`${model}.${name}`, {
-                    isExported: true
-                }).write();
-            };
-        });
-}
+const reWriteFiles = async (instances, model) => Promise.all(
+    Object.keys(instances).map((name) => {
+    const instance = db.get(`${model}.${name}`)
+    .value();
+    if(!instance){
+        return;
+    }
+    if(instance.isExported){
+        return;
+    }
+    const file = instance.update || instance.file;
+    if(!fs.existsSync(`${dir}/${file}`)){
+        return;
+    }
+    const fileData = fs.readFileSync(`${dir}/${file}`);
+    const savedData = JSON.parse(fileData);
+    if(savedData.args.children.length){
+        instance.update ? updateSaveComposite(savedData, file, true) : 
+        createTransportIdsForChildren(savedData, file, instance.childModel, true);
+        db.set(`${model}.${name}`, {
+            isExported: true
+        }).write();
+    };
+}));
 
 const remapSaveComposite = async () => {
-    const choiceLists = db.get('catalog_type')
-    .value();
-    const automations = db.get('rule_set')
-    .value();
-    const formRules = db.get('form_rule')
-    .value();
     try {
-        await Promise.all([
-            reWriteFiles(choiceLists, 'catalog_type'),
-            reWriteFiles(automations, 'rule_set'),
-            reWriteFiles(formRules, 'form_rule')
-        ]);
+        await modelsMap.forEach((value) => reWriteFiles(db.get(value.model).value(), value.model));
     } catch(e) {
         throw e;
     }
