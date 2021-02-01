@@ -143,6 +143,18 @@ const payloads = {
         transports:[]
     },
 
+    updateOrder: {
+        args: {
+            entities: [],
+            field: 'order',
+            filters: [],
+            order: {
+                '1': ''
+            }
+        },
+        transports: []
+    },
+
     deleteField: {
         args: {
             id: ''
@@ -347,7 +359,6 @@ const payloads = {
             parent_entity_id: '2c05c9fa-568e-49e2-b435-b84f79fe1d32',
             parent_fields: [
                 ['entityName', ''],
-                ['fa_entity_id', ''],
                 ['description', ''],
                 ['roles', ''],
                 ['conditions', [{'field_name':'','values':[],'operator':''}]]   

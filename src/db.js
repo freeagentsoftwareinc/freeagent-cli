@@ -7,11 +7,22 @@ const FileSync = require('lowdb/adapters/FileSync');
 const adapter = new FileSync('db.json');
 const db = low(adapter);
 const uuid  = require('node-uuid');
-const { set, filter, get, isArguments } = require('lodash');
+const { set, filter, get, omit } = require('lodash');
 const { chdir } = require('process');
 const dir = './fa_changeset';
-db.defaults({ app: {}, fields:[], role: {}, section: [], action: [], acl: [], catalog_type: {}, rule_set: {}, form_rule: {} })
-  .write();
+db.defaults({ 
+    app: {}, 
+    fields:[], 
+    role: {}, 
+    section: [], 
+    action: [], 
+    acl: [], 
+    catalog_type: {}, 
+    rule_set: {},
+    form_rule: {},
+    reorder: [],
+})
+.write();
 
 const notFoundEror = () => {
     console.log(chalk.red('it is not the part of current changeset must be editing system one or from other changeset'))
@@ -100,6 +111,59 @@ const updateField = (data, file) => {
     data.transports.push(obj);
     updateArgs(data, field.file);
 };
+
+const updateOrder = (data, file) => {
+    const entityName = get(data, 'args.entityName');
+    const entity = get(data, 'args.entity');
+    const field_name = get(data, 'args.field_name');
+    const field_value = get(data, 'args.field_value');
+    if(field_name && field_value) {
+        data.args.filters.push({
+            field_name,
+            values: [field_value]
+        });
+        delete data.args.field_name;
+        delete data.args.field_value;
+    }
+    db.get('reorder')
+    .push({
+        file,
+        entity,
+        entityName,
+        isExported: false,
+    })
+    .write();
+};
+
+const reWriteUpdateOrderFiles = () => {
+    const instances = db.get('reorder').value();
+    instances.map(async (instance) => {
+        if(!instance){
+            return;
+        }
+        if(instance.isExported){
+            return;
+        }
+        const file = instance.file;
+        if(!fs.existsSync(`${dir}/${file}`)){
+            return;
+        }
+        const fileData = await fs.readFileSync(`${dir}/${file}`);
+        const savedData = JSON.parse(fileData);
+        savedData.transports.push( {
+            order_transport_id_map: savedData.args.order,
+            model: instance.entity
+        });
+        delete savedData.args.order;
+        delete savedData.args.entityName;
+        const jsonData =  JSON.stringify(savedData, null, 4);
+        await fs.writeFileSync(`${dir}/${file}`, jsonData);
+        db.get('reorder')
+        .find({ entity: instance.entity, entityName: instance.entityName })
+        .assign({ isExported: true })
+        .write();
+    })
+}
 
 const deleteField = (data) => {
     const field =  db.get('fields')
@@ -333,7 +397,21 @@ const addSaveComposite = (data, file) => {
         childModel
     })
     .write();
-    data.args.parent_fields.push(['name', data.args.name]);
+    data.args.name && data.args.parent_fields.push(['name', data.args.name]);
+    data.args.entityName && data.args.parent_fields.shift() && data.args.parent_fields.push(['entityName', data.args.entityName]);
+    if(data.args.tragetField){
+        const field = db.get('fields')
+        .find({ app: data.args.entityName, name: data.args.tragetField })
+        .value();
+        if(field && field.id){
+            data.transports.push({
+                id: field.id,
+                field: 'parent_fields[0][1]',
+                model: 'fa_field_config'
+            });
+        }
+    }
+
 };
 
 const reMapTransportIds = (data, model, isExport) => {
@@ -354,7 +432,7 @@ const reMapTransportIds = (data, model, isExport) => {
     data.transports = [...newlyAddedTransports, ...updatedChildren];
 }
 
-const createTransportIdsForChildren = (savedData, file, model, isExport=false) => {
+const createTransportIdsForChildren = async (savedData, file, model, isExport=false) => {
     const newChildren = [];
     const updatedChildren = [];
     const newTransprotIds = {
@@ -378,7 +456,7 @@ const createTransportIdsForChildren = (savedData, file, model, isExport=false) =
     isExport && delete savedData.args.name;
     const jsonData =  JSON.stringify(savedData, null, 4);
     const filePath = `${dir}/${file}`
-    fs.writeFileSync(`${filePath}`, jsonData);
+    await fs.writeFileSync(`${filePath}`, jsonData);
     return newTransprotIds;
 };
 
@@ -393,7 +471,7 @@ const mapTransportIdsForUpatedChildren = (children, transportIds, model) => chil
         };
     });
 
-const updateSaveComposite = (data, file, isExport=false) => {
+const updateSaveComposite = async (data, file, isExport=false) => {
     const { model, childModel} = modelsMap.get(data.args.parent_entity_id);
     const instance = db.get(`${model}.${data.args.name}`)
         .value();
@@ -409,9 +487,10 @@ const updateSaveComposite = (data, file, isExport=false) => {
     const fileData = fs.readFileSync(`${dir}/${savedFile}`);
     const savedData = JSON.parse(fileData);
     if(savedData.args.children.length){
-        const childTransprots = createTransportIdsForChildren(savedData, savedFile, childModel, isExport);
+        const childTransprots = await createTransportIdsForChildren(savedData, savedFile, childModel, isExport);
         db.set(`${model}.${data.args.name}.update`, file)
         .write();
+        db.set(`${model}.${data.args.name}.isExported`, false).write();
         const mapedChildTransprots = mapTransportIdsForUpatedChildren(savedData.args.children, childTransprots.id, childModel);
         data.transports = mapedChildTransprots;
     };
@@ -420,8 +499,8 @@ const updateSaveComposite = (data, file, isExport=false) => {
     isExport && delete data.args.name;
 };
 
-const reWriteFiles = async (instances, model) => Promise.all(
-    Object.keys(instances).map((name) => {
+const reWriteSaveCompositeEntityFiles = async (instances, model) => Promise.all(
+    Object.keys(instances).map(async (name) => {
     const instance = db.get(`${model}.${name}`)
     .value();
     if(!instance){
@@ -434,20 +513,19 @@ const reWriteFiles = async (instances, model) => Promise.all(
     if(!fs.existsSync(`${dir}/${file}`)){
         return;
     }
-    const fileData = fs.readFileSync(`${dir}/${file}`);
+    const fileData = await fs.readFileSync(`${dir}/${file}`);
     const savedData = JSON.parse(fileData);
     if(savedData.args.children.length){
-        instance.update ? updateSaveComposite(savedData, file, true) : 
-        createTransportIdsForChildren(savedData, file, instance.childModel, true);
-        db.set(`${model}.${name}`, {
-            isExported: true
-        }).write();
+        instance.update ? await updateSaveComposite(savedData, file, true) : 
+        await createTransportIdsForChildren(savedData, file, instance.childModel, true);
+        db.set(`${model}.${data.args.name}.isExported`, true).write();
     };
 }));
 
-const remapSaveComposite = async () => {
+const remapSaveComposite =  () => {
     try {
-        await modelsMap.forEach((value) => reWriteFiles(db.get(value.model).value(), value.model));
+        modelsMap.forEach((value) => reWriteSaveCompositeEntityFiles(db.get(value.model).value(), value.model));
+        reWriteUpdateOrderFiles()
     } catch(e) {
         throw e;
     }
@@ -459,6 +537,7 @@ const runQuery = {
     updateApp,
     addField,
     updateField,
+    updateOrder,
     deleteField,
     addRole,
     updateRole,
@@ -474,7 +553,7 @@ const runQuery = {
     toggleAcl,
     addSaveComposite,
     updateSaveComposite,
-    remapSaveComposite
+    remapSaveComposite,
 }
 
 module.exports ={

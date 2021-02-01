@@ -62,6 +62,14 @@ program
     });
 
 program
+    .command('reorder-field <targetApp>')
+    .description('reorder fields')
+    .action((targetApp, option) => {
+        const args =  { entity: 'fa_field_config', entityName: targetApp, field_name: 'entityName', field_value: targetApp }
+        handleAction(option._name, args, program.editmode, program.interactive)
+    });
+
+program
     .command('delete-field <targetApp> <name>')
     .description('delete the Field')
     .action((targetApp, name, option) => {
@@ -118,6 +126,13 @@ program
         args.field_values = { ...args.field_values, ...{ title: name, entityName: targetApp} }
         handleAction(option._name, args, program.editmode, program.interactive)
     });
+
+program
+    .command('reorder-section')
+    .description('reorder sections')
+    .action((option) => {
+        handleAction(option._name, { entity: 'layout',  entityName: Date.now() }, program.editmode, program.interactive)
+    });
   
 program
     .command('activate-section  <targetApp> <name>')
@@ -150,6 +165,13 @@ program
         const args = { ...payloads.addAction.args }
         args.field_values = { ...args.field_values, ...{name, entityName: targetApp} }
         handleAction(option._name, args, program.editmode, program.interactive)
+    });
+
+program
+    .command('reorder-action')
+    .description('reorder app actions')
+    .action((option) => {
+        handleAction(option._name, { entity: 'app_action',  entityName: Date.now() }, program.editmode, program.interactive)
     });
 
 program
@@ -216,10 +238,10 @@ program
 
 
 program
-    .command('add-automation <name>')
+    .command('add-automation <name> <targetApp> [tragetField]')
     .description('add new automation')
-    .action((name, option) => {
-        handleAction(option._name, { name }, program.editmode, program.interactive)
+    .action((name, targetApp, tragetField, option) => {
+        handleAction(option._name, { name , entityName: targetApp, tragetField }, program.editmode, program.interactive)
     });
 
 program
@@ -230,10 +252,10 @@ program
     });
 
 program
-    .command('add-formrule <name>')
+    .command('add-formrule <name> <targetApp>')
     .description('add new form rule')
     .action((name, option) => {
-        handleAction(option._name, { name }, program.editmode, program.interactive)
+        handleAction(option._name, { name, entityName: targetApp }, program.editmode, program.interactive)
     });
 
 program
@@ -243,6 +265,28 @@ program
         handleAction(option._name, { name }, program.editmode, program.interactive)
     });
 
+program
+    .command('reorder-formrule')
+    .description('reorder form rules')
+    .action((option) => {
+        handleAction(option._name, { entity: 'form_rule',  entityName: Date.now() }, program.editmode, program.interactive)
+    });
+
+program
+    .command('reorder-lines')
+    .description('reorder lines')
+    .action((option) => {
+        const args =  { entity: 'fa_entity_config', entityName: Date.now() , field_name: 'fa_entity.is_primary', field_value: true }
+        handleAction(option._name, args, program.editmode, program.interactive)
+    });
+
+program
+    .command('reorder-relatedlist <targetApp>')
+    .description('reorder realted lists')
+    .action((targetApp, option) => {
+        const args =  { entity: 'fa_related_list', entityName: targetApp, field_name: 'entityName', field_value: targetApp }
+        handleAction(option._name, args, program.editmode, program.interactive)
+    });
 
 program
     .command('export')

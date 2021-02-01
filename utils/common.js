@@ -32,6 +32,12 @@ const operations = new Map([
         query: 'updateField',
         sucessMessage: 'updated the field successfully'
     }],
+    ['reorder-field', {
+        payload: 'updateOrder',
+        api: 'bulkUpdateOrder',
+        query: 'updateOrder',
+        sucessMessage: 'reorderd the field successfully'
+    }],
     ['delete-field', {
         payload: 'deleteField',
         api: 'deleteCustomField',
@@ -74,6 +80,12 @@ const operations = new Map([
         query: 'updateSection',
         sucessMessage: 'updated the section successfully'
     }],
+    ['reorder-section', {
+        payload: 'updateOrder',
+        api: 'bulkUpdateOrder',
+        query: 'updateOrder',
+        sucessMessage: 'reorderd the section successfully'
+    }],
     ['deactivate-section', {
         payload: 'deactivateSection',
         api: 'updateEntityValue',
@@ -97,6 +109,12 @@ const operations = new Map([
         api: 'updateEntity',
         query: 'updateAppAction',
         sucessMessage: 'updated the action successfully'
+    }],
+    ['reorder-action', {
+        payload: 'updateOrder',
+        api: 'bulkUpdateOrder',
+        query: 'updateOrder',
+        sucessMessage: 'reorderd the action successfully'
     }],
     ['activate-action', {
         payload: 'activateAction',
@@ -169,6 +187,12 @@ const operations = new Map([
         api: 'saveCompositeEntity',
         query: 'updateSaveComposite',
         sucessMessage: 'updated the formrule successfully'
+    }],
+    ['reorder-lines', {
+        payload: 'updateOrder',
+        api: 'bulkUpdateOrder',
+        query: 'updateOrder',
+        sucessMessage: 'reorderd the lines successfully'
     }]
 ]);
 
