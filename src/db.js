@@ -321,11 +321,11 @@ const toggleAcl = (data, file) => {
 const addSaveComposite = (data, file) => {
     const { model, childModel} = modelsMap.get(data.args.parent_entity_id);
     const id = uuid.v4();
-    const obj = [{
+    const obj = {
         id,
         field: 'transport_id',
         model: model
-    }];
+    };
     data.transports.push(obj);
     db.set(`${model}.${data.args.name}`, {
         id,
@@ -334,10 +334,9 @@ const addSaveComposite = (data, file) => {
     })
     .write();
     data.args.parent_fields.push(['name', data.args.name]);
-    delete data.args.name;
 };
 
-const reMapTransportIds = (data, model) => {
+const reMapTransportIds = (data, model, isExport) => {
     const newlyAddedTransports = filter(data.transports, (transport) => (transport.field === 'transport_id' || transport.field === 'instance_id')  );
     const updatedChildren = [];
     data.args.children.forEach((child, index) => {
@@ -345,7 +344,7 @@ const reMapTransportIds = (data, model) => {
             return;
         }
         const id = get(child, 'id')
-        delete child.id;
+        isExport && delete child.id;
         updatedChildren.push({
             id,
             field:`children[${index}].custom_fields[0][1]`,
@@ -355,10 +354,10 @@ const reMapTransportIds = (data, model) => {
     data.transports = [...newlyAddedTransports, ...updatedChildren];
 }
 
-const createTransportIdsForChildrend = (savedData, file, model) => {
-    const newlyAddedChildren = [];
+const createTransportIdsForChildren = (savedData, file, model, isExport=false) => {
+    const newChildren = [];
     const updatedChildren = [];
-    const childTransprots = {
+    const newTransprotIds = {
         id: [],
         field: 'transport_id',
         model
@@ -367,22 +366,24 @@ const createTransportIdsForChildrend = (savedData, file, model) => {
         if(child.id){
             return updatedChildren.push(child);
         }
-        newlyAddedChildren.push(child);
-        childTransprots.id.push(uuid.v4());
+        const id = uuid.v4()
+        newChildren.push(child);
+        newTransprotIds.id.push(id);
     });
-    savedData.args.children = [...newlyAddedChildren, ...updatedChildren];
-    savedData.transports.push(childTransprots);
+    savedData.args.children = [...newChildren, ...updatedChildren];
+    newTransprotIds.id.length && savedData.transports.unshift(newTransprotIds);
     if(updatedChildren.length){
-        reMapTransportIds(savedData, model);
+        reMapTransportIds(savedData, model, isExport);
     }
+    isExport && delete savedData.args.name;
     const jsonData =  JSON.stringify(savedData, null, 4);
     const filePath = `${dir}/${file}`
     fs.writeFileSync(`${filePath}`, jsonData);
-    return childTransprots;
+    return newTransprotIds;
 };
 
-const mapTransportIdsForUdpateChildren = (children, transportIds, model) => children.map((child, index) => {
-        const id = transportIds[index];
+const mapTransportIdsForUpatedChildren = (children, transportIds, model) => children.map((child, index) => {
+        const id = transportIds[index] || child.id;
         set(child, 'id', id)
         child.custom_fields.unshift(['id', '']);
         return {
@@ -392,8 +393,8 @@ const mapTransportIdsForUdpateChildren = (children, transportIds, model) => chil
         };
     });
 
-const updateSaveComposite = (data, file) => {
-    const {model, childModel} = modelsMap.get(data.args.parent_entity_id);
+const updateSaveComposite = (data, file, isExport=false) => {
+    const { model, childModel} = modelsMap.get(data.args.parent_entity_id);
     const instance = db.get(`${model}.${data.args.name}`)
         .value();
     if(!instance){
@@ -404,20 +405,19 @@ const updateSaveComposite = (data, file) => {
         field: 'instance_id',
         model
     };
-    const fileData = fs.readFileSync(`${dir}/${instance.file}`);
+    const savedFile = instance.update || instance.file;
+    const fileData = fs.readFileSync(`${dir}/${savedFile}`);
     const savedData = JSON.parse(fileData);
-    if(savedData.args.children.length && savedData.transports.length < 2){
-        const childTransprots = createTransportIdsForChildrend(savedData, instance.file, childModel);
-
+    if(savedData.args.children.length){
+        const childTransprots = createTransportIdsForChildren(savedData, savedFile, childModel, isExport);
         db.set(`${model}.${data.args.name}.update`, file)
         .write();
-        db.set(`${model}.${data.args.name}.child`, childTransprots.id)
-        .write();
-        const mapedChildTransprots = mapTransportIdsForUdpateChildren(savedData.args.children, childTransprots.id, childModel);
+        const mapedChildTransprots = mapTransportIdsForUpatedChildren(savedData.args.children, childTransprots.id, childModel);
         data.transports = mapedChildTransprots;
     };
     data.args = savedData.args;
     data.transports.push(parentTransport);
+    isExport && delete data.args.name;
 };
 
 const reWriteFiles = (instances, model) => {
@@ -427,17 +427,23 @@ const reWriteFiles = (instances, model) => {
             if(!instance){
                 return;
             }
-            const file = instance.file;
+            if(instance.isExported){
+                return;
+            }
+            const file = instance.update || instance.file;
             if(!fs.existsSync(`${dir}/${file}`)){
                 return;
             }
-            
             const fileData = fs.readFileSync(`${dir}/${file}`);
             const savedData = JSON.parse(fileData);
             if(savedData.args.children.length){
-                createTransportIdsForChildrend(savedData, file, instance.childModel);
+                instance.update ? updateSaveComposite(savedData, file, true) : 
+                createTransportIdsForChildren(savedData, file, instance.childModel, true);
+                db.set(`${model}.${name}`, {
+                    isExported: true
+                }).write();
             };
-        })
+        });
 }
 
 const remapSaveComposite = async () => {
