@@ -199,7 +199,7 @@ const operations = new Map([
         api: 'bulkUpdateOrder',
         query: 'updateOrder',
         sucessMessage: 'reorderd the realated list successfully'
-    }]
+    }],
     ['update-cardconfig', {
         payload: 'updateCardConfig',
         api: 'updateCardConfig',
