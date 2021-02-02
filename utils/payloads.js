@@ -64,6 +64,7 @@ const payloads = {
 
     updateApp: {
         args: {
+            id:'',
             label: '',
             label_plural: '',
             is_visible: true,

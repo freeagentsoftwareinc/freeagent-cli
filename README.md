@@ -19,7 +19,7 @@ Run `freeagent-cli init` To initialize the changset
 
 
 # commands
-  `init [name]`                                        initialize the changeset folder
+  `init [name]`                                      initialize the changeset folder
 
   `add-app <name> [pluralName]`                      create new app
   

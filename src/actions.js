@@ -29,7 +29,7 @@ const runOperation = (operation, args={}) => {
     const file = `${Date.now()}_${operation.api}_${v4()}.json`;
     runQuery[operation.query](data, file);
     const jsonData =  JSON.stringify(data, null, 4);
-    const filePath = `${dir}/${file}`
+    const filePath = `${dir}/${file}`;
     fs.writeFileSync(`${filePath}`, jsonData);
     console.log(chalk.green(operation.sucessMessage));
     return filePath;
