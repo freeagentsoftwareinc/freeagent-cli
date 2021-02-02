@@ -194,6 +194,12 @@ const operations = new Map([
         query: 'updateOrder',
         sucessMessage: 'reorderd the lines successfully'
     }],
+    ['reorder-relatedlist', {
+        payload: 'updateOrder',
+        api: 'bulkUpdateOrder',
+        query: 'updateOrder',
+        sucessMessage: 'reorderd the realated list successfully'
+    }]
     ['update-cardconfig', {
         payload: 'updateCardConfig',
         api: 'updateCardConfig',
