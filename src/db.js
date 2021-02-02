@@ -581,7 +581,7 @@ const reWriteSaveCompositeEntityFiles = async (instances, model) => Promise.all(
     if(savedData.args.children.length){
         instance.update ? await updateSaveComposite(savedData, file, true) : 
         await createTransportIdsForChildren(savedData, file, instance.childModel, true);
-        db.set(`${model}.${data.args.name}.isExported`, true).write();
+        db.set(`${model}.${name}.isExported`, true).write();
     };
 }));
 
