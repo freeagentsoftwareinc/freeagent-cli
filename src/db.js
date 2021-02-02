@@ -765,10 +765,10 @@ const reWriteSaveCompositeEntityFiles = async (instances, model) => Promise.all(
     };
 }));
 
-const remapSaveComposite =  (isTransports) => {
+const remapSaveComposite =  (isIds) => {
     try {
         modelsMap.forEach((value) => reWriteSaveCompositeEntityFiles(db.get(value.model).value(), value.model));
-        if(!isTransports){
+        if(!isIds){
             reWriteUpdateEntityConfigFiles();
             reWriteFieldsFiles();
         }
