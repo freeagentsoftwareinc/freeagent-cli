@@ -35,13 +35,13 @@ program
 program
     .command('update-app <label>')
     .description('update the app')
-    .action((label, new_label, option) => {
+    .action((label, option) => {
         /*
            option._name : command name 
            program.editmode : -e option
            program.interactive: -i option
         */
-       const args = { label: label, new_label }
+       const args = { label: label }
         handleAction(option._name, args, program.editmode, program.interactive)
     });
 
