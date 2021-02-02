@@ -1,5 +1,4 @@
 
-const { args } = require('commander');
 const fs = require('fs');
 const chalk = require('chalk');
 const low = require('lowdb');
@@ -7,7 +6,7 @@ const FileSync = require('lowdb/adapters/FileSync');
 const adapter = new FileSync('db.json');
 const db = low(adapter);
 const { v4, validate }  = require('uuid');
-const { set, filter, get, omit, defaultsDeep } = require('lodash');
+const { set, filter, get } = require('lodash');
 const dir = './fa_changeset';
 db.defaults({ 
     app: {}, 
@@ -59,6 +58,9 @@ const addChangeset = (data) => {
 };
 
 const updateArgs = (data, file) => {
+    if(!fs.existsSync(`${dir}/${file}`)){
+        return;
+    }
     const fileData = fs.readFileSync(`${dir}/${file}`);
     const savedData = JSON.parse(fileData);
     data.args = { ...data.args, ...savedData.args };
@@ -120,6 +122,7 @@ const updateField = (data, file) => {
         model: 'fa_field_config'
     };
     data.transports.push(obj);
+    set(data, 'args.id', '');
     updateArgs(data, field.file);
 };
 
@@ -152,13 +155,16 @@ const reWriteUpdateOrderFiles = () => {
         if(!instance){
             return;
         }
+
         if(instance.isExported){
             return;
         }
+
         const file = instance.file;
         if(!fs.existsSync(`${dir}/${file}`)){
             return;
         }
+
         const fileData = await fs.readFileSync(`${dir}/${file}`);
         const savedData = JSON.parse(fileData);
         savedData.transports.push( {
@@ -208,11 +214,8 @@ const reWriteCardConfigFiles = () => {
                 const field = db.get('fields')
                 .find({ app: savedData.args.entity, name: value })
                 .value();
-                if(field){
-                    set(transports, get(cardConfigFieldsId, key), field.id);
-                } else {
-                    set(savedData.args.card_config_mappings, get(cardConfigFieldsId, key), value);
-                }
+                field ? set(transports, get(cardConfigFieldsId, key), field.id)
+                    : set(savedData.args.card_config_mappings, get(cardConfigFieldsId, key), value);
                 delete savedData.args.card_config_mappings[key];
             }
         });
@@ -474,7 +477,6 @@ const addSaveComposite = (data, file) => {
             });
         }
     }
-
 };
 
 const reMapTransportIds = (data, model, isExport) => {
@@ -504,6 +506,7 @@ const createTransportIdsForChildren = async (savedData, file, model, isExport=fa
         model
     };
     savedData.args.children.forEach((child) => {
+
         if(child.id){
             return updatedChildren.push(child);
         }
@@ -513,6 +516,7 @@ const createTransportIdsForChildren = async (savedData, file, model, isExport=fa
     });
     savedData.args.children = [...newChildren, ...updatedChildren];
     newTransprotIds.id.length && savedData.transports.unshift(newTransprotIds);
+
     if(updatedChildren.length){
         reMapTransportIds(savedData, model, isExport);
     }
@@ -538,9 +542,15 @@ const updateSaveComposite = async (data, file, isExport=false) => {
     const { model, childModel} = modelsMap.get(data.args.parent_entity_id);
     const instance = db.get(`${model}.${data.args.name}`)
         .value();
+    
     if(!instance){
       return;
     }
+    
+    if(!fs.existsSync(`${dir}/${file}`)){
+        return;
+    };
+
     const parentTransport = {
         id: instance.id,
         field: 'instance_id',
@@ -549,6 +559,7 @@ const updateSaveComposite = async (data, file, isExport=false) => {
     const savedFile = instance.update || instance.file;
     const fileData = fs.readFileSync(`${dir}/${savedFile}`);
     const savedData = JSON.parse(fileData);
+
     if(savedData.args.children.length){
         const childTransprots = await createTransportIdsForChildren(savedData, savedFile, childModel, isExport);
         db.set(`${model}.${data.args.name}.update`, file)
@@ -566,12 +577,15 @@ const reWriteSaveCompositeEntityFiles = async (instances, model) => Promise.all(
     Object.keys(instances).map(async (name) => {
     const instance = db.get(`${model}.${name}`)
     .value();
+
     if(!instance){
         return;
     }
+
     if(instance.isExported){
         return;
     }
+
     const file = instance.update || instance.file;
     if(!fs.existsSync(`${dir}/${file}`)){
         return;
