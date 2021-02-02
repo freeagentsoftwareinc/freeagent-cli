@@ -9,7 +9,7 @@ Run `npm link`
 Run `freeagent-cli init` To initialize the changset
 
 # Options
-`-i  --interactive` To Run command in interactive Mode
+<!-- `-i  --interactive` To Run command in interactive Mode -->
 
 `-e  --editmode` To Run command in edit Mode, to edit file in `vi editor`
 

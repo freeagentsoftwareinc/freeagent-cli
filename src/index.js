@@ -7,7 +7,7 @@ const { handleAction, exportChangeset } = require('./actions');
 
 program
     .version('0.1')
-    .option('-i, --interactive', 'run in interactive mode')
+    // .option('-i, --interactive', 'run in interactive mode')
     .option('-e, --editmode', 'run in vi edit mode')
     .description('freeagent changeset generator system');
 
