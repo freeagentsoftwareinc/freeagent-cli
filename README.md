@@ -15,7 +15,7 @@ Run `freeagent-cli init` To initialize the changset
 
 `<option>` is mandatory to run the command
 
-`[optoin]` is optional to run the commnad
+`[option]` is optional to run the commnad
 
 
 # commands
@@ -27,27 +27,27 @@ Run `freeagent-cli init` To initialize the changset
   
   `add-field <targetApp> <name>`                     create new field
   
-  `update-field <targetApp> <name>`                  update the Field
+  `update-field <targetApp> <name>`                  update the field
   
   `reorder-field <targetApp>`                        reorder fields
   
-  `delete-field <targetApp> <name>`                  delete the Field
+  `delete-field <targetApp> <name>`                  delete the field
   
-  `add-role <name>`                                  create new Role
+  `add-role <name>`                                  create new role
   
-  `update-role <name>`                               update the Role
+  `update-role <name>`                               update the role
   
-  `deactivate-role <name>`                           deactivate the Role
+  `deactivate-role <name>`                           deactivate the role
   
-  `activate-role <name>`                             activate the Role
+  `activate-role <name>`                             activate the role
   
   `add-section <targetApp> <name>`                   add new section
   
-  `update-section <targetApp> <name>`                upate the section
+  `update-section <targetApp> <name>`                update the section
   
   `reorder-section`                                  reorder sections
   
-  `activate-section <targetApp> <name>`              cctivate the section
+  `activate-section <targetApp> <name>`              activate the section
   
   `deactivate-section <targetApp> <name>`            deactivate the section
   
@@ -71,7 +71,7 @@ Run `freeagent-cli init` To initialize the changset
   
   `add-choicelist <name>`                            add new choice list
   
-  `update-choicelist <name>`                         udpate the choice list
+  `update-choicelist <name>`                         update the choice list
   
   `add-automation <name> <targetApp> [tragetField]`  add new automation
   
@@ -85,8 +85,8 @@ Run `freeagent-cli init` To initialize the changset
   
   `reorder-lines`                                    reorder lines
   
-  `reorder-relatedlist <targetApp>`                  reorder realted lists
+  `reorder-relatedlist <targetApp>`                  reorder related lists
   
   `update-cardconfig <targetApp>`                    update the card configuration
   
-  `export`                                           zip the created changeset
+  `export`                                           comaplete and zip the created changeset

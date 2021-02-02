@@ -55,7 +55,7 @@ program
 
 program
     .command('update-field <targetApp> <name>')
-    .description('update the Field')
+    .description('update the field')
     .action((targetApp, name, option) => {
         const args = { name_label: name, entity: targetApp };
         handleAction(option._name, args, program.editmode, program.interactive)
@@ -71,7 +71,7 @@ program
 
 program
     .command('delete-field <targetApp> <name>')
-    .description('delete the Field')
+    .description('delete the field')
     .action((targetApp, name, option) => {
         const args = { name_label: name, entity: targetApp }
         handleAction(option._name, args, program.editmode, program.interactive)
@@ -79,7 +79,7 @@ program
 
 program
     .command('add-role <name>')
-    .description('create new Role')
+    .description('create new role')
     .action((name, option) => {
         const args = { ...payloads.addRole.args }
         args.field_values = { ...args.field_values, ...{ name: name || ''} };
@@ -88,7 +88,7 @@ program
 
 program
     .command('update-role <name>')
-    .description('update the Role')
+    .description('update the role')
     .action((name, option) => {
         const args = { ...payloads.addRole.args }
         args.field_values = { ...args.field_values, ...{ name: name || ''} };
@@ -97,14 +97,14 @@ program
 
 program
     .command('deactivate-role <name>')
-    .description('deactivate the Role')
+    .description('deactivate the role')
     .action((name, option) => {
         handleAction(option._name, { name }, program.editmode, program.interactive)
     });
 
 program
     .command('activate-role <name>')
-    .description('activate the Role')
+    .description('activate the role')
     .action((name, option) => {
         handleAction(option._name, { name }, program.editmode, program.interactive)
     });
@@ -120,7 +120,7 @@ program
 
 program
     .command('update-section <targetApp> <name>')
-    .description('upate the section')
+    .description('update the section')
     .action((targetApp, name, option) => {
         const args = { ...payloads.addSection.args }
         args.field_values = { ...args.field_values, ...{ title: name, entityName: targetApp} }
@@ -136,7 +136,7 @@ program
   
 program
     .command('activate-section  <targetApp> <name>')
-    .description('cctivate the section')
+    .description('activate the section')
     .action((targetApp, name, option) => {
         handleAction(option._name, { targetApp, name }, program.editmode, program.interactive)
     });
@@ -231,7 +231,7 @@ program
 
 program
     .command('update-choicelist <name>')
-    .description('udpate the choice list')
+    .description('update the choice list')
     .action((name, option) => {
         handleAction(option._name, { name }, program.editmode, program.interactive)
     });
@@ -282,7 +282,7 @@ program
 
 program
     .command('reorder-relatedlist <targetApp>')
-    .description('reorder realted lists')
+    .description('reorder related lists')
     .action((targetApp, option) => {
         const args =  { entity: 'fa_related_list', entityName: targetApp, field_name: 'entityName', field_value: targetApp }
         handleAction(option._name, args, program.editmode, program.interactive)
@@ -298,7 +298,7 @@ program
 program
     .option('-id, --id', 'use transpot ids instead of ids')
     .command('export')
-    .description('zip the created changeset')
+    .description('compalete and zip the created changeset')
     .action(() => {
         return exportChangeset(program.id);
     });

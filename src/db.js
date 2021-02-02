@@ -153,7 +153,7 @@ const reWriteUpdateEntityConfigFiles = () => {
 
         if(!id && !validate(id)){
             console.log(`please provide the id to ${file}`);
-            throw new Error('no id or invalid present for update');
+            throw new Error('empty or invalid id provided for update');
         };
 
         savedData.transports.push( {
@@ -257,7 +257,7 @@ const reWriteFieldsFiles = () => {
 
         if(instance.isSystem && instance.isUpdate && !id && !validate(id)){
             console.log(`please provide the id to ${file}`);
-            throw new Error('no id or invalid present for update');
+            throw new Error('empty or invalid id provided for update');
         };
         
         if(instance.isSystem && instance.isUpdate) {
@@ -573,7 +573,7 @@ const addAcl = (data, file) => {
             model: 'fa_field_config'
         });
     }else {
-        console.log(chalk.red('field is not the part of current changeset must be applying on system one or on other changeset'))
+        console.log(chalk.red('field is not the part of current changeset must be applying ACL on system field or on other changeset'))
     };
     data.transports = data.transports.concat(obj);
     db.get('acl')
