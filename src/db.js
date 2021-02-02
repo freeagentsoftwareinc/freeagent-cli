@@ -11,7 +11,6 @@ const dir = './fa_changeset';
 
 db.defaults({ 
     apps: [],
-    system_apps: [],
     fields:[], 
     role: {}, 
     section: [], 
@@ -55,6 +54,20 @@ const cardConfigFieldsId = {
     fifith_line: "e17e3d22-6c9e-41e8-ae12-1d93f84eeb24",
 };
 
+const fieldReferenceKeys = new Map([
+    ['catalog_type_id', 'catalog_type'],
+    ['parent_field_id', 'fa_field_config'],
+    ['parent_fa_field_id', 'fa_field_config'],
+    ['fa_entity_config_id', 'fa_entity_config'],
+    ['reference_qualifier', 'fa_field_config'],
+    ['reference_fa_field_id', 'fa_field_config'],
+    ['parent_custom_field_id', 'fa_field_config'],
+    ['reference_fa_entity_id', 'fa_entity'],
+    ['reference_custom_field_id','fa_field_config'],
+    ['reference_qualifier_value', 'fa_field_config'],
+    ['fa_related_field_config_id', 'fa_field_config']
+]);
+
 const addChangeset = (data) => {
     return;
 };
@@ -80,7 +93,8 @@ const addApp = (data, file) => {
     .push({
         id,
         file,
-        label: data.args.label, 
+        label: data.args.label,
+        label: data.args.label_plural, 
         isSystem: false,
         isExported: false
     })
@@ -95,8 +109,16 @@ const updateApp = (data, file) => {
         })
         .value();
 
+
+    const obj = {
+        id: (app && app.id) || '',
+        field: 'id',
+        model: 'fa_entity_config'
+    };
+    data.transports.push(obj);
+
     if(!app){
-        db.get('system_apps')
+        db.get('apps')
         .push({
             file,
             label: data.args.label, 
@@ -106,24 +128,17 @@ const updateApp = (data, file) => {
         .write();
         return notFoundEror();
     }
-
-    const obj = {
-        id: app.id,
-        field: 'id',
-        model: 'fa_entity_config'
-    };
-    data.transports.push(obj);
     updateArgs(data, app.file);
 };
 
 const reWriteUpdateEntityConfigFiles = () => {
-    const instances = db.get('system_apps').value();
+    const instances = db.get('apps').value();
     instances.map(async ( instance ) => {
         if(!instance){
             return;
         }
        
-        if(instance.isExported){
+        if(!instance.isSystem && instance.isExported){
             return;
         }
 
@@ -149,8 +164,8 @@ const reWriteUpdateEntityConfigFiles = () => {
         set(savedData, 'args.id', '');
         const jsonData =  JSON.stringify(savedData, null, 4);
         await fs.writeFileSync(`${dir}/${file}`, jsonData);
-        db.get('reorder')
-        .find({ label: instance.label, isExported: false })
+        db.get('apps')
+        .find({ label: instance.label, isSystem: true, isExported: false })
         .assign({ isExported: true })
         .write();
     });
@@ -163,27 +178,118 @@ const addField = (data, file) => {
         field: 'transport_id',
         model: 'fa_field_config'
     };
+    const app = db.get('apps')
+        .find({ name: data.args.entity })
+        .value();
+    set(data, 'args.related_list_name', (app && app.label_plural) || data.args.entity);
+    set(data, 'args.related_list_name_plural', (app && app.label_plural) || data.args.entity);
     data.transports.push(obj);
     db.get('fields')
-    .push({ app: data.args.entity, name: data.args.name_label, id, file })
+    .push({  
+        id,
+        file,
+        app: data.args.entity,
+        name: data.args.name_label,
+        isUpdate: false,
+        isSystem: false
+    })
     .write();
 };
 
 const updateField = (data, file) => {
-    const field =  db.get('fields')
-        .find({ app: data.args.entity, name: data.args.name_label })
+    const field = db.get('fields')
+        .find({ 
+            app: data.args.entity,
+            name: data.args.name_label,
+            isSystem: false
+        })
         .value();
-    if(!field){
-        return notFoundEror();
-    }
     const obj = {
-        id: field.id,
+        id: (field && field.id) || '',
         field: 'id',
         model: 'fa_field_config'
     };
     data.transports.push(obj);
     set(data, 'args.id', '');
+    if(!field){
+        db.get('fields')
+        .push({
+            file,
+            label: data.args.label, 
+            isSystem: true,
+            isExported: false,
+            isUpdate: true,
+        })
+        .write();
+        return notFoundEror();
+    }
     updateArgs(data, field.file);
+    db.get('fields')
+    .push({
+        file,
+        label: data.args.label, 
+        isSystem: false,
+        isExported: false,
+        isUpdate: true,
+    })
+    .write();
+};
+
+const reWriteFieldsFiles = () => {
+    const instances = db.get('fields').value();
+    instances.map(async ( instance ) => {
+        if(!instance){
+            return;
+        }
+       
+        if(instance.isExported){
+            return;
+        }
+
+        const file = instance.file;
+        if(!fs.existsSync(`${dir}/${file}`)){
+            return;
+        }
+
+        const fileData = await fs.readFileSync(`${dir}/${file}`);
+        const savedData = JSON.parse(fileData);
+        const id = get(savedData, 'args.id');
+
+        if(instance.isSystem && instance.isUpdate && !id && !validate(id)){
+            console.log(`please provide the id to ${file}`);
+            throw new Error('no id or invalid present for update');
+        };
+        
+        if(instance.isSystem && instance.isUpdate) {
+            savedData.transports.pop();
+            savedData.transports.push({
+                id,
+                field: 'id',
+                model: 'fa_field_config'
+            });
+            set(savedData, 'args.id', '');
+        };
+        const referenceTypes = ['reference_array', 'reference'];
+        if(referenceTypes.includes(savedData.args.data_type)){
+            fieldReferenceKeys.forEach((value, key) => {
+                const id = get(savedData, `args.${key}`);
+                if(id && validate(id)){
+                    savedData.transports.push({
+                        id,
+                        field: key,
+                        model: value
+                    });
+                    set(savedData, `args.${key}`, '');
+                }
+            });
+        };
+        const jsonData =  JSON.stringify(savedData, null, 4);
+        await fs.writeFileSync(`${dir}/${file}`, jsonData);
+        db.get('fields')
+        .find({ label: instance.label, isSystem: true, isExported: false })
+        .assign({ isExported: true })
+        .write();
+    });
 };
 
 const updateOrder = (data, file) => {
@@ -659,10 +765,13 @@ const reWriteSaveCompositeEntityFiles = async (instances, model) => Promise.all(
     };
 }));
 
-const remapSaveComposite =  () => {
+const remapSaveComposite =  (isTransports) => {
     try {
         modelsMap.forEach((value) => reWriteSaveCompositeEntityFiles(db.get(value.model).value(), value.model));
-        reWriteUpdateEntityConfigFiles();
+        if(!isTransports){
+            reWriteUpdateEntityConfigFiles();
+            reWriteFieldsFiles();
+        }
         reWriteUpdateOrderFiles();
         reWriteCardConfigFiles();
     } catch(e) {

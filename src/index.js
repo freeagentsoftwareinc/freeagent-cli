@@ -296,10 +296,11 @@ program
     });
 
 program
+    .option('-t, --transports', 'use transpot ids instead of ids')
     .command('export')
     .description('zip the created changeset')
     .action(() => {
-        return exportChangeset();
+        return exportChangeset(program.transports);
     });
 
 program.parse(process.argv);

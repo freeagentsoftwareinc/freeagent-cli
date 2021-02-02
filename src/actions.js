@@ -77,12 +77,12 @@ const handleAction = (command, args={}, editMode, interactiveMode) => {
     return runOperation(operation, args);
 };
 
-const exportChangeset = async () => {
+const exportChangeset = async (isTransports) => {
     if (!fs.existsSync(dir)){
         console.log(errorMessages.app_created);
         return false;
     };
-    await runQuery['remapSaveComposite']();
+    await runQuery['remapSaveComposite'](isTransports);
     const zipFolderName = "fa_changeset.zip";
     const archive = archiver('zip', { zlib: { level: 9 }});
     const data = fs.createWriteStream(zipFolderName);
