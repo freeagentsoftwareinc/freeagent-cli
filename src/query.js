@@ -1,3 +1,4 @@
+const chalk = require('chalk');
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
 const adapter = new FileSync('db.json');
@@ -29,13 +30,19 @@ const find = (model, where ) => db.get(model)
 const findAll = (model) => db.get(model).value();
 
 const update = (model, where, data) => db.get(model)
-.find(where)
-.assign(data)
-.write();
+    .find(where)
+    .assign(data)
+    .write();
+
+const resetDb = () => {
+    db.setState({});
+    console.log(chalk.green('your data is erased successfully'))
+} 
 
 module.exports = {
     insert,
     find,
     findAll,
-    update
+    update,
+    resetDb
 }

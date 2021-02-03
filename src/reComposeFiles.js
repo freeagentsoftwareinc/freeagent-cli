@@ -95,7 +95,7 @@ const reWriteFieldsFiles = () => {
         }
         const jsonData =  JSON.stringify(savedData, null, 4);
         await fs.writeFileSync(`${dir}/${file}`, jsonData);
-        update('fa_field_config', { label: instance.label, isExported: false }, { isExported: true });
+        update('fa_field_config', { name: instance.name, app: instance.app, isExported: false }, { isExported: true });
         console.log("trhis", find('fa_field_config',{label: instance.label}))
     });
 };
@@ -287,7 +287,7 @@ const reWriteCreateUpdaTeEntityFiles = (instances, model) => {
 
         const jsonData =  JSON.stringify(savedData, null, 4);
         await fs.writeFileSync(`${dir}/${file}`, jsonData);
-        update(model, { name: instance.name, isSystem: true, isUpdate: true, isExported: false }, { isExported: true });
+        update(model, { name: instance.name, isUpdate: true, isExported: false }, { isExported: true });
     });
 };
 

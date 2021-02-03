@@ -3,6 +3,7 @@
 const { program } = require('commander');
 const payloads = require('../utils/payloads');
 const { handleAction, exportChangeset } = require('./actions');
+const { resetDb } = require('./query');
 
 program
     .version('0.1')
@@ -299,6 +300,13 @@ program
     .description('compalete and zip the created changeset')
     .action(() => {
         return exportChangeset();
+    });
+
+program
+    .command('reset-db')
+    .description('reset local CLI db')
+    .action(() => {
+        return resetDb();
     });
 
 program.parse(process.argv);

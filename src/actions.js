@@ -97,7 +97,7 @@ const exportChangeset = async () => {
         console.log(chalk.green('please find at root'),chalk.yellow(': changeset.zip'));
         return true;
     });
-}
+};
 
 module.exports = {
     handleAction,
