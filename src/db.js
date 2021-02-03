@@ -94,7 +94,7 @@ const addApp = (data, file) => {
         id,
         file,
         label: data.args.label,
-        label: data.args.label_plural, 
+        label_plural: data.args.label_plural, 
         isSystem: false,
         isExported: false
     })
