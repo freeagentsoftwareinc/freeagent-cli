@@ -91,7 +91,10 @@ const payloads = {
             quick_add_hint: null,
             description: '',
             default_sorts: [],
-            color: ''
+            color: '',
+            is_applet: null,
+            parent_id: null,
+            fields_configuration_attachment_id: null,
         },
         transports: []
     },
@@ -190,6 +193,7 @@ const payloads = {
         },
         transports:[]
     },
+
     activateRole: {
         args:{
             entity: 'fa_role',
@@ -246,12 +250,7 @@ const payloads = {
                 entityName: '',
             }
         },
-        transports:[
-        {
-            id: '',
-            field: 'field_values.rule_set_id',
-            model: 'rule_set'
-        }]
+        transports:[]
     },
 
     activateAction: {
@@ -276,15 +275,16 @@ const payloads = {
         args:{
             entity: 'fa_acl',   
             field_values: {
-                operation: null,
                 acl_type: '',
+                operation: '',
                 target_entity_id: '',
                 fa_field_id: '',
                 fa_acl_field_roles: [],
                 active: true,
-                resource_type: '',
                 type: 'grant',
                 entityName: '',
+                entity_operation: '',
+                conditions: [{ field_name: '', values: [''], operator: '' }]
             }
         },
         transports:[]
@@ -378,6 +378,7 @@ const payloads = {
         },
         transports:[]
     },
+
     updateCardConfig: {
         args: {
             entity: '',

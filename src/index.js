@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 const { program } = require('commander');
-const { set } = require('lodash');
 const payloads = require('../utils/payloads');
 const { handleAction, exportChangeset } = require('./actions');
 
@@ -296,11 +295,10 @@ program
     });
 
 program
-    .option('-id, --id', 'use transpot ids instead of ids')
     .command('export')
     .description('compalete and zip the created changeset')
     .action(() => {
-        return exportChangeset(program.id);
+        return exportChangeset();
     });
 
 program.parse(process.argv);
