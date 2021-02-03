@@ -31,7 +31,6 @@ const updateApp = (data, file) => {
         label: data.args.label,
     }
     data = updateRecord(data, file, 'fa_entity_config', option);
-    console.log(data);
 };
 
 const addField = (data, file) => {

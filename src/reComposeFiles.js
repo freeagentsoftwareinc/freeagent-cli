@@ -49,7 +49,6 @@ const reWriteUpdateEntityConfigFiles = () => {
 const reWriteFieldsFiles = () => {
     const instances = findAll('fa_field_config');
     instances.map(async ( instance ) => {
-       console.log("instance", instance)
         if(!instance || instance.isExported){
             return;
         }
@@ -96,7 +95,6 @@ const reWriteFieldsFiles = () => {
         const jsonData =  JSON.stringify(savedData, null, 4);
         await fs.writeFileSync(`${dir}/${file}`, jsonData);
         update('fa_field_config', { name: instance.name, app: instance.app, isExported: false }, { isExported: true });
-        console.log("trhis", find('fa_field_config',{label: instance.label}))
     });
 };
 
