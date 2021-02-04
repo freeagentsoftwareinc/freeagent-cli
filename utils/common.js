@@ -291,8 +291,9 @@ const entityOperationTypes =     {
     delete: 'd22d45c0-f2fe-43ad-86e5-b31bf3e4f3db',
     read: 'a22d45c0-f2fe-43ad-86e5-b31bf3e4f3db',
     update: 'c22d45c0-f2fe-43ad-86e5-b31bf3e4f3db'
+};
 
-}
+const modelConstant = ['fa_entity_config', 'fa_field_config','fa_role', 'layout', 'catalog_type', 'catalog'];
 
 module.exports = {
     operations,
@@ -306,5 +307,6 @@ module.exports = {
     appearanceTypes,
     operantionTypes,
     aclTypes,
-    entityOperationTypes
+    entityOperationTypes,
+    modelConstant
 };

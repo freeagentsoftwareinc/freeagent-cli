@@ -20,7 +20,7 @@ const addChangeset = (data) => {
 
 const addApp = (data, file) => {
     const option = {
-        label: data.args.label,
+        name: data.args.label,
         label_plural: data.args.label_plural
     };
     data = createRecord(data, file, 'fa_entity_config', option);
@@ -28,7 +28,7 @@ const addApp = (data, file) => {
 
 const updateApp = (data, file) => {
     const option = {
-        label: data.args.label,
+        name: data.args.label,
     }
     data = updateRecord(data, file, 'fa_entity_config', option);
 };
@@ -313,7 +313,7 @@ const reWriteSaveCompositeEntityFiles = async (instances, model) => Promise.all(
     Object.keys(instances).map(async (name) => {
     const instance = find(model, { name });
     const savedData = await getSavedData(instance)
-    const file = instance.update || instance.file;
+    const file = instance.file;
     if(savedData && savedData.args.children.length){
         instance.update ? await updateSaveComposite(savedData, file, true) : 
         await createTransportIdsForChildren(savedData, file, instance.childModel, true);

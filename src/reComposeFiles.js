@@ -12,8 +12,20 @@ const {
     actionTypes,
     operantionTypes,
     aclTypes,
-    entityOperationTypes
+    entityOperationTypes,
+    modelConstant
 } = require('../utils/common');
+
+const findInAllModels = (id) => {
+    let foundRecordId;
+    modelConstant.forEach((model) => {
+        const instance = find(model, { name: id });
+        if(instance && instance.id && !foundRecordId){
+            foundRecordId = instance.id
+        }
+    });
+    return foundRecordId;
+};
 
 const reWriteUpdateEntityConfigFiles = () => {
     const instances = findAll('fa_entity_config');
@@ -68,10 +80,11 @@ const reWriteFieldsFiles = () => {
             const referenceTypes = ['reference_array', 'reference'];
             if(referenceTypes.includes(savedData.args.data_type)){
                 fieldReferenceKeys.forEach((value, key) => {
-                    const id = get(savedData, `args.${key}`);
-                    if(id && validate(id)){
+                    let id = get(savedData, `args.${key}`);
+                    const transportId = id && validate(id) ? id : findInAllModels(id);
+                    if(transportId){
                         savedData.transports.push({
-                            id,
+                            id: transportId ,
                             field: key,
                             model: value
                         });
@@ -82,7 +95,7 @@ const reWriteFieldsFiles = () => {
         };
         const jsonData =  JSON.stringify(savedData, null, 4);
         await fs.writeFileSync(`${dir}/${file}`, jsonData);
-        update('fa_field_config', { name: instance.name, app: instance.app, isExported: false }, { isExported: true });
+        // update('fa_field_config', { name: instance.name, app: instance.app, isExported: false }, { isExported: true });
     });
 };
 
