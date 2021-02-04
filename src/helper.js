@@ -3,7 +3,7 @@ const fs = require('fs');
 const { set } = require('lodash');
 const { v4 }  = require('uuid');
 const { errorMessages } = require('../utils/common');
-const { find, update, insert } = require('./query');
+const { find, update, insert, findAll } = require('./query');
 const dir = './fa_changeset';
 
 const updateArgs = (data, file) => {
@@ -82,7 +82,7 @@ const updateRecord = (data, file, model, option, isDelete=false, isToggle=false)
 };
 
 const getSavedData = async (instance) => {
-    if(!instance || instance.isExported || !instance || !instance.isUpdate){
+    if(!instance || instance.isExported){
         return null;
     }
 

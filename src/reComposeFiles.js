@@ -1,6 +1,7 @@
 const fs = require('fs');
 const { set, get, camelCase } = require('lodash');
 const { find, findAll, update } = require('./query');
+const { getSavedData } = require('./helper');
 const { validate }  = require('uuid');
 const dir = './fa_changeset';
 const {
@@ -17,19 +18,12 @@ const {
 const reWriteUpdateEntityConfigFiles = () => {
     const instances = findAll('fa_entity_config');
     instances.map(async ( instance ) => {
-        if(!instance || !instance.isUpdate || !instance.isSystem || instance.isExported){
-            return;
-        }
-
         const file = instance.file;
-        if(!fs.existsSync(`${dir}/${file}`)){
+        const savedData = await getSavedData(instance)
+        if(!savedData || !instance.isUpdate || !instance.isSystem){
             return;
         }
-
-        const fileData = await fs.readFileSync(`${dir}/${file}`);
-        const savedData = JSON.parse(fileData);
         const id = get(savedData, 'args.id');
-
         if(!id && !validate(id)){
             console.log(`please provide the id to ${file}`);
             throw new Error('empty or invalid id provided for update');
@@ -49,19 +43,13 @@ const reWriteUpdateEntityConfigFiles = () => {
 const reWriteFieldsFiles = () => {
     const instances = findAll('fa_field_config');
     instances.map(async ( instance ) => {
-        if(!instance || instance.isExported){
-            return;
-        }
-
         const file = instance.file;
-        if(!fs.existsSync(`${dir}/${file}`)){
+        const savedData = await getSavedData(instance)
+
+        if(!savedData){
             return;
-        }
-
-        const fileData = await fs.readFileSync(`${dir}/${file}`);
-        const savedData = JSON.parse(fileData);
+        };
         const id = get(savedData, 'args.id');
-
         if(instance.isSystem && (instance.isUpdate || instance.delete) && !id && !validate(id)){
             console.log(`please provide the id to ${file}`);
             throw new Error('empty or invalid id provided for update');
@@ -91,7 +79,7 @@ const reWriteFieldsFiles = () => {
                     }
                 });
             };
-        }
+        };
         const jsonData =  JSON.stringify(savedData, null, 4);
         await fs.writeFileSync(`${dir}/${file}`, jsonData);
         update('fa_field_config', { name: instance.name, app: instance.app, isExported: false }, { isExported: true });
