@@ -67,12 +67,12 @@ const updateRecord = (data, file, model, option, isDelete=false, isToggle=false)
     };
     data.transports.push(tansport);
     updateArgs(data, instance.file);
-    update(model, {
+    insert(model, {
         ...option,
         file,
         isDelete,
         isToggle,
-        isSystem: true,
+        isSystem: false,
         isExported: false,
         isUpdate: true
     });

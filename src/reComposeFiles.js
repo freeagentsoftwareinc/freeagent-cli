@@ -17,14 +17,15 @@ const {
 } = require('../utils/common');
 
 const findInAllModels = (id) => {
-    let foundRecordId;
+    const foundRecord = {};
     modelConstant.forEach((model) => {
         const instance = find(model, { name: id });
-        if(instance && instance.id && !foundRecordId){
-            foundRecordId = instance.id
+        if(instance && instance.id && !foundRecord.id){
+            set(foundRecord, 'id', instance.id);
+            set(foundRecord, 'model', model);
         }
     });
-    return foundRecordId;
+    return foundRecord;
 };
 
 const reWriteUpdateEntityConfigFiles = () => {
@@ -62,7 +63,7 @@ const reWriteFieldsFiles = () => {
             return;
         };
         const id = get(savedData, 'args.id');
-        if(instance.isSystem && (instance.isUpdate || instance.delete) && !id && !validate(id)){
+        if(instance.isSystem && instance.isUpdate && !id && !validate(id)){
             console.log(`please provide the id to ${file}`);
             throw new Error('empty or invalid id provided for update');
         };
@@ -75,18 +76,17 @@ const reWriteFieldsFiles = () => {
             });
             set(savedData, 'args.id', '');
         };
-
         if(!instance.delete){
             const referenceTypes = ['reference_array', 'reference'];
             if(referenceTypes.includes(savedData.args.data_type)){
                 fieldReferenceKeys.forEach((value, key) => {
-                    let id = get(savedData, `args.${key}`);
-                    const transportId = id && validate(id) ? id : findInAllModels(id);
-                    if(transportId){
+                    const id = get(savedData, `args.${key}`);
+                    const transport = !(id && validate(id)) ? findInAllModels(id) : id;
+                    if(typeof transport === 'string' || transport.id){
                         savedData.transports.push({
-                            id: transportId ,
+                            id: transport.id || transport,
                             field: key,
-                            model: value
+                            model: transport.model || value
                         });
                         set(savedData, `args.${key}`, '');
                     }
@@ -95,7 +95,7 @@ const reWriteFieldsFiles = () => {
         };
         const jsonData =  JSON.stringify(savedData, null, 4);
         await fs.writeFileSync(`${dir}/${file}`, jsonData);
-        // update('fa_field_config', { name: instance.name, app: instance.app, isExported: false }, { isExported: true });
+        update('fa_field_config', { name: instance.name, app: instance.app, isExported: false }, { isExported: true });
     });
 };
 
