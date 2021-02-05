@@ -206,7 +206,7 @@ const addSaveComposite = async (data, file) => {
     const option = {
         model,
         childModel,
-        name: data.args.name,
+        name: data.args.parent_fields.name,
     };
     const isExisingChoiceList = findOne(model, option);
     if(isExisingChoiceList){
@@ -218,10 +218,11 @@ const addSaveComposite = async (data, file) => {
     data = createRecord(data, model, { file, ...option });
 };
 
-const createTransportIdsForChildren = async (instance, file) => {
+const createTransportIdsForChildren = async (instance) => {
     const savedData = await getSavedData(instance);
     if(!savedData){
         console.log(chalk.red('please provide correct choicelist name'))
+        return;
     };
     const children = savedData.args.children.map((child) => {
         if(!child.id){
@@ -244,17 +245,18 @@ const createTransportIdsForChildren = async (instance, file) => {
 };
 
 const updateSaveComposite = async (data, file) => {
-    const { model, childModel} = modelsMap.get(data.args.parent_entity_id);
+    const { model, childModel } = modelsMap.get(data.args.parent_entity_id);
     const option = {
         model,
         childModel,
-        name: data.args.name,
+        name: data.args.parent_fields.name,
     };
     const instance = findLast(model, option);
     if(!instance){
         console.log(chalk.red('data is not present please to update, must be updating system one'));
     };
-    const updateSavedData = await createTransportIdsForChildren(instance, file);
+    const updateSavedData = await createTransportIdsForChildren(instance);
+console.log(updateSavedData)
     await saveDataToFile(updateSavedData, instance.file);
     data.args = {...updateSavedData.args };
     data.transports = [{

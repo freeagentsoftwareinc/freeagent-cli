@@ -325,15 +325,15 @@ const reMapChildrend = (children, instance) => {
         };
         transports.push({
             id: record.id,
-            field: `children[${index}].custom_fields[1]`,
+            field: `children[${index}].custom_fields[0][1]`,
             model: childModel
         });
-        remapedChild.custom_fields.push(['id', record.id]);
+        remapedChild.custom_fields.shift(['id', '']);
         return remapedChild;
     });
     newTransportIds.length && transports.push({
         id: newTransportIds,
-        field: 'trasnports_id',
+        field: 'transport_id',
         model: childModel
     });
     return{
@@ -361,7 +361,7 @@ const reWriteSaveCompositeEntityFiles = async (instances) => {
         set(savedData, 'transports', [...savedData.transports, ...afterMapedPerentData.transports]);
         const jsonData =  JSON.stringify({...savedData}, null, 4);
         await fs.writeFileSync(`${dir}/${instance.file}`, jsonData);
-        update(model, { file: instance.file, isExported: false }, { isExported: true });
+        update(instance.model, { file: instance.file, isExported: false }, { isExported: true });
     });
 }
 

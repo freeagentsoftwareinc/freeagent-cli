@@ -81,7 +81,7 @@ const updateRecord = (data, file, model, option, isDelete=false, isToggle=false)
 };
 
 const getSavedData = async (instance) => {
-    if(!instance || instance.isExported){
+    if(!instance){
         return null;
     }
 

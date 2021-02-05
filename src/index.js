@@ -236,7 +236,9 @@ program
     .command('update-choicelist <name>')
     .description('update the choice list')
     .action((name, option) => {
-        handleAction(option._name, { name }, program.editmode, program.interactive)
+        const args = { ...payloads.addChoiceList.args }
+        args.parent_fields = { name, ...args.parent_fields,}
+        handleAction(option._name, args, program.editmode, program.interactive)
     });
 
 
