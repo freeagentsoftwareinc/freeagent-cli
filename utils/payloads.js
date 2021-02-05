@@ -312,6 +312,7 @@ const payloads = {
             instance_id: null,
             parent_entity_id: '10913ac7-852e-516e-a2d7-3c24c34600d4',
             parent_fields: {
+                name: '',
                 order_type: '',
                 allow_choice_creation: true
             },
@@ -332,25 +333,29 @@ const payloads = {
         args: {
             instance_id: null,
             parent_entity_id: 'cf7de345-a40b-56cb-b70a-7fb707a5b4b0',
-            parent_fields: [
-                ['fa_entity_id', ''],
-                ['trigger', ''],
-                ['filter_conditions', [{'field_name':'task_type','values':[],'operator':'includes'}]]  
-            ],
+            parent_fields: {
+                name: '',
+                fa_entity_id : '',
+                entityName: '',
+                trigger: '',
+                schedule_cron: '',
+                schedule_datetime_field: '',
+                on_update_field: null,
+                filter_conditions: "[{ 'field_name':'','values':[], 'operator': '' }]"
+            },
             children: [{
                 entity_id: '37a890a4-01c4-56a7-8be0-6466b65db0dd',
-                custom_fields: [
-                    ['description', 'automation'],
-                    ['type', 'custom_code'],
-                    ['custom_code', ''],
-                    ['delay', null],
-                    ['working_calendar', 'false'],
-                    ['due_date_field', 'false']
-                ]
+                custom_fields: {
+                    description: '',
+                    type: '',
+                    custom_code:'',
+                    delay: null,
+                    working_calendar: false,
+                    due_date_field: false,
+                }
             }],
         },
-        transports:[]
-        
+        transports:[]  
     },
 
     addFormRule: {

@@ -228,7 +228,7 @@ program
     .description('add new choice list')
     .action((name, option) => {
         const args = { ...payloads.addChoiceList.args }
-        args.parent_fields = { name, ...args.parent_fields,}
+        args.parent_fields = {...args.parent_fields, name}
         handleAction(option._name, args, program.editmode, program.interactive)
     });
 
@@ -237,23 +237,28 @@ program
     .description('update the choice list')
     .action((name, option) => {
         const args = { ...payloads.addChoiceList.args }
-        args.parent_fields = { name, ...args.parent_fields,}
+        args.parent_fields = {...args.parent_fields, name}
         handleAction(option._name, args, program.editmode, program.interactive)
     });
 
 
 program
-    .command('add-automation <name> <targetApp> [tragetField]')
+    .command('add-automation <name>')
     .description('add new automation')
-    .action((name, targetApp, tragetField, option) => {
-        handleAction(option._name, { name , entityName: targetApp, tragetField }, program.editmode, program.interactive)
+    .action((name, option) => {
+        const args = { ...payloads.addAutomation.args }
+        args.parent_fields = {...args.parent_fields, name}
+        handleAction(option._name, args, program.editmode, program.interactive)
     });
 
 program
     .command('update-automation <name>')
     .description('update the automation')
     .action((name, option) => {
-        handleAction(option._name, { name }, program.editmode, program.interactive)
+        const args = { ...payloads.addAutomation.args }
+        args.parent_fields = {...args.parent_fields, name}
+        handleAction(option._name, args, program.editmode, program.interactive)
+        handleAction(option._name, args, program.editmode, program.interactive)
     });
 
 program

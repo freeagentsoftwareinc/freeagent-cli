@@ -1,7 +1,7 @@
 const fs = require('fs');
 const { set, get, camelCase, toPairsIn, sortBy } = require('lodash');
 const { findAll, update, insert, findOne } = require('./query');
-const { choiceListOrderTypes } = require('../utils/common');
+const { choiceListOrderTypes, automationsTriggers } = require('../utils/common');
 const { getSavedData } = require('./helper');
 const { validate, v4 }  = require('uuid');
 const dir = './fa_changeset';
@@ -342,10 +342,43 @@ const reMapChildrend = (children, instance) => {
     }
 };
 
-const reMapParentfields = (savedData) => {
-    const orderType = get(savedData, 'args.parent_fields.order_type');
-    set(savedData, 'args.parent_fields.order_type', get(choiceListOrderTypes, orderType));
-    return toPairsIn(get(savedData, 'args.parent_fields'));
+const reMapParentfields = (parentFields) => {
+    const entityName = get(parentFields, 'entityName');
+    const orderType = get(parentFields, 'order_type');
+    const triggerType = get(parentFields, 'trigger');
+    let scheduleDatetimeField = get(parentFields, 'schedule_datetime_field');
+    let onUpdateField = get(parentFields, 'on_update_field');
+    if(orderType){
+        set(parentFields, 'order_type', get(choiceListOrderTypes, orderType));
+    };
+    
+    if(triggerType){
+        set(parentFields, 'trigger', get(automationsTriggers, camelCase(triggerType)));
+    }
+    if(scheduleDatetimeField && !validate(scheduleDatetimeField)){
+        scheduleDatetimeField = get(findOne('fa_field_config', { name: scheduleDatetimeField, app: entityName }), 'id');
+        set(parentFields, 'schedule_datetime_field', scheduleDatetimeField);
+    };
+
+    if(onUpdateField && !validate(onUpdateField)){
+        onUpdateField = get(findOne('fa_field_config', { name: onUpdateField, app: entityName }), 'id');
+        set(parentFields, 'schedule_datetime_field', onUpdateField);
+    };
+
+    const parentTransports = [];
+    Object.keys(parentFields).forEach((key, index) => {
+        if(key === 'schedule_datetime_field' || key === 'on_update_field'){
+            parentTransports.push({
+                id: key,
+                field: `parent_fields[${index}][1]`,
+                model: 'fa_field_config'
+            })
+        }
+    });
+    return {
+        parentFields:  toPairsIn(parentFields),
+        parentTransports 
+    }
 };
 
 const reWriteSaveCompositeEntityFiles = async (instances) => {
@@ -354,11 +387,11 @@ const reWriteSaveCompositeEntityFiles = async (instances) => {
         if(!savedData){
             return;
         };
-        const parentFields = reMapParentfields(savedData);
+        const parentFields = reMapParentfields(savedData.args.parent_fields);
         const afterMapedPerentData = reMapChildrend(get(savedData, 'args.children'), instance);
-        set(savedData, 'args.parent_fields', parentFields)
+        set(savedData, 'args.parent_fields', parentFields.parentFields)
         set(savedData, 'args.children', afterMapedPerentData.children);
-        set(savedData, 'transports', [...savedData.transports, ...afterMapedPerentData.transports]);
+        set(savedData, 'transports', [...savedData.transports, ...parentFields.parentTransports, ...afterMapedPerentData.transports]);
         const jsonData =  JSON.stringify({...savedData}, null, 4);
         await fs.writeFileSync(`${dir}/${instance.file}`, jsonData);
         update(instance.model, { file: instance.file, isExported: false }, { isExported: true });

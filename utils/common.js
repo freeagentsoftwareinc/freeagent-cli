@@ -300,6 +300,13 @@ const choiceListOrderTypes = {
     order: '901f9fd9-161b-40fa-8dd9-09bd292a9de8'
 };
 
+const automationsTriggers = {
+    onCreate: '9d02d813-fd95-48ba-8c78-2608a1c9f9a5',
+    onUpdate: '603307d5-f4ed-4174-b380-df0228e6a3bb',
+    onAppAction: 'f8b862e0-a13f-4708-ab3e-b973de1e781e',
+    scheduleDatetimeField: '1398b293-35e4-416a-a57c-5d10f7f93af6',
+    scheduleCron: 'e824d06c-e41a-4bee-97de-35c84a53736f',
+  };
 
 const modelConstant = ['fa_entity_config', 'fa_field_config','fa_role', 'layout', 'catalog_type', 'catalog'];
 
@@ -318,4 +325,5 @@ module.exports = {
     entityOperationTypes,
     modelConstant,
     choiceListOrderTypes,
+    automationsTriggers
 };
