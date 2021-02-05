@@ -31,11 +31,9 @@ const addApp = (data, file) => {
 
 const updateApp = (data, file) => {
     const option = {
-        file,
-        file,
         name: data.args.label,
     }
-    data = updateRecord(data, 'fa_entity_config', option);
+    data = updateRecord(data, file, 'fa_entity_config', option);
 };
 
 const addField = (data, file) => {
@@ -52,11 +50,10 @@ const addField = (data, file) => {
 
 const updateField = (data, file) => {
     const option = {
-        file,
         app: data.args.entity,
         name: data.args.name_label
     }
-    data = updateRecord(data, 'fa_field_config', option);
+    data = updateRecord(data, file, 'fa_field_config', option);
 };
 
 const updateOrder = (data, file) => {
@@ -90,11 +87,10 @@ const updateCardConfig = (data, file) => {
 
 const deleteField = (data, file) => {
     const option = {
-        file,
         app: data.args.entity,
         label: data.args.name_label
     }
-    data = updateRecord(data, 'fa_field_config', option, true);
+    data = updateRecord(data, file, 'fa_field_config', option, true);
 };
 
 const addRole = (data, file) => {
@@ -107,18 +103,16 @@ const addRole = (data, file) => {
 
 const updateRole = (data, file) => {
     const option = {
-        file,
         name: data.args.field_values.name
     };
-    data = updateRecord(data, 'fa_role', option);
+    data = updateRecord(data, file, 'fa_role', option);
 };
 
 const toggleRole = (data, file) => {
     const option = {
-        file,
         name: data.args.field_values.name
     };
-    data = updateRecord(data, 'fa_role', option, false, true);
+    data = updateRecord(data, file, 'fa_role', option, false, true);
     delete data.args.name;
 };
 
@@ -143,11 +137,10 @@ const updateSection = (data, file) => {
 
 const toggleSection = (data, file) => {
     const option = {
-        file,
         app: data.args.targetApp,
         name: data.args.name,
     };
-    data = updateRecord(data, 'layout', false, true );
+    data = updateRecord(data, file, 'layout', false, true );
     delete data.args.name;
     delete data.args.targetApp;
 };
@@ -172,11 +165,10 @@ const updateAppAction = (data, file) => {
 
 const toggleAction = (data, file) => {
     const option = {
-        file,
         app: data.args.targetApp,
         name: data.args.name,
     };
-    data = updateRecord(data, 'app_action', option, false, true);
+    data = updateRecord(data, file, 'app_action', option, false, true);
     delete data.args.name;
     delete data.args.targetApp;
 };
@@ -201,11 +193,10 @@ const updateAcl = (data, file) => {
 
 const toggleAcl = (data, file) => {
     const option = {
-        file,
         app: data.args.targetApp,
         name: data.args.tragetField,
     };
-    data = updateRecord(data, 'fa_acl', option, false, true);
+    data = updateRecord(data, file, 'fa_acl', option, false, true);
     delete data.args.targetApp;
     delete data.args.fa_field_id;
 };

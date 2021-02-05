@@ -3,7 +3,7 @@ const fs = require('fs');
 const { set } = require('lodash');
 const { v4 }  = require('uuid');
 const { errorMessages } = require('../utils/common');
-const { insert } = require('./query');
+const { insert, findOne, findAll } = require('./query');
 const dir = './fa_changeset';
 
 const updateArgs = (data, file) => {
@@ -35,18 +35,19 @@ const createRecord = (data, model, option, isDelete=false) => {
         ...data
     }
 };
-
-const updateRecord = (data, model, option, isDelete=false, isToggle=false) => {
+const updateRecord = (data, file, model, option, isDelete=false, isToggle=false) => {
     let instance = findOne(model, { 
         ...option,
         isDelete,
         isSystem: false,
         isUpdate: false,
+        isExported: false,
     });
     set(data, 'args.id', '');
     if(!instance || !instance.id){
        insert(model, {
             ...option,
+            file,
             isDelete,
             isToggle,
             isSystem: true,
@@ -67,6 +68,7 @@ const updateRecord = (data, model, option, isDelete=false, isToggle=false) => {
     updateArgs(data, instance.file);
     insert(model, {
         ...option,
+        file,
         isDelete,
         isToggle,
         isSystem: false,
