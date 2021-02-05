@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { set, get, camelCase, toPairsIn, sortBy } = require('lodash');
+const { set, get, camelCase, toPairs, sortBy, find } = require('lodash');
 const { findAll, update, insert, findOne } = require('./query');
 const { choiceListOrderTypes, automationsTriggers, modelsMap } = require('../utils/common');
 const { getSavedData } = require('./helper');
@@ -14,9 +14,15 @@ const {
     operantionTypes,
     aclTypes,
     entityOperationTypes,
-    modelConstant
+    modelConstant,
+    formRuleOperatoinValues,
+    formRuleOperatoins,
+    formRuleTypes,
 } = require('../utils/common');
 const { mainModule } = require('process');
+const { Instance } = require('chalk');
+const { inspect } = require('util');
+const { addFormRule } = require('../utils/payloads');
 
 const findInAllModels = (id) => {
     const foundRecord = {};
@@ -292,10 +298,63 @@ const reWriteCreateUpdaTeEntityFiles = (instances, model) => {
     });
 };
 
+const setTransportidForChildValues = (children) => {
+    const transports = [];
+    const updatedCildren = children.map((child, parentIndex)=> {
+        child.custom_fields = child.custom_fields.map((props, index)=> {
+            if(!props[1]){
+                return [props[0], props[1]];
+            }
+            if(props[0] === 'field_name'){
+                transports.push({
+                    id: (validate(props[1]) ? props[1] : find('fa_field_config', { name: props[1]})),
+                    filed: `children[${parentIndex}].custom_fields[${index}][1]`,
+                    model: 'fa_field_config'
+                })
+            };
+           
+            if(props[0] === 'section_name'){
+                transports.push({
+                    id: (validate(props[1]) ? props[1] : find('layout', { name: props[1]})),
+                    filed: `children[${parentIndex}].custom_fields[${index}][1]`,
+                    model: 'layout'
+                })
+            };
+
+            if(props[0] === 'app_action_id'){
+                transports.push({
+                    id: (validate(props[1]) ? props[1] : find('app_action', { name: props[1]})),
+                    filed: `children[${parentIndex}].custom_fields[${index}][1]`,
+                    model: 'app_action'
+                })
+            };
+
+            if(props[0] === 'type'){
+                props[1] = get(formRuleTypes, camelCase(props[1])) || props[1];
+            };
+
+            if(props[0] === 'operation'){
+                props[1] = get(formRuleOperatoins, camelCase(props[1])) || props[1];
+            };
+
+            if(props[0] === 'value'){
+                props[1] = get(formRuleOperatoinValues, camelCase(props[1])) || props[1];
+            };
+            return [props[0], props[1]]
+        });
+        return child;
+    });
+    return {
+        transports,
+        updatedCildren
+    }
+};
+
 const reMapChildrend = (children, instance) => {
     const { name, file, childModel } = instance;
     const newTransportIds = [];
     const transports = [];
+    
     const childWithUpdateStatus = children.map((child) => {
         const childRecord = findOne(childModel, {
             id: child.id
@@ -310,7 +369,7 @@ const reMapChildrend = (children, instance) => {
     const mapedChildren = sortedChildList.map((record, index) => {
         const remapedChild = {
             entity_id: record.entity_id,
-            custom_fields: toPairsIn(get(record, 'custom_fields'))
+            custom_fields: toPairs(get(record, 'custom_fields'))
         };
         if(!record.isUpdate) {
             const id = v4();
@@ -343,11 +402,13 @@ const reMapChildrend = (children, instance) => {
 };
 
 const reMapParentfields = (parentFields) => {
+    const parentTransports = [];
     const entityName = get(parentFields, 'entityName');
     const orderType = get(parentFields, 'order_type');
     const triggerType = get(parentFields, 'trigger');
-    let scheduleDatetimeField = get(parentFields, 'schedule_datetime_field');
-    let onUpdateField = get(parentFields, 'on_update_field');
+    const roles = get(parentFields, 'roles');
+    const scheduleDatetimeField = get(parentFields, 'schedule_datetime_field');
+    const onUpdateField = get(parentFields, 'on_update_field');
     if(orderType){
         set(parentFields, 'order_type', get(choiceListOrderTypes, orderType));
     };
@@ -356,16 +417,19 @@ const reMapParentfields = (parentFields) => {
         set(parentFields, 'trigger', get(automationsTriggers, camelCase(triggerType)));
     }
     if(scheduleDatetimeField && !validate(scheduleDatetimeField)){
-        scheduleDatetimeField = get(findOne('fa_field_config', { name: scheduleDatetimeField, app: entityName }), 'id');
-        set(parentFields, 'schedule_datetime_field', scheduleDatetimeField);
+        set(parentFields, 'schedule_datetime_field', 
+            get(findOne('fa_field_config', { name: scheduleDatetimeField, app: entityName }), 'id'));
     };
 
     if(onUpdateField && !validate(onUpdateField)){
-        onUpdateField = get(findOne('fa_field_config', { name: onUpdateField, app: entityName }), 'id');
-        set(parentFields, 'schedule_datetime_field', onUpdateField);
+        set(parentFields, 'schedule_datetime_field',
+            get(findOne('fa_field_config', { name: onUpdateField, app: entityName }), 'id'));
+    };
+    
+    if(roles && roles.length){
+        parentTransports.push(...reMapRoelsIds(roles, 'parent_fields.roles'));
     };
 
-    const parentTransports = [];
     Object.keys(parentFields).forEach((key, index) => {
         if(key === 'schedule_datetime_field' || key === 'on_update_field'){
             parentTransports.push({
@@ -376,7 +440,7 @@ const reMapParentfields = (parentFields) => {
         }
     });
     return {
-        parentFields:  toPairsIn(parentFields),
+        parentFields: toPairs(parentFields),
         parentTransports 
     }
 };
@@ -423,6 +487,12 @@ const reWriteSaveCompositeEntityFiles = async (instances) => {
         if(!instance.isToggle){
             covertDataForSaveCompositeApi(savedData, instance);
         }
+        if(model === 'form_rule'){
+           const updatedData = setTransportidForChildValues(get(savedData,'args.children'));
+            set(savedData, 'args.children', updatedData.updatedCildren)
+            savedData.transports.push(...updatedData.transports);
+        };
+            //for active or deactive case
         covertDataForupdateEntityValueApi(savedData, model);
         const jsonData =  JSON.stringify({...savedData}, null, 4);
         await fs.writeFileSync(`${dir}/${file}`, jsonData);

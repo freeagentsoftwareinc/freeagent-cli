@@ -289,26 +289,28 @@ program
     });
 
 program
-    .command('add-formrule <description> <targetApp>')
+    .command('add-formrule <targetApp> <description>')
     .description('add new form rule')
-    .action((description, targetApp, option) => {
-        const args = { ...payloads.addAutomation.args }
+    .action((targetApp, description, option) => {
+        const args = { ...payloads.addFormRule.args }
         args.parent_fields = {...args.parent_fields, description, entityName: targetApp}
         handleAction(option._name, args, program.editmode, program.interactive)
     });
 
 program
-    .command('update-formrule <name>')
+    .command('update-formrule <targetApp> <description>')
     .description('update the form rule')
-    .action((name, option) => {
-        handleAction(option._name, { name }, program.editmode, program.interactive)
+    .action((targetApp, description, option) => {
+        const args = { ...payloads.addFormRule.args }
+        args.parent_fields = {...args.parent_fields, description, entityName: targetApp}
+        handleAction(option._name, args, program.editmode, program.interactive)
     });
 
 program
     .command('reorder-formrule <targetApp>')
     .description('reorder form rules')
     .action((targetApp, option) => {
-        handleAction(option._name, { entity: 'form_rule',  entityName: targetApp }, program.editmode, program.interactive)
+        handleAction(option._name, args, program.editmode, program.interactive)
     });
 
 program

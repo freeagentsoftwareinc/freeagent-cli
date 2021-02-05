@@ -221,6 +221,10 @@ const addSaveComposite = async (data, file) => {
         childModel,
         name: data.args.parent_fields.name,
     };
+
+    if(model === 'form_rule'){
+        set(option, 'name', data.args.parent_fields.description);
+    }
     const isExisingChoiceList = findOne(model, option);
     if(isExisingChoiceList){
        console.log(chalk.red('name aleady is there, please new one'));
@@ -264,6 +268,10 @@ const updateSaveComposite = async (data, file) => {
         childModel,
         name: data.args.parent_fields.name,
     };
+    
+    if(model === 'form_rule'){
+        set(option, 'name', data.args.parent_fields.description);
+    }
     const instance = findLast(model, option);
     if(!instance){
         console.log(chalk.red('data is not present please to update, must be updating system one'));

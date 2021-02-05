@@ -204,13 +204,13 @@ const operations = new Map([
         payload: 'addFormRule',
         api: 'saveCompositeEntity',
         query: 'addSaveComposite',
-        sucessMessage: 'created the field successfully'
+        sucessMessage: 'created the form rule successfully'
     }],
     ['update-formrule', {
         payload: 'addFormRule',
         api: 'saveCompositeEntity',
         query: 'updateSaveComposite',
-        sucessMessage: 'updated the formrule successfully'
+        sucessMessage: 'updated the form rule successfully'
     }],
     ['reorder-lines', {
         payload: 'updateOrder',
