@@ -88,7 +88,7 @@ const updateCardConfig = (data, file) => {
 const deleteField = (data, file) => {
     const option = {
         app: data.args.entity,
-        label: data.args.name_label
+        name: data.args.name_label
     }
     data = updateRecord(data, file, 'fa_field_config', option, true);
 };
@@ -127,11 +127,10 @@ const addSection = (data, file) => {
 
 const updateSection = (data, file) => {
     const option = {
-        file,
         app: data.args.field_values.entityName,
         name: data.args.field_values.title,
     }
-    data = updateRecord(data, 'layout', option);
+    data = updateRecord(data, file, 'layout', option);
 };
 
 
@@ -140,7 +139,7 @@ const toggleSection = (data, file) => {
         app: data.args.targetApp,
         name: data.args.name,
     };
-    data = updateRecord(data, file, 'layout', false, true );
+    data = updateRecord(data, file, 'layout', option, false, true );
     delete data.args.name;
     delete data.args.targetApp;
 };
@@ -156,11 +155,10 @@ const addAppAction = (data, file) => {
 
 const updateAppAction = (data, file) => {
     const option = {
-        file,
         app: data.args.field_values.entityName,
         name: data.args.field_values.name,
     };
-    data = updateRecord(data, 'app_action', option);
+    data = updateRecord(data, file, 'app_action', option);
 };
 
 const toggleAction = (data, file) => {
@@ -184,11 +182,10 @@ const addAcl = (data, file) => {
 
 const updateAcl = (data, file) => {
     const option = {
-        file,
         app: data.args.field_values.entityName,
         name: data.args.field_values.fa_field_id,
     };
-    data = updateRecord(data, 'fa_acl', option);
+    data = updateRecord(data, file, 'fa_acl', option);
 };
 
 const toggleAcl = (data, file) => {
@@ -199,6 +196,22 @@ const toggleAcl = (data, file) => {
     data = updateRecord(data, file, 'fa_acl', option, false, true);
     delete data.args.targetApp;
     delete data.args.fa_field_id;
+};
+
+const toggleChoiceList = (data, file) => {
+    const option = {
+        name: data.args.name,
+    };
+    data = updateRecord(data, file, 'catalog_type', option, false, true);
+    delete data.args.name;
+};
+
+const toggleAutomation = (data, file) => {
+    const option = {
+        name: data.args.name,
+    };
+    data = updateRecord(data, file, 'rule_set', option, false, true);
+    delete data.args.name;
 };
 
 const addSaveComposite = async (data, file) => {
@@ -221,7 +234,7 @@ const addSaveComposite = async (data, file) => {
 const createTransportIdsForChildren = async (instance) => {
     const savedData = await getSavedData(instance);
     if(!savedData){
-        console.log(chalk.red('please provide correct choicelist name'))
+        console.log(chalk.red('please provide correct choicelist name, if you are not editing system one'))
         return;
     };
     const children = savedData.args.children.map((child) => {
@@ -256,14 +269,16 @@ const updateSaveComposite = async (data, file) => {
         console.log(chalk.red('data is not present please to update, must be updating system one'));
     };
     const updateSavedData = await createTransportIdsForChildren(instance);
-    await saveDataToFile(updateSavedData, instance.file);
-    data.args = {...updateSavedData.args };
-    data.transports = [{
-        id: instance.id,
-        field: 'insatnce_id',
-        model
-    }];
-    insert(model, { file, isUpdate: true, isExported: false, ...option });
+    if(updateSavedData){
+        await saveDataToFile(updateSavedData, instance.file);
+        data.args = {...updateSavedData.args };
+        data.transports = [{
+            id: instance.id,
+            field: 'insatnce_id',
+            model
+        }];
+    }
+    insert(model, { file, model, childModel, isUpdate: true, isExported: false, ...option });
 };
 
 const remapSaveComposite = async () => {
@@ -296,6 +311,7 @@ const runQuery = {
     addAppAction,
     updateAppAction,
     toggleAction,
+    toggleChoiceList,
     addAcl,
     updateAcl,
     toggleAcl,
@@ -303,6 +319,7 @@ const runQuery = {
     updateSaveComposite,
     remapSaveComposite,
     updateCardConfig,
+    toggleAutomation
 }
 
 module.exports ={

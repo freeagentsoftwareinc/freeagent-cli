@@ -129,10 +129,10 @@ program
     });
 
 program
-    .command('reorder-section')
+    .command('reorder-section <targetApp>')
     .description('reorder sections')
-    .action((option) => {
-        handleAction(option._name, { entity: 'layout',  entityName: Date.now() }, program.editmode, program.interactive)
+    .action((targetApp, option) => {
+        handleAction(option._name, { entity: 'layout',  entityName: targetApp }, program.editmode, program.interactive)
     });
   
 program
@@ -169,10 +169,10 @@ program
     });
 
 program
-    .command('reorder-action')
+    .command('reorder-action <targetApp>')
     .description('reorder app actions')
-    .action((option) => {
-        handleAction(option._name, { entity: 'app_action',  entityName: Date.now() }, program.editmode, program.interactive)
+    .action((targetApp, option) => {
+        handleAction(option._name, { entity: 'app_action',  entityName: targetApp }, program.editmode, program.interactive)
     });
 
 program
@@ -241,6 +241,20 @@ program
         handleAction(option._name, args, program.editmode, program.interactive)
     });
 
+program
+    .command('activate-choicelist <name>')
+    .description('activate the choicelist')
+    .action((name, option) => {
+        handleAction(option._name, { name }, program.editmode, program.interactive)
+    });
+   
+   
+program
+    .command('deactivate-choicelist <name>')
+    .description('deactivate the choicelist')
+    .action((name, option) => {
+        handleAction(option._name, { name}, program.editmode, program.interactive)
+    });
 
 program
     .command('add-automation <name>')
@@ -258,14 +272,29 @@ program
         const args = { ...payloads.addAutomation.args }
         args.parent_fields = {...args.parent_fields, name}
         handleAction(option._name, args, program.editmode, program.interactive)
-        handleAction(option._name, args, program.editmode, program.interactive)
     });
 
 program
-    .command('add-formrule <name> <targetApp>')
-    .description('add new form rule')
+    .command('activate-automation <name>')
+    .description('activate the automation')
     .action((name, option) => {
-        handleAction(option._name, { name, entityName: targetApp }, program.editmode, program.interactive)
+        handleAction(option._name, { name }, program.editmode, program.interactive)
+    });
+   
+program
+    .command('deactivate-automation <name>')
+    .description('deactivate the automation')
+    .action((name, option) => {
+        handleAction(option._name, { name}, program.editmode, program.interactive)
+    });
+
+program
+    .command('add-formrule <description> <targetApp>')
+    .description('add new form rule')
+    .action((description, targetApp, option) => {
+        const args = { ...payloads.addAutomation.args }
+        args.parent_fields = {...args.parent_fields, description, entityName: targetApp}
+        handleAction(option._name, args, program.editmode, program.interactive)
     });
 
 program
@@ -276,17 +305,17 @@ program
     });
 
 program
-    .command('reorder-formrule')
+    .command('reorder-formrule <targetApp>')
     .description('reorder form rules')
-    .action((option) => {
-        handleAction(option._name, { entity: 'form_rule',  entityName: Date.now() }, program.editmode, program.interactive)
+    .action((targetApp, option) => {
+        handleAction(option._name, { entity: 'form_rule',  entityName: targetApp }, program.editmode, program.interactive)
     });
 
 program
-    .command('reorder-lines')
+    .command('reorder-lines <targetApp>')
     .description('reorder lines')
-    .action((option) => {
-        const args =  { entity: 'fa_entity_config', entityName: Date.now() , field_name: 'fa_entity.is_primary', field_value: true }
+    .action((targetApp, option) => {
+        const args =  { entity: 'fa_entity_config', entityName: targetApp, field_name: 'fa_entity.is_primary', field_value: true }
         handleAction(option._name, args, program.editmode, program.interactive)
     });
 

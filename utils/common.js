@@ -164,6 +164,18 @@ const operations = new Map([
         query: 'updateSaveComposite',
         sucessMessage: 'updated the choice list successfully'
     }],
+    ['activate-choicelist', {
+        payload: 'activateChoiceList',
+        api: 'updateEntityValue',
+        query: 'toggleChoiceList',
+        sucessMessage: 'activated the choicelist successfully'
+    }],
+    ['deactivate-choicelist', {
+        payload: 'deactivateChoiceList',
+        api: 'updateEntityValue',
+        query: 'toggleChoiceList',
+        sucessMessage: 'deactivated the choicelist successfully'
+    }],
     ['add-automation', {
         payload: 'addAutomation',
         api: 'saveCompositeEntity',
@@ -175,6 +187,18 @@ const operations = new Map([
         api: 'saveCompositeEntity',
         query: 'updateSaveComposite',
         sucessMessage: 'updated the automation successfully'
+    }],
+    ['activate-automation', {
+        payload: 'activateAutomation',
+        api: 'updateEntityValue',
+        query: 'toggleAutomation',
+        sucessMessage: 'activated the automation successfully'
+    }],
+    ['deactivate-automation', {
+        payload: 'deactivateAutomation',
+        api: 'updateEntityValue',
+        query: 'toggleAutomation',
+        sucessMessage: 'deactivated the automation successfully'
     }],
     ['add-formrule', {
         payload: 'addFormRule',
@@ -230,8 +254,6 @@ const modelsMap = new Map([
         childModel: 'form_action'
     }]
 ]);
-
-// const saveCompositeEntityModels = ['catalog_type']
 
 const cardConfigFieldsId = {
     still_looking: "3ee6c6c7-3a5e-4a53-9735-154300aebd4f",
@@ -306,6 +328,26 @@ const automationsTriggers = {
     onAppAction: 'f8b862e0-a13f-4708-ab3e-b973de1e781e',
     scheduleDatetimeField: '1398b293-35e4-416a-a57c-5d10f7f93af6',
     scheduleCron: 'e824d06c-e41a-4bee-97de-35c84a53736f',
+};
+
+const formRuleOperatoins= {
+    visible: '2630fba4-3da4-44a3-b05e-eb74fe6acee0',
+    mandatory: 'a98cc27e-3fac-491a-b5a1-61f6c4e06125',
+    readOnly: 'd3366cc1-2a43-4ed3-9cde-7c73846f9e9b',
+    reset: '5bcd7f9a-e6cd-4d38-b1a5-e7619cc41a4d',
+    setValue: 'aab04614-2eea-4dff-ae7d-7e84af294f9e',
+  };
+  
+  const formRuleOperatoinValues = {
+    true: 'a6e198ae-c959-431c-bb0d-4dfedea022ae',
+    false: 'f1b720c1-04ee-458f-b0a5-008962a15244',
+    noChange: 'cca22add-81f8-45e8-bf2c-89c424a96cdb',
+  };
+  
+  const formRuleTypes = {
+    appAction: '1eb3aa53-4247-412c-a241-2e65acdef107',
+    formSection: '1eb3aa53-4247-412c-a241-2e65acdef108',
+    formField: '5b67a8c1-2bef-4250-a7eb-8668260a08cf',
   };
 
 const modelConstant = ['fa_entity_config', 'fa_field_config','fa_role', 'layout', 'catalog_type', 'catalog'];
@@ -325,5 +367,8 @@ module.exports = {
     entityOperationTypes,
     modelConstant,
     choiceListOrderTypes,
-    automationsTriggers
+    automationsTriggers,
+    formRuleOperatoins,
+    formRuleOperatoinValues,
+    formRuleTypes
 };

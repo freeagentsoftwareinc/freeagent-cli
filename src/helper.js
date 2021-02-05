@@ -38,12 +38,11 @@ const createRecord = (data, model, option, isDelete=false) => {
 const updateRecord = (data, file, model, option, isDelete=false, isToggle=false) => {
     let instance = findOne(model, { 
         ...option,
-        isDelete,
+        isDelete: false,
         isSystem: false,
-        isUpdate: false,
-        isExported: false,
+        isUpdate: false
     });
-    set(data, 'args.id', '');
+    !isToggle && set(data, 'args.id', '');
     if(!instance || !instance.id){
        insert(model, {
             ...option,
@@ -61,11 +60,11 @@ const updateRecord = (data, file, model, option, isDelete=false, isToggle=false)
     };
     const tansport = {
         id: instance.id,
-        field: 'id',
+        field: !isToggle ? 'id' : 'entity_value_id',
         model
     };
     data.transports.push(tansport);
-    updateArgs(data, instance.file);
+    !isToggle && updateArgs(data, instance.file);
     insert(model, {
         ...option,
         file,

@@ -329,6 +329,24 @@ const payloads = {
         transports:[]
     },
 
+    activateChoiceList: {
+        args:{
+            entity_value_id: '',
+            entity: 'catalog_type',
+            custom_fields: [['is_visible', true]]
+        },
+        transports:[]
+    },
+
+    deactivateChoiceList: {
+        args:{
+            entity_value_id: '',
+            entity: 'catalog_type',
+            custom_fields:  [["is_visible", false]]
+        },
+        transports:[]
+    },
+
     addAutomation: {
         args: {
             instance_id: null,
@@ -356,6 +374,24 @@ const payloads = {
             }],
         },
         transports:[]  
+    },
+
+    activateAutomation: {
+        args:{
+            entity_value_id: '',
+            entity: 'rule_set',
+            custom_fields: [['is_visible', true]]
+        },
+        transports:[]
+    },
+
+    deactivateAutomation: {
+        args:{
+            entity_value_id: '',
+            entity: 'rule_set',
+            custom_fields:  [["is_visible", false]]
+        },
+        transports:[]
     },
 
     addFormRule: {
@@ -398,7 +434,7 @@ const payloads = {
             }
         },
         transports: []
-    }
+    },
 };
 
 module.exports = payloads;

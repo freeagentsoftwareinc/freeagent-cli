@@ -1,7 +1,7 @@
 const fs = require('fs');
 const { set, get, camelCase, toPairsIn, sortBy } = require('lodash');
 const { findAll, update, insert, findOne } = require('./query');
-const { choiceListOrderTypes, automationsTriggers } = require('../utils/common');
+const { choiceListOrderTypes, automationsTriggers, modelsMap } = require('../utils/common');
 const { getSavedData } = require('./helper');
 const { validate, v4 }  = require('uuid');
 const dir = './fa_changeset';
@@ -16,6 +16,7 @@ const {
     entityOperationTypes,
     modelConstant
 } = require('../utils/common');
+const { mainModule } = require('process');
 
 const findInAllModels = (id) => {
     const foundRecord = {};
@@ -380,23 +381,54 @@ const reMapParentfields = (parentFields) => {
     }
 };
 
+const covertDataForupdateEntityValueApi = (savedData) => {
+    const entityValueId   = get(savedData, 'args.entity_value_id');
+    if(!entityValueId && !validate(entityValueId)){
+        return;
+    }
+    const systemTrasportId = {
+        id: entityValueId,
+        field: 'entity_value_id',
+        model: savedData.args.entity
+    };
+    set(savedData, 'args.entity_value_id', '');
+    set(savedData, 'transports', [systemTrasportId]);
+};
+
+const covertDataForSaveCompositeApi= (savedData, instance) => {
+    const instanceId   = get(savedData, 'args.instance_id');
+    const parentFields = reMapParentfields(savedData.args.parent_fields);
+    const afterMapedPerentData = reMapChildrend(get(savedData, 'args.children'), instance);
+    set(savedData, 'args.parent_fields', parentFields.parentFields)
+    set(savedData, 'args.children', afterMapedPerentData.children);
+    set(savedData, 'transports', [...savedData.transports, ...parentFields.parentTransports, ...afterMapedPerentData.transports]);
+    if(instanceId){
+        const systemTrasportId = {
+            id: instanceId,
+            field: 'instance_id',
+            model: instance.model
+        }
+        set(savedData, 'args.instance_id', '');
+        set(savedData, 'transports', [...savedData.transports, systemTrasportId]);
+    }
+};
+
 const reWriteSaveCompositeEntityFiles = async (instances) => {
     instances.map(async (instance) => {
         const savedData = await getSavedData(instance);
-        if(!savedData){
+        const { model, file, isExported } = instance;
+        if(!savedData || isExported){
             return;
         };
-        const parentFields = reMapParentfields(savedData.args.parent_fields);
-        const afterMapedPerentData = reMapChildrend(get(savedData, 'args.children'), instance);
-        set(savedData, 'args.parent_fields', parentFields.parentFields)
-        set(savedData, 'args.children', afterMapedPerentData.children);
-        set(savedData, 'transports', [...savedData.transports, ...parentFields.parentTransports, ...afterMapedPerentData.transports]);
+        if(!instance.isToggle){
+            covertDataForSaveCompositeApi(savedData, instance);
+        }
+        covertDataForupdateEntityValueApi(savedData, model);
         const jsonData =  JSON.stringify({...savedData}, null, 4);
-        await fs.writeFileSync(`${dir}/${instance.file}`, jsonData);
-        update(instance.model, { file: instance.file, isExported: false }, { isExported: true });
+        await fs.writeFileSync(`${dir}/${file}`, jsonData);
+        update(model, { file: file, isExported: false }, { isExported: true });
     });
-}
-
+};
 
 module.exports = {
     reWriteUpdateEntityConfigFiles,
