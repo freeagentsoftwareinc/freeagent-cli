@@ -256,7 +256,6 @@ const updateSaveComposite = async (data, file) => {
         console.log(chalk.red('data is not present please to update, must be updating system one'));
     };
     const updateSavedData = await createTransportIdsForChildren(instance);
-console.log(updateSavedData)
     await saveDataToFile(updateSavedData, instance.file);
     data.args = {...updateSavedData.args };
     data.transports = [{

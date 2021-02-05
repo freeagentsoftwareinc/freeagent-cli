@@ -328,7 +328,7 @@ const reMapChildrend = (children, instance) => {
             field: `children[${index}].custom_fields[0][1]`,
             model: childModel
         });
-        remapedChild.custom_fields.shift(['id', '']);
+        remapedChild.custom_fields.unshift(['id', '']);
         return remapedChild;
     });
     newTransportIds.length && transports.push({
