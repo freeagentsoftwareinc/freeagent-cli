@@ -16,7 +16,6 @@ const {
     entityOperationTypes,
     modelConstant
 } = require('../utils/common');
-const { chdir } = require('process');
 
 const findInAllModels = (id) => {
     const foundRecord = {};

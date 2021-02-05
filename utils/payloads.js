@@ -362,22 +362,22 @@ const payloads = {
         args: {
             instance_id: null,
             parent_entity_id: '2c05c9fa-568e-49e2-b435-b84f79fe1d32',
-            parent_fields: [
-                ['entityName', ''],
-                ['description', ''],
-                ['roles', ''],
-                ['conditions', [{'field_name':'','values':[],'operator':''}]]   
-            ],
+            parent_fields: {
+                entityName: '',
+                description: '',
+                roles: [],
+                conditions: "[{ 'field_name':'','values': [], 'operator': '' }]",
+            },
             children: [{
                 entity_id: '101328d1-3b44-4f19-a19e-9a645776761b',
-                custom_fields: [
-                    ['field_name', null],
-                    ['section_name', null],
-                    ['type', ''],
-                    ['app_action_id', ''],
-                    ['operation', ''],
-                    ['value', '']
-                ]
+                custom_fields: {
+                    field_name: '',
+                    section_name: '',
+                    type: '',
+                    app_action_id: '',
+                    operation: '',
+                    value: '',
+                }
             }],
         },
         transports:[]

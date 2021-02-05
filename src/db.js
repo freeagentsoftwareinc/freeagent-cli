@@ -110,7 +110,7 @@ const updateRole = (data, file) => {
 
 const toggleRole = (data, file) => {
     const option = {
-        name: data.args.field_values.name
+        name: data.args.name
     };
     data = updateRecord(data, file, 'fa_role', option, false, true);
     delete data.args.name;
