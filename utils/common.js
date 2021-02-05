@@ -231,6 +231,8 @@ const modelsMap = new Map([
     }]
 ]);
 
+// const saveCompositeEntityModels = ['catalog_type']
+
 const cardConfigFieldsId = {
     still_looking: "3ee6c6c7-3a5e-4a53-9735-154300aebd4f",
     card_title: "99250395-196f-46e9-8a72-046d497a06ca",
@@ -286,12 +288,18 @@ const aclTypes = {
     record: 'ada73cdb-4e7b-482c-bf41-ef9746324853'
 };
 
-const entityOperationTypes =     {
+const entityOperationTypes = {
     create: 'b22d45c0-f2fe-43ad-86e5-b31bf3e4f3db',
     delete: 'd22d45c0-f2fe-43ad-86e5-b31bf3e4f3db',
     read: 'a22d45c0-f2fe-43ad-86e5-b31bf3e4f3db',
     update: 'c22d45c0-f2fe-43ad-86e5-b31bf3e4f3db'
 };
+
+const choiceListOrderTypes = {
+    alphabetical : 'b672222d-f782-48d9-99bf-71608605d8de',
+    order: '901f9fd9-161b-40fa-8dd9-09bd292a9de8'
+};
+
 
 const modelConstant = ['fa_entity_config', 'fa_field_config','fa_role', 'layout', 'catalog_type', 'catalog'];
 
@@ -308,5 +316,6 @@ module.exports = {
     operantionTypes,
     aclTypes,
     entityOperationTypes,
-    modelConstant
+    modelConstant,
+    choiceListOrderTypes,
 };

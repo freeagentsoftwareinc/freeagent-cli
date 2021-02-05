@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const { program } = require('commander');
+const { array } = require('yargs');
 const payloads = require('../utils/payloads');
 const { handleAction, exportChangeset } = require('./actions');
 const { resetDb } = require('./query');
@@ -226,7 +227,9 @@ program
     .command('add-choicelist <name>')
     .description('add new choice list')
     .action((name, option) => {
-        handleAction(option._name, { name }, program.editmode, program.interactive)
+        const args = { ...payloads.addChoiceList.args }
+        args.parent_fields = { name, ...args.parent_fields,}
+        handleAction(option._name, args, program.editmode, program.interactive)
     });
 
 program

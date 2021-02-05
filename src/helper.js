@@ -3,7 +3,7 @@ const fs = require('fs');
 const { set } = require('lodash');
 const { v4 }  = require('uuid');
 const { errorMessages } = require('../utils/common');
-const { find, update, insert, findAll } = require('./query');
+const { insert } = require('./query');
 const dir = './fa_changeset';
 
 const updateArgs = (data, file) => {
@@ -15,7 +15,7 @@ const updateArgs = (data, file) => {
     data.args = { ...data.args, ...savedData.args };
 };
 
-const createRecord = (data, file, model, option, isDelete=false) => {
+const createRecord = (data, model, option, isDelete=false) => {
     const id = v4();
     const tansport = {
         id,
@@ -26,7 +26,6 @@ const createRecord = (data, file, model, option, isDelete=false) => {
     insert(model, {
         ...option,
         id,
-        file,
         isDelete,
         isSystem: false,
         isExported: false,
@@ -37,8 +36,8 @@ const createRecord = (data, file, model, option, isDelete=false) => {
     }
 };
 
-const updateRecord = (data, file, model, option, isDelete=false, isToggle=false) => {
-    let instance = find(model, { 
+const updateRecord = (data, model, option, isDelete=false, isToggle=false) => {
+    let instance = findOne(model, { 
         ...option,
         isDelete,
         isSystem: false,
@@ -48,7 +47,6 @@ const updateRecord = (data, file, model, option, isDelete=false, isToggle=false)
     if(!instance || !instance.id){
        insert(model, {
             ...option,
-            file,
             isDelete,
             isToggle,
             isSystem: true,
@@ -69,7 +67,6 @@ const updateRecord = (data, file, model, option, isDelete=false, isToggle=false)
     updateArgs(data, instance.file);
     insert(model, {
         ...option,
-        file,
         isDelete,
         isToggle,
         isSystem: false,
@@ -94,11 +91,17 @@ const getSavedData = async (instance) => {
     return {
         ...JSON.parse(fileData)
     }
-}
+};
 
+const saveDataToFile = async (data, file) => {
+    const jsonData =  JSON.stringify(data, null, 4);
+    const filePath = `${dir}/${file}`
+    await fs.writeFileSync(`${filePath}`, jsonData);
+};
 
 module.exports = {
     createRecord,
     updateRecord,
-    getSavedData
+    getSavedData,
+    saveDataToFile
 }

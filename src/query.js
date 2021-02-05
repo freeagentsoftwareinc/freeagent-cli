@@ -24,8 +24,12 @@ const insert = (model, data) => db.get(model)
     .push(data)
     .write();
 
-const find = (model, where ) => db.get(model)
+const findOne = (model, where ) => db.get(model)
     .find(where)
+    .value();
+
+const findLast = (model, where) => db.get(model)
+    .findLast(where)
     .value();
 
 const findAll = (model) => db.get(model).value();
@@ -39,11 +43,12 @@ const resetDb = () => {
     db.setState({});
     db.write()
     console.log(chalk.green('your data is erased successfully'))
-} 
+};
 
 module.exports = {
     insert,
-    find,
+    findOne,
+    findLast,
     findAll,
     update,
     resetDb

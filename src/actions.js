@@ -5,7 +5,7 @@ const dir = './fa_changeset';
 const child_process = require('child_process');
 const editor = process.env.EDITOR || 'vi';
 const archiver = require('archiver');
-const { get, concat } = require('lodash');
+const { get } = require('lodash');
 const { prompt } = require('inquirer');
 const payloads = require('../utils/payloads');
 const questions = require('../utils/questions');
@@ -19,7 +19,7 @@ const getPayload = (operation, args) => {
     return data;
 };
 
-const runOperation = (operation, args={}) => {
+const runOperation = async (operation, args={}) => {
     const folderPath = initializeFolder(operation.payload);
     if (!folderPath) {
         console.log(get(errorMessages, operation.payload)); 
@@ -27,10 +27,10 @@ const runOperation = (operation, args={}) => {
     }
     const data = getPayload(operation.payload, args);
     const file = `${Date.now()}_${operation.api}_${v4()}.json`;
-    runQuery[operation.query](data, file);
+    await runQuery[operation.query](data, file);
     const jsonData =  JSON.stringify(data, null, 4);
     const filePath = `${dir}/${file}`;
-    fs.writeFileSync(`${filePath}`, jsonData);
+    await fs.writeFileSync(`${filePath}`, jsonData);
     console.log(chalk.green(operation.sucessMessage));
     return filePath;
 };
@@ -45,8 +45,8 @@ const openFileInViEditor = (file) => {
     });
 };
 
-const runOperationInEditMode = (opration, args) => {
-   const filePath = runOperation(opration, args);
+const runOperationInEditMode = async (opration, args) => {
+   const filePath = await runOperation(opration, args);
    return openFileInViEditor(filePath);
 };
 
@@ -66,15 +66,15 @@ const initializeFolder = (operation) => {
     return false;
 };   
 
-const handleAction = (command, args={}, editMode, interactiveMode) => {
+const handleAction = async (command, args={}, editMode, interactiveMode) => {
     const operation = operations.get(command);
     if (editMode) {
-        return runOperationInEditMode(operation, args) 
+        return await runOperationInEditMode(operation, args) 
     }
     if (interactiveMode) {
-        return runOperationInIntractionMode(operation, args)
+        return await runOperationInIntractionMode(operation, args)
     };
-    return runOperation(operation, args);
+    return await runOperation(operation, args);
 };
 
 const exportChangeset = async () => {

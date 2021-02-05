@@ -311,18 +311,18 @@ const payloads = {
         args: {
             instance_id: null,
             parent_entity_id: '10913ac7-852e-516e-a2d7-3c24c34600d4',
-            parent_fields: [
-                ['order_type', ''],
-                ['allow_choice_creation', 'true'],
-            ],
+            parent_fields: {
+                order_type: '',
+                allow_choice_creation: true
+            },
             children: [{
                 entity_id: '6fc34d02-c890-5661-a157-565d99a4fe37',
-                custom_fields: [
-                    ['name', ''],
-                    ['icon', null],
-                    ['color', null],
-                    ['order', null]
-                ]
+                custom_fields: {
+                    name: '',
+                    icon: '',
+                    color: '',
+                    order: '',
+                }
             }],
         },
         transports:[]
@@ -333,7 +333,6 @@ const payloads = {
             instance_id: null,
             parent_entity_id: 'cf7de345-a40b-56cb-b70a-7fb707a5b4b0',
             parent_fields: [
-                ['entityName', ''],
                 ['fa_entity_id', ''],
                 ['trigger', ''],
                 ['filter_conditions', [{'field_name':'task_type','values':[],'operator':'includes'}]]  
