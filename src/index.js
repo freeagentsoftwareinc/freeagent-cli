@@ -362,6 +362,20 @@ program
     });
 
 program
+    .command('activate-formrule <targetApp> <description>')
+    .description('activate the automation')
+    .action((targetApp, description, option) => {
+        handleAction(option._name, { entityName: targetApp, description }, program.editmode, program.interactive)
+    });
+   
+program
+    .command('deactivate-formrule <targetApp> <description>')
+    .description('deactivate the automation')
+    .action((targetApp, description, option) => {
+        handleAction(option._name, { entityName: targetApp, description }, program.editmode, program.interactive)
+    });
+
+program
     .command('reorder-formrule <targetApp>')
     .description('reorder form rules')
     .action((targetApp, option) => {

@@ -274,6 +274,15 @@ const toggleAutomation = (data, file) => {
     delete data.args.name;
 };
 
+const toggleFormrule = (data, file) => {
+    const option = {
+        name: data.args.description,
+    };
+    data = updateRecord(data, file, 'form_rule', option, false, true);
+    delete data.args.description;
+    delete data.args.entityName;
+};
+
 const addSaveComposite = async (data, file) => {
     const { model, childModel } = modelsMap.get(data.args.parent_entity_id);
     const option = {
@@ -391,7 +400,8 @@ const runQuery = {
     updateSaveComposite,
     remapSaveComposite,
     updateCardConfig,
-    toggleAutomation
+    toggleAutomation,
+    toggleFormrule
 }
 
 module.exports ={

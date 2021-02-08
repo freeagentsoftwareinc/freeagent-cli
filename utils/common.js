@@ -260,6 +260,18 @@ const operations = new Map([
         query: 'updateOrder',
         sucessMessage: 'reorderd the form rules successfully'
     }],
+    ['activate-formrule', {
+        payload: 'activateFormrule',
+        api: 'updateEntityValue',
+        query: 'toggleFormrule',
+        sucessMessage: 'activated the form rule successfully'
+    }],
+    ['deactivate-formrule', {
+        payload: 'deactivateFormrule',
+        api: 'updateEntityValue',
+        query: 'toggleFormrule',
+        sucessMessage: 'deactivated the form rule successfully'
+    }],
     ['reorder-lines', {
         payload: 'updateOrder',
         api: 'bulkUpdateOrder',
@@ -400,7 +412,7 @@ const formRuleOperatoins= {
 
 const modelForFieldReference = ['fa_entity_config', 'fa_field_config','fa_role', 'layout', 'catalog_type', 'catalog'];
 
-const modelsForEntityValueId = ['fa_role', 'layout', 'catalog_type']
+const modelsForEntityValueId = ['fa_role', 'layout', 'catalog_type', 'form_rule', 'rule_set']
 
 module.exports = {
     operations,

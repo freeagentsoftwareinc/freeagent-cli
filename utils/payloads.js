@@ -453,6 +453,25 @@ const payloads = {
         transports:[]
     },
 
+    activateFormrule: {
+        args:{
+            entity_value_id: '',
+            entity: 'form_rule',
+            custom_fields: [['is_visible', true]]
+        },
+        transports:[]
+    },
+
+    deactivateFormrule: {
+        args:{
+            entity_value_id: '',
+            entity: 'form_rule',
+            custom_fields:  [["is_visible", false]]
+        },
+        transports:[]
+    },
+
+
     updateCardConfig: {
         args: {
             entity: '',
