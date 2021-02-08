@@ -365,6 +365,7 @@ program
     .command('reorder-formrule <targetApp>')
     .description('reorder form rules')
     .action((targetApp, option) => {
+        const args =  { entity: 'form_rule', entityName: targetApp, field: "order" }
         handleAction(option._name, args, program.editmode, program.interactive)
     });
 

@@ -254,6 +254,12 @@ const operations = new Map([
         query: 'updateSaveComposite',
         sucessMessage: 'updated the form rule successfully'
     }],
+    ['reorder-formrule', {
+        payload: 'updateOrder',
+        api: 'bulkUpdateOrder',
+        query: 'updateOrder',
+        sucessMessage: 'reorderd the form rules successfully'
+    }],
     ['reorder-lines', {
         payload: 'updateOrder',
         api: 'bulkUpdateOrder',
