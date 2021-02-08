@@ -221,7 +221,7 @@ const reMapAppAction = (data) => {
     };
     set(data, 'args.field_values.appearance_id', 
     get(appearanceTypes, camelCase(appearanceType)) || null);
-    set(data, 'data.args.field_values.type', get(actionTypes, camelCase(actionType)) || null);
+    set(data, 'args.field_values.type', get(actionTypes, camelCase(actionType)) || null);
 };
 
 const reMapAcl = (data) => {
