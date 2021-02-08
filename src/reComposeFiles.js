@@ -440,7 +440,8 @@ const reMapParentfields = (parentFields) => {
     };
 
     Object.keys(parentFields).forEach((key, index) => {
-        if(key === 'schedule_datetime_field' || key === 'on_update_field'){
+        if((key === 'schedule_datetime_field' && get(parentFields, 'schedule_datetime_field'))
+            || (key === 'on_update_field' && get(parentFields, 'schedule_datetime_field')) ){
             parentTransports.push({
                 id: key,
                 field: `parent_fields[${index}][1]`,

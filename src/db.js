@@ -353,7 +353,7 @@ const updateSaveComposite = async (data, file) => {
         data.args = {...updateSavedData.args };
         data.transports = [{
             id: instance.id,
-            field: 'insatnce_id',
+            field: 'instance_id',
             model
         }];
     };

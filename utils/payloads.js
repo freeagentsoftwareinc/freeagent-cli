@@ -318,7 +318,8 @@ const payloads = {
                 type: 'grant',
                 entityName: '',
                 entity_operation: '',
-                conditions: [{ field_name: '', values: [''], operator: '' }]
+                resource_type: 'field',
+                conditions: '[{ "field_name": "" , "values": [], "operator": "" }]',
             }
         },
         transports:[]
@@ -367,7 +368,7 @@ const payloads = {
         args:{
             entity_value_id: '',
             entity: 'catalog_type',
-            custom_fields: [['is_visible', true]]
+            custom_fields: [['is_visible', 'true' ]]
         },
         transports:[]
     },
@@ -376,7 +377,7 @@ const payloads = {
         args:{
             entity_value_id: '',
             entity: 'catalog_type',
-            custom_fields:  [["is_visible", false]]
+            custom_fields:  [["is_visible", 'false' ]]
         },
         transports:[]
     },
@@ -393,7 +394,7 @@ const payloads = {
                 schedule_cron: '',
                 schedule_datetime_field: '',
                 on_update_field: null,
-                filter_conditions: "[{ 'field_name':'','values':[], 'operator': '' }]"
+                filter_conditions: '[{ "field_name": "" , "values": [], "operator": "" }]',
             },
             children: [{
                 entity_id: '37a890a4-01c4-56a7-8be0-6466b65db0dd',
@@ -414,7 +415,7 @@ const payloads = {
         args:{
             entity_value_id: '',
             entity: 'rule_set',
-            custom_fields: [['is_visible', true]]
+            custom_fields: [['is_visible', 'true']]
         },
         transports:[]
     },
@@ -423,7 +424,7 @@ const payloads = {
         args:{
             entity_value_id: '',
             entity: 'rule_set',
-            custom_fields:  [["is_visible", false]]
+            custom_fields:  [["is_visible", 'false' ]]
         },
         transports:[]
     },
@@ -436,7 +437,7 @@ const payloads = {
                 entityName: '',
                 description: '',
                 roles: [],
-                conditions: "[{ 'field_name':'','values': [], 'operator': '' }]",
+                conditions: '[{ "field_name": "" , "values": [], "operator": "" }]',
             },
             children: [{
                 entity_id: '101328d1-3b44-4f19-a19e-9a645776761b',
@@ -457,7 +458,7 @@ const payloads = {
         args:{
             entity_value_id: '',
             entity: 'form_rule',
-            custom_fields: [['is_visible', true]]
+            custom_fields: [['is_visible', 'true' ]]
         },
         transports:[]
     },
@@ -466,7 +467,7 @@ const payloads = {
         args:{
             entity_value_id: '',
             entity: 'form_rule',
-            custom_fields:  [["is_visible", false]]
+            custom_fields:  [["is_visible", 'false' ]]
         },
         transports:[]
     },
