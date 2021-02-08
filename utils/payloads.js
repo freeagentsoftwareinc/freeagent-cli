@@ -392,7 +392,7 @@ const payloads = {
                 entityName: '',
                 trigger: '',
                 schedule_cron: '',
-                schedule_datetime_field: '',
+                schedule_datetime_field: null,
                 on_update_field: null,
                 filter_conditions: '[{ "field_name": "" , "values": [], "operator": "" }]',
             },

@@ -439,6 +439,10 @@ const reMapParentfields = (parentFields) => {
         parentTransports.push(...reMapRoelsIds(roles, 'parent_fields.roles'));
     };
 
+    if(!entityName){
+        delete parentFields.entityName;
+    }
+
     Object.keys(parentFields).forEach((key, index) => {
         if((key === 'schedule_datetime_field' && get(parentFields, 'schedule_datetime_field'))
             || (key === 'on_update_field' && get(parentFields, 'schedule_datetime_field')) ){
