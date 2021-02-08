@@ -2,8 +2,8 @@
 const fs = require('fs');
 const { set } = require('lodash');
 const { v4 }  = require('uuid');
-const { errorMessages, modelsForEntityValueId } = require('../utils/common');
-const { insert, findOne, findAll } = require('./query');
+const { errorMessages, modelsForEntityValueId } = require('../utils/constants');
+const { insert, findOne, findAll } = require('./db');
 const dir = './fa_changeset';
 
 const updateArgs = (data, file) => {

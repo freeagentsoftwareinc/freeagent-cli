@@ -1,7 +1,7 @@
 const fs = require('fs');
 const { set, get, camelCase, toPairs, sortBy, find } = require('lodash');
-const { findAll, update, insert, findOne } = require('./query');
-const { choiceListOrderTypes, automationsTriggers, modelsMap } = require('../utils/common');
+const { findAll, update, insert, findOne } = require('./db');
+const { choiceListOrderTypes, automationsTriggers } = require('../utils/constants');
 const { getSavedData } = require('./helper');
 const { validate, v4 }  = require('uuid');
 const dir = './fa_changeset';
@@ -18,8 +18,7 @@ const {
     formRuleOperatoinValues,
     formRuleOperatoins,
     formRuleTypes,
-} = require('../utils/common');
-const { Instance } = require('chalk');
+} = require('../utils/constants');
 
 const findInAllModels = (id) => {
     const foundRecord = {};

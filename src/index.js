@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 
 const { program } = require('commander');
-const { array } = require('yargs');
 const payloads = require('../utils/payloads');
-const { handleAction, exportChangeset } = require('./actions');
-const { resetDb } = require('./query');
+const { handleOperation, exportChangeset } = require('./operations');
+const { resetDb } = require('./db');
 
 program
     .version('0.1')
@@ -17,7 +16,7 @@ program
     .description('initialize the changeset folder')
     .action((name, option) => {
         const args = { name }
-        handleAction(option._name, args, program.editmode, program.interactive)
+        handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
 program
@@ -30,7 +29,7 @@ program
            program.interactive: -i option
         */
        const args = { label: name, label_plural: pluralName  }
-        handleAction(option._name, args, program.editmode, program.interactive)
+        handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
 program
@@ -43,21 +42,21 @@ program
            program.interactive: -i option
         */
        const args = { label: label }
-        handleAction(option._name, args, program.editmode, program.interactive)
+        handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
 program
     .command('activate-app <name>')
     .description('activate the app')
     .action((name, option) => {
-        handleAction(option._name, { name }, program.editmode, program.interactive)
+        handleOperation(option._name, { name }, program.editmode, program.interactive)
     });
 
 program
     .command('deactivate-app <name>')
     .description('deactivate the app')
     .action((name, option) => {
-        handleAction(option._name, { name }, program.editmode, program.interactive)
+        handleOperation(option._name, { name }, program.editmode, program.interactive)
     });
 
 program
@@ -65,7 +64,7 @@ program
     .description('create new line to the traget app')
     .action((targetApp, name, pluralName, option) => {
        const args = { label: name, label_plural: pluralName, parent_id: targetApp }
-        handleAction(option._name, args, program.editmode, program.interactive)
+        handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
     program
@@ -73,7 +72,7 @@ program
     .description('activate the line')
     .action((targetApp, name, option) => {
         const args = { label: name, parent_id: targetApp }
-        handleAction(option._name, args, program.editmode, program.interactive)
+        handleOperation(option._name, args, program.editmode, program.interactive)
      });
 
 program
@@ -81,7 +80,7 @@ program
     .description('deactivate the line')
     .action((targetApp, name, option) => {
         const args = { label: name, parent_id: targetApp }
-        handleAction(option._name, args, program.editmode, program.interactive)
+        handleOperation(option._name, args, program.editmode, program.interactive)
      });
 
 program
@@ -89,7 +88,7 @@ program
     .description('create new field')
     .action((targetApp, name, option) => {
         const args = { parent_id: targetApp, name_label: name, entity: targetApp }
-        handleAction(option._name, args, program.editmode, program.interactive)
+        handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
 program
@@ -97,7 +96,7 @@ program
     .description('update the field')
     .action((targetApp, name, option) => {
         const args = { name_label: name, entity: targetApp };
-        handleAction(option._name, args, program.editmode, program.interactive)
+        handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
 program
@@ -105,7 +104,7 @@ program
     .description('delete the field')
     .action((targetApp, name, option) => {
         const args = { name_label: name, entity: targetApp }
-        handleAction(option._name, args, program.editmode, program.interactive)
+        handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
 program
@@ -113,7 +112,7 @@ program
     .description('activate the field')
     .action((targetApp, name, option) => {
         const args = { name_label: name, entity: targetApp }
-        handleAction(option._name, args, program.editmode, program.interactive)
+        handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
 program
@@ -121,7 +120,7 @@ program
     .description('deactivate the field')
     .action((targetApp, name, option) => {
         const args = { name_label: name, entity: targetApp }
-        handleAction(option._name, args, program.editmode, program.interactive)
+        handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
 program
@@ -129,7 +128,7 @@ program
     .description('reorder fields')
     .action((targetApp, option) => {
         const args =  { entity: 'fa_field_config', entityName: targetApp, field_name: 'entityName', field_value: targetApp }
-        handleAction(option._name, args, program.editmode, program.interactive)
+        handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
 
@@ -139,7 +138,7 @@ program
     .action((name, option) => {
         const args = { ...payloads.addRole.args }
         args.field_values = { ...args.field_values, ...{ name: name || ''} };
-        handleAction(option._name, args, program.editmode, program.interactive)
+        handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
 program
@@ -148,21 +147,21 @@ program
     .action((name, option) => {
         const args = { ...payloads.addRole.args }
         args.field_values = { ...args.field_values, ...{ name: name || ''} };
-        handleAction(option._name, args, program.editmode, program.interactive)
+        handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
 program
     .command('deactivate-role <name>')
     .description('deactivate the role')
     .action((name, option) => {
-        handleAction(option._name, { name }, program.editmode, program.interactive)
+        handleOperation(option._name, { name }, program.editmode, program.interactive)
     });
 
 program
     .command('activate-role <name>')
     .description('activate the role')
     .action((name, option) => {
-        handleAction(option._name, { name }, program.editmode, program.interactive)
+        handleOperation(option._name, { name }, program.editmode, program.interactive)
     });
 
 program
@@ -171,7 +170,7 @@ program
     .action((targetApp, name, option) => {
         const args = { ...payloads.addSection.args }
         args.field_values = { ...args.field_values, ...{ title: name, entityName: targetApp } }
-        handleAction(option._name, args, program.editmode, program.interactive)
+        handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
 program
@@ -180,21 +179,21 @@ program
     .action((targetApp, name, option) => {
         const args = { ...payloads.addSection.args }
         args.field_values = { ...args.field_values, ...{ title: name, entityName: targetApp} }
-        handleAction(option._name, args, program.editmode, program.interactive)
+        handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
 program
     .command('reorder-section <targetApp>')
     .description('reorder sections')
     .action((targetApp, option) => {
-        handleAction(option._name, { entity: 'layout',  entityName: targetApp }, program.editmode, program.interactive)
+        handleOperation(option._name, { entity: 'layout',  entityName: targetApp }, program.editmode, program.interactive)
     });
   
 program
     .command('activate-section  <targetApp> <name>')
     .description('activate the section')
     .action((targetApp, name, option) => {
-        handleAction(option._name, { targetApp, name }, program.editmode, program.interactive)
+        handleOperation(option._name, { targetApp, name }, program.editmode, program.interactive)
     });
    
    
@@ -202,7 +201,7 @@ program
     .command('deactivate-section  <targetApp> <name>')
     .description('deactivate the section')
     .action((targetApp, name, option) => {
-        handleAction(option._name, { targetApp, name }, program.editmode, program.interactive)
+        handleOperation(option._name, { targetApp, name }, program.editmode, program.interactive)
     });
 
 program
@@ -211,7 +210,7 @@ program
     .action((targetApp, name, option) => {
         const args = { ...payloads.addAction.args }
         args.field_values = { ...args.field_values, ...{ name, entityName: targetApp }}
-        handleAction(option._name, args, program.editmode, program.interactive)
+        handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
 program
@@ -220,21 +219,21 @@ program
     .action((targetApp, name, option) => {
         const args = { ...payloads.addAction.args }
         args.field_values = { ...args.field_values, ...{name, entityName: targetApp} }
-        handleAction(option._name, args, program.editmode, program.interactive)
+        handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
 program
     .command('reorder-action <targetApp>')
     .description('reorder app actions')
     .action((targetApp, option) => {
-        handleAction(option._name, { entity: 'app_action',  entityName: targetApp }, program.editmode, program.interactive)
+        handleOperation(option._name, { entity: 'app_action',  entityName: targetApp }, program.editmode, program.interactive)
     });
 
 program
     .command('activate-action <targetApp> <name>')
     .description('activate the app action')
     .action((targetApp, name, option) => {
-        handleAction(option._name, { targetApp, name }, program.editmode, program.interactive)
+        handleOperation(option._name, { targetApp, name }, program.editmode, program.interactive)
     });
    
    
@@ -242,7 +241,7 @@ program
     .command('deactivate-action <targetApp> <name>')
     .description('deactivate the app action')
     .action((targetApp, name, option) => {
-        handleAction(option._name, { targetApp, name }, program.editmode, program.interactive)
+        handleOperation(option._name, { targetApp, name }, program.editmode, program.interactive)
     });
 
 program
@@ -251,7 +250,7 @@ program
     .action((targetApp, tragetField, option) => {
         const args = { ...payloads.addAcl.args }
         args.field_values = { ...args.field_values, ...{ entityName: targetApp, fa_field_id: tragetField }}
-        handleAction(option._name, args, program.editmode, program.interactive)
+        handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
 program
@@ -260,14 +259,14 @@ program
     .action((targetApp, tragetField, option) => {
         const args = { ...payloads.addAcl.args }
         args.field_values = { ...args.field_values, ...{ entityName: targetApp, fa_field_id: tragetField }}
-        handleAction(option._name, args, program.editmode, program.interactive)
+        handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
 program
     .command('activate-acl  <targetApp> <tragetField>')
     .description('activate the ACL')
     .action((targetApp, tragetField, option) => {
-        handleAction(option._name, { targetApp, tragetField }, program.editmode, program.interactive)
+        handleOperation(option._name, { targetApp, tragetField }, program.editmode, program.interactive)
     });
    
    
@@ -275,7 +274,7 @@ program
     .command('deactivate-acl  <targetApp> <tragetField>')
     .description('deactivate the ACL')
     .action((targetApp, tragetField, option) => {
-        handleAction(option._name, { targetApp, tragetField }, program.editmode, program.interactive)
+        handleOperation(option._name, { targetApp, tragetField }, program.editmode, program.interactive)
     });
 
 program
@@ -284,7 +283,7 @@ program
     .action((name, option) => {
         const args = { ...payloads.addChoiceList.args }
         args.parent_fields = {...args.parent_fields, name}
-        handleAction(option._name, args, program.editmode, program.interactive)
+        handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
 program
@@ -293,14 +292,14 @@ program
     .action((name, option) => {
         const args = { ...payloads.addChoiceList.args }
         args.parent_fields = {...args.parent_fields, name}
-        handleAction(option._name, args, program.editmode, program.interactive)
+        handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
 program
     .command('activate-choicelist <name>')
     .description('activate the choicelist')
     .action((name, option) => {
-        handleAction(option._name, { name }, program.editmode, program.interactive)
+        handleOperation(option._name, { name }, program.editmode, program.interactive)
     });
    
    
@@ -308,7 +307,7 @@ program
     .command('deactivate-choicelist <name>')
     .description('deactivate the choicelist')
     .action((name, option) => {
-        handleAction(option._name, { name}, program.editmode, program.interactive)
+        handleOperation(option._name, { name}, program.editmode, program.interactive)
     });
 
 program
@@ -317,7 +316,7 @@ program
     .action((name, option) => {
         const args = { ...payloads.addAutomation.args }
         args.parent_fields = {...args.parent_fields, name}
-        handleAction(option._name, args, program.editmode, program.interactive)
+        handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
 program
@@ -326,21 +325,21 @@ program
     .action((name, option) => {
         const args = { ...payloads.addAutomation.args }
         args.parent_fields = {...args.parent_fields, name}
-        handleAction(option._name, args, program.editmode, program.interactive)
+        handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
 program
     .command('activate-automation <name>')
     .description('activate the automation')
     .action((name, option) => {
-        handleAction(option._name, { name }, program.editmode, program.interactive)
+        handleOperation(option._name, { name }, program.editmode, program.interactive)
     });
    
 program
     .command('deactivate-automation <name>')
     .description('deactivate the automation')
     .action((name, option) => {
-        handleAction(option._name, { name}, program.editmode, program.interactive)
+        handleOperation(option._name, { name}, program.editmode, program.interactive)
     });
 
 program
@@ -349,7 +348,7 @@ program
     .action((targetApp, description, option) => {
         const args = { ...payloads.addFormRule.args }
         args.parent_fields = {...args.parent_fields, description, entityName: targetApp}
-        handleAction(option._name, args, program.editmode, program.interactive)
+        handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
 program
@@ -358,21 +357,21 @@ program
     .action((targetApp, description, option) => {
         const args = { ...payloads.addFormRule.args }
         args.parent_fields = {...args.parent_fields, description, entityName: targetApp}
-        handleAction(option._name, args, program.editmode, program.interactive)
+        handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
 program
     .command('activate-formrule <targetApp> <description>')
     .description('activate the automation')
     .action((targetApp, description, option) => {
-        handleAction(option._name, { entityName: targetApp, description }, program.editmode, program.interactive)
+        handleOperation(option._name, { entityName: targetApp, description }, program.editmode, program.interactive)
     });
    
 program
     .command('deactivate-formrule <targetApp> <description>')
     .description('deactivate the automation')
     .action((targetApp, description, option) => {
-        handleAction(option._name, { entityName: targetApp, description }, program.editmode, program.interactive)
+        handleOperation(option._name, { entityName: targetApp, description }, program.editmode, program.interactive)
     });
 
 program
@@ -380,7 +379,7 @@ program
     .description('reorder form rules')
     .action((targetApp, option) => {
         const args =  { entity: 'form_rule', entityName: targetApp, field: "order" }
-        handleAction(option._name, args, program.editmode, program.interactive)
+        handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
 program
@@ -388,7 +387,7 @@ program
     .description('reorder lines')
     .action((targetApp, option) => {
         const args =  { entity: 'fa_entity_config', entityName: targetApp, field_name: 'fa_entity.is_primary', field_value: true }
-        handleAction(option._name, args, program.editmode, program.interactive)
+        handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
 program
@@ -396,14 +395,14 @@ program
     .description('reorder related lists')
     .action((targetApp, option) => {
         const args =  { entity: 'fa_related_list', entityName: targetApp, field_name: 'entityName', field_value: targetApp }
-        handleAction(option._name, args, program.editmode, program.interactive)
+        handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
 program
     .command('update-cardconfig <targetApp>')
     .description('update the card configuration')
     .action((targetApp, option) => {
-        handleAction(option._name, { entity: targetApp }, program.editmode, program.interactive)
+        handleOperation(option._name, { entity: targetApp }, program.editmode, program.interactive)
     });
 
 program
