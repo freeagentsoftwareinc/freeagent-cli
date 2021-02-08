@@ -14,19 +14,16 @@ const {
     operantionTypes,
     aclTypes,
     entityOperationTypes,
-    modelConstant,
+    modelForFieldReference,
     formRuleOperatoinValues,
     formRuleOperatoins,
     formRuleTypes,
 } = require('../utils/common');
-const { mainModule } = require('process');
 const { Instance } = require('chalk');
-const { inspect } = require('util');
-const { addFormRule } = require('../utils/payloads');
 
 const findInAllModels = (id) => {
     const foundRecord = {};
-    modelConstant.forEach((model) => {
+    modelForFieldReference.forEach((model) => {
         const instance = findOne(model, { name: id });
         if(instance && instance.id && !foundRecord.id){
             set(foundRecord, 'id', instance.id);
@@ -41,23 +38,35 @@ const reWriteUpdateEntityConfigFiles = () => {
     instances.map(async ( instance ) => {
         const file = instance.file;
         const savedData = await getSavedData(instance)
-        if(!savedData || !instance.isUpdate || !instance.isSystem){
+        if(!savedData || instance.isExported){
             return;
         }
-        const id = get(savedData, 'args.id');
+
+        if(!instance.isLine && (!instance.isUpdate || !instance.isSystem)){
+            return;
+        }
+
+        if(instance.isToggle && !instance.isSystem){
+            return;
+        }
+        const id = get(savedData, 'args.id') || get(savedData, 'args.parent_id');
         if(!id && !validate(id)){
             console.log(`please provide the id to ${file}`);
             throw new Error('empty or invalid id provided for update');
         };
+
+        const field = !instance.isLine ? 'id' : 'parent_id';
         savedData.transports.push( {
             id,
-            field: 'id',
+            field,
             model: 'fa_entity_config'
         });
-        set(savedData, 'args.id', '');
+        set(savedData, `args.${field}`, '');
+        delete savedData.args.id;
+        delete savedData.args.parent_id;
         const jsonData =  JSON.stringify(savedData, null, 4);
         await fs.writeFileSync(`${dir}/${file}`, jsonData);
-        update('fa_entity_config', { label: instance.label, isExported: false }, { isExported: true });
+        update('fa_entity_config', { name: instance.label, isExported: false }, { isExported: true });
     });
 };
 
@@ -241,7 +250,7 @@ const reMapAcl = (data) => {
 };
 
 
-const reWriteCreateUpdaTeEntityFiles = (instances, model) => {
+const reWriteCreateUpdateEntityFiles = (instances, model) => {
     instances.map(async ( instance ) => {
        
         if(!instance || instance.isExported){
@@ -502,7 +511,7 @@ const reWriteSaveCompositeEntityFiles = async (instances) => {
 
 module.exports = {
     reWriteUpdateEntityConfigFiles,
-    reWriteCreateUpdaTeEntityFiles,
+    reWriteCreateUpdateEntityFiles,
     reWriteFieldsFiles,
     reWriteUpdateOrderFiles,
     reWriteCardConfigFiles,

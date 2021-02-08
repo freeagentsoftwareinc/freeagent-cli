@@ -99,6 +99,22 @@ const payloads = {
         transports: []
     },
 
+    activateApp: {
+        args: {
+            id: '',
+            isVisible: true,
+        },
+        transports: []
+    },
+
+    deactivateApp: {
+        args: {
+            id: '',
+            isVisible: false,
+        },
+        transports: []
+    },
+
     addCustomField: {
         args:{
             entity: '',
@@ -162,6 +178,24 @@ const payloads = {
     deleteField: {
         args: {
             id: ''
+        },
+        transports: []
+    },
+
+    activateField: {
+        args: {
+            id: '',
+            isVisible: true,
+            is_filterable: true
+        },
+        transports: []
+    },
+
+    deactivateField: {
+        args: {
+            id: '',
+            isVisible: false,
+            is_filterable: false
         },
         transports: []
     },

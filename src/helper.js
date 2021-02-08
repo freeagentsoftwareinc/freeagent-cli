@@ -2,7 +2,7 @@
 const fs = require('fs');
 const { set } = require('lodash');
 const { v4 }  = require('uuid');
-const { errorMessages } = require('../utils/common');
+const { errorMessages, modelsForEntityValueId } = require('../utils/common');
 const { insert, findOne, findAll } = require('./query');
 const dir = './fa_changeset';
 
@@ -60,11 +60,11 @@ const updateRecord = (data, file, model, option, isDelete=false, isToggle=false)
     };
     const tansport = {
         id: instance.id,
-        field: !isToggle ? 'id' : 'entity_value_id',
+        field: (!isToggle || !modelsForEntityValueId.includes(model)) ? 'id' : 'entity_value_id',
         model
     };
     data.transports.push(tansport);
-    !isToggle && updateArgs(data, instance.file);
+    (!isToggle && !isDelete) && updateArgs(data, instance.file);
     insert(model, {
         ...option,
         file,

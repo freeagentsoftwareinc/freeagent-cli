@@ -21,7 +21,7 @@ program
     });
 
 program
-    .command('add-app <name> [pluralName]')
+    .command('add-app <name> <pluralName>')
     .description('create new app')
     .action((name, pluralName, option) => {
         /*
@@ -29,7 +29,7 @@ program
            program.editmode : -e option
            program.interactive: -i option
         */
-       const args = { label: name, label_plural: pluralName || name }
+       const args = { label: name, label_plural: pluralName  }
         handleAction(option._name, args, program.editmode, program.interactive)
     });
 
@@ -47,10 +47,48 @@ program
     });
 
 program
+    .command('activate-app <name>')
+    .description('activate the app')
+    .action((name, option) => {
+        handleAction(option._name, { name }, program.editmode, program.interactive)
+    });
+
+program
+    .command('deactivate-app <name>')
+    .description('deactivate the app')
+    .action((name, option) => {
+        handleAction(option._name, { name }, program.editmode, program.interactive)
+    });
+
+program
+    .command('add-line <targetApp> <name> <pluralName>')
+    .description('create new line to the traget app')
+    .action((targetApp, name, pluralName, option) => {
+       const args = { label: name, label_plural: pluralName, parent_id: targetApp }
+        handleAction(option._name, args, program.editmode, program.interactive)
+    });
+
+    program
+    .command('activate-line <targetApp> <name> >')
+    .description('activate the line')
+    .action((targetApp, name, option) => {
+        const args = { label: name, parent_id: targetApp }
+        handleAction(option._name, args, program.editmode, program.interactive)
+     });
+
+program
+    .command('deactivate-line <targetApp> <name> >')
+    .description('deactivate the line')
+    .action((targetApp, name, option) => {
+        const args = { label: name, parent_id: targetApp }
+        handleAction(option._name, args, program.editmode, program.interactive)
+     });
+
+program
     .command('add-field <targetApp> <name>')
     .description('create new field')
     .action((targetApp, name, option) => {
-        const args = { name_label: name, entity: targetApp }
+        const args = { parent_id: targetApp, name_label: name, entity: targetApp }
         handleAction(option._name, args, program.editmode, program.interactive)
     });
 
@@ -63,6 +101,30 @@ program
     });
 
 program
+    .command('delete-field <targetApp> <name>')
+    .description('delete the field')
+    .action((targetApp, name, option) => {
+        const args = { name_label: name, entity: targetApp }
+        handleAction(option._name, args, program.editmode, program.interactive)
+    });
+
+program
+    .command('activate-field <targetApp> <name>')
+    .description('activate the field')
+    .action((targetApp, name, option) => {
+        const args = { name_label: name, entity: targetApp }
+        handleAction(option._name, args, program.editmode, program.interactive)
+    });
+
+program
+    .command('deactivate-field <targetApp> <name>')
+    .description('deactivate the field')
+    .action((targetApp, name, option) => {
+        const args = { name_label: name, entity: targetApp }
+        handleAction(option._name, args, program.editmode, program.interactive)
+    });
+
+program
     .command('reorder-field <targetApp>')
     .description('reorder fields')
     .action((targetApp, option) => {
@@ -70,13 +132,6 @@ program
         handleAction(option._name, args, program.editmode, program.interactive)
     });
 
-program
-    .command('delete-field <targetApp> <name>')
-    .description('delete the field')
-    .action((targetApp, name, option) => {
-        const args = { name_label: name, entity: targetApp }
-        handleAction(option._name, args, program.editmode, program.interactive)
-    });
 
 program
     .command('add-role <name>')

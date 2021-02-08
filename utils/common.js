@@ -20,6 +20,36 @@ const operations = new Map([
         query: 'updateApp',
         sucessMessage: 'updated the app successfully'
     }],
+    ['activate-app', {
+        payload: 'activateApp',
+        api: 'updateEntityConfig',
+        query: 'toggleApp',
+        sucessMessage: 'activated the apps successfully'
+    }],
+    ['deactivate-app', {
+        payload: 'deactivateApp',
+        api: 'updateEntityConfig',
+        query: 'toggleApp',
+        sucessMessage: 'deactivated the app successfully'
+    }],
+    ['add-line', {
+        payload: 'addEntity',
+        api: 'addEntity',
+        query: 'addLine',
+        sucessMessage: 'created new line successfully'
+    }],
+    ['activate-line', {
+        payload: 'activateApp',
+        api: 'updateEntityConfig',
+        query: 'toggleLine',
+        sucessMessage: 'activated the line successfully'
+    }],
+    ['deactivate-line', {
+        payload: 'deactivateApp',
+        api: 'updateEntityConfig',
+        query: 'toggleLine',
+        sucessMessage: 'deactivated the line successfully'
+    }],
     ['add-field', {
         payload: 'addCustomField',
         api: 'addCustomField',
@@ -31,6 +61,18 @@ const operations = new Map([
         api: 'updateFieldConfig',
         query: 'updateField',
         sucessMessage: 'updated the field successfully'
+    }],
+    ['activate-field', {
+        payload: 'activateField',
+        api: 'updateFieldConfig',
+        query: 'toggleField',
+        sucessMessage: 'activated the field successfully'
+    }],
+    ['deactivate-field', {
+        payload: 'deactivateField',
+        api: 'updateFieldConfig',
+        query: 'toggleField',
+        sucessMessage: 'deactivated the field successfully'
     }],
     ['reorder-field', {
         payload: 'updateOrder',
@@ -60,7 +102,7 @@ const operations = new Map([
         payload: 'deactivateRole',
         api: 'updateEntityValue',
         query: 'toggleRole',
-        sucessMessage: 'deactivated the field successfully'
+        sucessMessage: 'deactivated the role successfully'
     }],
     ['activate-role', {
         payload: 'activateRole',
@@ -350,7 +392,9 @@ const formRuleOperatoins= {
     formField: '5b67a8c1-2bef-4250-a7eb-8668260a08cf',
   };
 
-const modelConstant = ['fa_entity_config', 'fa_field_config','fa_role', 'layout', 'catalog_type', 'catalog'];
+const modelForFieldReference = ['fa_entity_config', 'fa_field_config','fa_role', 'layout', 'catalog_type', 'catalog'];
+
+const modelsForEntityValueId = ['fa_role', 'layout', 'catalog_type']
 
 module.exports = {
     operations,
@@ -365,10 +409,11 @@ module.exports = {
     operantionTypes,
     aclTypes,
     entityOperationTypes,
-    modelConstant,
+    modelForFieldReference,
     choiceListOrderTypes,
     automationsTriggers,
     formRuleOperatoins,
     formRuleOperatoinValues,
-    formRuleTypes
+    formRuleTypes,
+    modelsForEntityValueId
 };

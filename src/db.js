@@ -2,12 +2,12 @@
 const fs = require('fs');
 const { v4 }  = require('uuid');
 const { set, get } = require('lodash');
-const { modelsMap, createEntityMap } = require('../utils/common');
-const { findOne, findLast, findAll, update, insert } = require('./query');
+const { modelsMap, createEntityMap, errorMessages } = require('../utils/common');
+const { findOne, findLast, findAll, insert } = require('./query');
 const {
     reWriteUpdateEntityConfigFiles,
     reWriteFieldsFiles,
-    reWriteCreateUpdaTeEntityFiles,
+    reWriteCreateUpdateEntityFiles,
     reWriteSaveCompositeEntityFiles,
     reWriteUpdateOrderFiles,
     reWriteCardConfigFiles,
@@ -24,7 +24,8 @@ const addApp = (data, file) => {
     const option = {
         file,
         name: data.args.label,
-        label_plural: data.args.label_plural
+        label_plural: data.args.label_plural,
+        isLine: false
     };
     data = createRecord(data, 'fa_entity_config', option);
 };
@@ -32,10 +33,57 @@ const addApp = (data, file) => {
 const updateApp = (data, file) => {
     const option = {
         name: data.args.label,
+        isLine: false,
     }
     data = updateRecord(data, file, 'fa_entity_config', option);
 };
 
+const toggleApp = (data, file) => {
+    const option = {
+        name: data.args.name,
+    };
+    data = updateRecord(data, file, 'fa_entity_config', option, false, true);
+    delete data.args.name;
+};
+
+const addLine = (data, file) => {
+    const where = {
+        name: data.args.parent_id,
+        isLine: false,
+    };
+    const app = findOne('fa_entity_config', where);
+    const parentId = (app && app.id) ? app.id : '';
+    if(!parentId){
+        console.log(errorMessages.notFoundEror);
+    }
+    const option = {
+        file,
+        name: data.args.label,
+        label_plural: data.args.label_plural,
+        parent_id: parentId,
+        isLine: true,
+        
+    };
+    data = createRecord(data, 'fa_entity_config', option);
+    set(data, 'args.parent_id', parentId);
+};
+
+const toggleLine = (data, file) => {
+    const where = {
+        name: data.args.parent_id,
+        isLine: false,
+    };
+    const app = findOne('fa_entity_config', where);
+    const parentId = (app && app.id) ? app.id : '';
+    const option = {
+        name: data.args.label,
+        parent_id: parentId,
+        isLine: true,
+    };
+    data = updateRecord(data, file, 'fa_entity_config', option, false, true);
+    delete data.args.parent_id;
+    delete data.args.label;
+}
 const addField = (data, file) => {
     const option = {
         file,
@@ -54,6 +102,26 @@ const updateField = (data, file) => {
         name: data.args.name_label
     }
     data = updateRecord(data, file, 'fa_field_config', option);
+};
+
+const deleteField = (data, file) => {
+    const option = {
+        app: data.args.entity,
+        name: data.args.name_label
+    }
+    data = updateRecord(data, file, 'fa_field_config', option, true);
+    delete data.args.entity;
+    delete data.args.name_label;
+};
+
+const toggleField = (data, file) => {
+    const option = {
+        app: data.args.entity,
+        name: data.args.name_label
+    }
+    data = updateRecord(data, file, 'fa_field_config', option, false, true);
+    delete data.args.entity;
+    delete data.args.name_label;
 };
 
 const updateOrder = (data, file) => {
@@ -83,14 +151,6 @@ const updateCardConfig = (data, file) => {
         entity: data.args.entity,
         isExport: false
     });
-};
-
-const deleteField = (data, file) => {
-    const option = {
-        app: data.args.entity,
-        name: data.args.name_label
-    }
-    data = updateRecord(data, file, 'fa_field_config', option, true);
 };
 
 const addRole = (data, file) => {
@@ -268,7 +328,7 @@ const updateSaveComposite = async (data, file) => {
         childModel,
         name: data.args.parent_fields.name,
     };
-    
+
     if(model === 'form_rule'){
         set(option, 'name', data.args.parent_fields.description);
     }
@@ -292,7 +352,7 @@ const updateSaveComposite = async (data, file) => {
 const remapSaveComposite = async () => {
     try {
         modelsMap.forEach(async (value) => await reWriteSaveCompositeEntityFiles(findAll(value.model)));
-        createEntityMap.map((model) => reWriteCreateUpdaTeEntityFiles(findAll(model), model));
+        createEntityMap.map((model) => reWriteCreateUpdateEntityFiles(findAll(model), model));
         reWriteUpdateEntityConfigFiles();
         reWriteFieldsFiles();
         reWriteUpdateOrderFiles();
@@ -306,8 +366,12 @@ const runQuery = {
     addChangeset,
     addApp,
     updateApp,
+    toggleApp,
+    addLine,
+    toggleLine,
     addField,
     updateField,
+    toggleField,
     updateOrder,
     deleteField,
     addRole,
