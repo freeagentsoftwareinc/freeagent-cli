@@ -15,6 +15,7 @@ const {
 const dir = './fa_changeset';
 const { createRecord, updateRecord, getSavedData, saveDataToFile } = require('./helper');
 const chalk = require('chalk');
+const { chdir } = require('process');
 
 const addChangeset = (data) => {
     return;
@@ -341,6 +342,7 @@ const updateSaveComposite = async (data, file) => {
     if(model === 'form_rule'){
         set(option, 'name', data.args.parent_fields.description);
     }
+
     const instance = findLast(model, option);
     if(!instance){
         console.log(chalk.red('data is not present please to update, must be updating system one'));
@@ -354,6 +356,13 @@ const updateSaveComposite = async (data, file) => {
             field: 'insatnce_id',
             model
         }];
+    };
+    if(data.args.children.length){
+        data.args.children.forEach((child) => {
+            if(!child.id){
+                child.id = '';
+            }
+        })
     }
     insert(model, { file, model, childModel, isUpdate: true, isExported: false, ...option });
 };
