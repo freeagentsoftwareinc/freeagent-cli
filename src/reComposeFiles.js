@@ -79,6 +79,7 @@ const reWriteFieldsFiles = () => {
             return;
         };
         const id = get(savedData, 'args.id');
+        const layout = get(savedData, 'args.layout_id');
         if(instance.isSystem && instance.isUpdate && !id && !validate(id)){
             console.log(`please provide the id to ${file}`);
             throw new Error('empty or invalid id provided for update');
@@ -92,6 +93,16 @@ const reWriteFieldsFiles = () => {
             });
             set(savedData, 'args.id', '');
         };
+
+        if(layout){
+            const layoutId = validate(layout) ? layout : findOne('layout', {name: layout}).id;
+            savedData.transports.push({
+                id: layoutId,
+                field: 'layout_id',
+                model: 'layout'
+            });
+        };
+         
         if(!instance.delete){
             const referenceTypes = ['reference_array', 'reference'];
             if(referenceTypes.includes(savedData.args.data_type)){

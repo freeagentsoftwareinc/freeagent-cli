@@ -5,6 +5,7 @@ const adapter = new FileSync('db.json');
 const db = low(adapter);
 
 db.defaults({ 
+    fa_changeset: [],
     fa_entity_config: [],
     fa_field_config:[], 
     fa_role: [], 

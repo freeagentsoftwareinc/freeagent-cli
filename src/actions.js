@@ -1,8 +1,8 @@
 
 const chalk = require('chalk');
 const { v4 }  = require('uuid');
-const { set, get } = require('lodash');
-const { modelsMap, createEntityMap, errorMessages } = require('../utils/constants');
+const { set, get, snakeCase } = require('lodash');
+const { modelsMap, createEntityMap, faEntitiesName, errorMessages } = require('../utils/constants');
 const { findOne, findLast, findAll, insert } = require('./db');
 const { createRecord, updateRecord, getSavedData, saveDataToFile } = require('./helper');
 const {
@@ -13,9 +13,19 @@ const {
     reWriteUpdateOrderFiles,
     reWriteCardConfigFiles,
 } = require('./reComposeFiles');
+const { option } = require('commander');
 
 const addChangeset = (data) => {
-    return;
+    const option = {
+        name: data.args.name
+    }
+    const changeset = findOne('fa_changeset', option);
+    if( changeset){
+        console.log(chalk.red(`changeset name ${data.args.name} exists, please use different name`));
+        return;
+    }
+    data = createRecord(data, 'fa_changeset', option);
+    return { ...data };
 };
 
 const addApp = (data, file) => {
@@ -25,7 +35,12 @@ const addApp = (data, file) => {
         label_plural: data.args.label_plural,
         isLine: false
     };
+    if(faEntitiesName.includes(snakeCase(data.args.label))){
+        console.log(chalk.red(`The system app existis with name ${data.args.label}, please user the different name`));
+        return;
+    };
     data = createRecord(data, 'fa_entity_config', option);
+    return { ...data }
 };
 
 const updateApp = (data, file) => {
@@ -34,6 +49,7 @@ const updateApp = (data, file) => {
         isLine: false,
     }
     data = updateRecord(data, file, 'fa_entity_config', option);
+    return { ...data }
 };
 
 const toggleApp = (data, file) => {
@@ -42,6 +58,7 @@ const toggleApp = (data, file) => {
     };
     data = updateRecord(data, file, 'fa_entity_config', option, false, true);
     delete data.args.name;
+    return { ...data }
 };
 
 const addLine = (data, file) => {
@@ -64,6 +81,7 @@ const addLine = (data, file) => {
     };
     data = createRecord(data, 'fa_entity_config', option);
     set(data, 'args.parent_id', parentId);
+    return { ...data }
 };
 
 const toggleLine = (data, file) => {
@@ -81,6 +99,7 @@ const toggleLine = (data, file) => {
     data = updateRecord(data, file, 'fa_entity_config', option, false, true);
     delete data.args.parent_id;
     delete data.args.label;
+    return { ...data }
 }
 const addField = (data, file) => {
     const option = {
@@ -89,9 +108,13 @@ const addField = (data, file) => {
         name: data.args.name_label
     }
     const app = findOne('fa_entity_config', { name: data.args.entity });
+    if(!app){
+        console.log(chalk.red('The app is not present in current changeset must be adding field to system / other changeset app'));
+    };
     set(data, 'args.related_list_name', (app && app.label_plural) || data.args.entity);
     set(data, 'args.related_list_name_plural', (app && app.label_plural) || data.args.entity);
-    data = createRecord(data, 'fa_field_config', option)
+    data = createRecord(data, 'fa_field_config', option);
+    return { ...data }
 };
 
 const updateField = (data, file) => {
@@ -100,6 +123,7 @@ const updateField = (data, file) => {
         name: data.args.name_label
     }
     data = updateRecord(data, file, 'fa_field_config', option);
+    return { ...data }
 };
 
 const deleteField = (data, file) => {
@@ -110,6 +134,7 @@ const deleteField = (data, file) => {
     data = updateRecord(data, file, 'fa_field_config', option, true);
     delete data.args.entity;
     delete data.args.name_label;
+    return { ...data }
 };
 
 const toggleField = (data, file) => {
@@ -120,6 +145,7 @@ const toggleField = (data, file) => {
     data = updateRecord(data, file, 'fa_field_config', option, false, true);
     delete data.args.entity;
     delete data.args.name_label;
+    return { ...data }
 };
 
 const updateOrder = (data, file) => {
@@ -149,6 +175,7 @@ const updateCardConfig = (data, file) => {
         entity: data.args.entity,
         isExport: false
     });
+    return { ...data }
 };
 
 const addRole = (data, file) => {
@@ -157,6 +184,7 @@ const addRole = (data, file) => {
         name: data.args.field_values.name
     };
     data = createRecord(data, 'fa_role', option);
+    return { ...data }
 };
 
 const updateRole = (data, file) => {
@@ -164,6 +192,7 @@ const updateRole = (data, file) => {
         name: data.args.field_values.name
     };
     data = updateRecord(data, file, 'fa_role', option);
+    return { ...data }
 };
 
 const toggleRole = (data, file) => {
@@ -172,6 +201,7 @@ const toggleRole = (data, file) => {
     };
     data = updateRecord(data, file, 'fa_role', option, false, true);
     delete data.args.name;
+    return { ...data }
 };
 
 const addSection = (data, file) => {
@@ -180,7 +210,12 @@ const addSection = (data, file) => {
         app: data.args.field_values.entityName,
         name: data.args.field_values.title,
     }
+    const app = findOne('fa_entity_config', { name: data.args.field_values.entityName });
+    if(!app){
+        console.log(chalk.red('The app is not present in current changeset must be adding section to system / other changeset app'));
+    };
     data = createRecord(data, 'layout', option);
+    return { ...data }
 };
 
 const updateSection = (data, file) => {
@@ -189,6 +224,7 @@ const updateSection = (data, file) => {
         name: data.args.field_values.title,
     }
     data = updateRecord(data, file, 'layout', option);
+    return { ...data }
 };
 
 
@@ -200,6 +236,7 @@ const toggleSection = (data, file) => {
     data = updateRecord(data, file, 'layout', option, false, true );
     delete data.args.name;
     delete data.args.targetApp;
+    return { ...data }
 };
 
 const addAppAction = (data, file) => {
@@ -207,8 +244,13 @@ const addAppAction = (data, file) => {
         file,
         app: data.args.field_values.entityName,
         name: data.args.field_values.name,
-    }; 
+    };
+    const app = findOne('fa_entity_config', { name: data.args.field_values.entityName });
+    if(!app){
+        console.log(chalk.red('The app is not present in current changeset must be adding action to system / other changeset app'));
+    };
     data = createRecord(data, 'app_action', option);
+    return { ...data }
 };
 
 const updateAppAction = (data, file) => {
@@ -217,6 +259,7 @@ const updateAppAction = (data, file) => {
         name: data.args.field_values.name,
     };
     data = updateRecord(data, file, 'app_action', option);
+    return { ...data }
 };
 
 const toggleAction = (data, file) => {
@@ -227,6 +270,7 @@ const toggleAction = (data, file) => {
     data = updateRecord(data, file, 'app_action', option, false, true);
     delete data.args.name;
     delete data.args.targetApp;
+    return { ...data }
 };
 
 const addAcl = (data, file) => {
@@ -235,7 +279,12 @@ const addAcl = (data, file) => {
         app: data.args.field_values.entityName,
         name: data.args.field_values.fa_field_id,
     };
+    const app = findOne('fa_entity_config', { name: data.args.field_values.entityName });
+    if(!app){
+        console.log(chalk.red('The app is not present in current changeset must be adding action to system / other changeset app'));
+    };
     data = createRecord(data, 'fa_acl', option);
+    return { ...data }
 };
 
 const updateAcl = (data, file) => {
@@ -244,6 +293,7 @@ const updateAcl = (data, file) => {
         name: data.args.field_values.fa_field_id,
     };
     data = updateRecord(data, file, 'fa_acl', option);
+    return { ...data }
 };
 
 const toggleAcl = (data, file) => {
@@ -254,6 +304,7 @@ const toggleAcl = (data, file) => {
     data = updateRecord(data, file, 'fa_acl', option, false, true);
     delete data.args.targetApp;
     delete data.args.fa_field_id;
+    return { ...data }
 };
 
 const toggleChoiceList = (data, file) => {
@@ -262,6 +313,7 @@ const toggleChoiceList = (data, file) => {
     };
     data = updateRecord(data, file, 'catalog_type', option, false, true);
     delete data.args.name;
+    return { ...data }
 };
 
 const toggleAutomation = (data, file) => {
@@ -270,6 +322,7 @@ const toggleAutomation = (data, file) => {
     };
     data = updateRecord(data, file, 'rule_set', option, false, true);
     delete data.args.name;
+    return { ...data }
 };
 
 const toggleFormrule = (data, file) => {
@@ -279,6 +332,7 @@ const toggleFormrule = (data, file) => {
     data = updateRecord(data, file, 'form_rule', option, false, true);
     delete data.args.description;
     delete data.args.entityName;
+    return { ...data }
 };
 
 const addSaveComposite = async (data, file) => {
@@ -300,6 +354,7 @@ const addSaveComposite = async (data, file) => {
         )
     };
     data = createRecord(data, model, { file, ...option });
+    return { ...data }
 };
 
 const createTransportIdsForChildren = async (instance) => {
@@ -362,6 +417,7 @@ const updateSaveComposite = async (data, file) => {
         })
     }
     insert(model, { file, model, childModel, isUpdate: true, isExported: false, ...option });
+    return { ...data }
 };
 
 const remapSaveComposite = async () => {
@@ -377,7 +433,7 @@ const remapSaveComposite = async () => {
     }
 };
 
-const runQuery = {
+const runAction = {
     addChangeset,
     addApp,
     updateApp,
@@ -411,5 +467,5 @@ const runQuery = {
 }
 
 module.exports ={
-    runQuery
+    runAction
 }

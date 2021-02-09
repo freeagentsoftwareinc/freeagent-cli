@@ -5,289 +5,289 @@ const operations = new Map([
     ['init', {
         payload: 'addChangeset',
         api: 'changeset',
-        query: 'addChangeset',
+        action: 'addChangeset',
         sucessMessage: 'changeset folder initialized'
     }],
     ['add-app', {
         payload: 'addEntity',
         api: 'addEntity',
-        query: 'addApp',
+        action: 'addApp',
         sucessMessage: 'created app successfully'
     }],
     ['update-app', {
         payload: 'updateApp',
         api: 'updateEntityConfig',
-        query: 'updateApp',
+        action: 'updateApp',
         sucessMessage: 'updated the app successfully'
     }],
     ['activate-app', {
         payload: 'activateApp',
         api: 'updateEntityConfig',
-        query: 'toggleApp',
+        action: 'toggleApp',
         sucessMessage: 'activated the apps successfully'
     }],
     ['deactivate-app', {
         payload: 'deactivateApp',
         api: 'updateEntityConfig',
-        query: 'toggleApp',
+        action: 'toggleApp',
         sucessMessage: 'deactivated the app successfully'
     }],
     ['add-line', {
         payload: 'addEntity',
         api: 'addEntity',
-        query: 'addLine',
+        action: 'addLine',
         sucessMessage: 'created new line successfully'
     }],
     ['activate-line', {
         payload: 'activateApp',
         api: 'updateEntityConfig',
-        query: 'toggleLine',
+        action: 'toggleLine',
         sucessMessage: 'activated the line successfully'
     }],
     ['deactivate-line', {
         payload: 'deactivateApp',
         api: 'updateEntityConfig',
-        query: 'toggleLine',
+        action: 'toggleLine',
         sucessMessage: 'deactivated the line successfully'
     }],
     ['add-field', {
         payload: 'addCustomField',
         api: 'addCustomField',
-        query: 'addField',
+        action: 'addField',
         sucessMessage: 'created new field successfully'
     }],
     ['update-field', {
         payload: 'addCustomField',
         api: 'updateFieldConfig',
-        query: 'updateField',
+        action: 'updateField',
         sucessMessage: 'updated the field successfully'
     }],
     ['activate-field', {
         payload: 'activateField',
         api: 'updateFieldConfig',
-        query: 'toggleField',
+        action: 'toggleField',
         sucessMessage: 'activated the field successfully'
     }],
     ['deactivate-field', {
         payload: 'deactivateField',
         api: 'updateFieldConfig',
-        query: 'toggleField',
+        action: 'toggleField',
         sucessMessage: 'deactivated the field successfully'
     }],
     ['reorder-field', {
         payload: 'updateOrder',
         api: 'bulkUpdateOrder',
-        query: 'updateOrder',
+        action: 'updateOrder',
         sucessMessage: 'reorderd the field successfully'
     }],
     ['delete-field', {
         payload: 'deleteField',
         api: 'deleteCustomField',
-        query: 'deleteField',
+        action: 'deleteField',
         sucessMessage: 'deleted the field successfully'
     }],
     ['add-role', {
         payload: 'addRole',
         api: 'createEntity',
-        query: 'addRole',
+        action: 'addRole',
         sucessMessage: 'created the role successfully'
     }],
     ['update-role', {
         payload: 'addRole',
         api: 'updateEntity',
-        query: 'updateRole',
+        action: 'updateRole',
         sucessMessage: 'updated the role successfully'
     }],
     ['deactivate-role', {
         payload: 'deactivateRole',
         api: 'updateEntityValue',
-        query: 'toggleRole',
+        action: 'toggleRole',
         sucessMessage: 'deactivated the role successfully'
     }],
     ['activate-role', {
         payload: 'activateRole',
         api: 'updateEntityValue',
-        query: 'toggleRole',
+        action: 'toggleRole',
         sucessMessage: 'activated the role successfully'
     }],
     ['add-section', {
         payload: 'addSection',
         api: 'createEntity',
-        query: 'addSection',
+        action: 'addSection',
         sucessMessage: 'created the section successfully'
     }],
     ['update-section', {
         payload: 'addSection',
         api: 'updateEntity',
-        query: 'updateSection',
+        action: 'updateSection',
         sucessMessage: 'updated the section successfully'
     }],
     ['reorder-section', {
         payload: 'updateOrder',
         api: 'bulkUpdateOrder',
-        query: 'updateOrder',
+        action: 'updateOrder',
         sucessMessage: 'reorderd the section successfully'
     }],
     ['deactivate-section', {
         payload: 'deactivateSection',
         api: 'updateEntityValue',
-        query: 'toggleSection',
+        action: 'toggleSection',
         sucessMessage: 'deactivated the section successfully'
     }],
     ['activate-section', {
         payload: 'activateSection',
         api: 'updateEntityValue',
-        query: 'toggleSection',
+        action: 'toggleSection',
         sucessMessage: 'activated the section successfully'
     }],
     ['add-action', {
         payload: 'addAction',
         api: 'createEntity',
-        query: 'addAppAction',
+        action: 'addAppAction',
         sucessMessage: 'created the action successfully'
     }],
     ['update-action', {
         payload: 'addAction',
         api: 'updateEntity',
-        query: 'updateAppAction',
+        action: 'updateAppAction',
         sucessMessage: 'updated the action successfully'
     }],
     ['reorder-action', {
         payload: 'updateOrder',
         api: 'bulkUpdateOrder',
-        query: 'updateOrder',
+        action: 'updateOrder',
         sucessMessage: 'reorderd the action successfully'
     }],
     ['activate-action', {
         payload: 'activateAction',
         api: 'updateEntityValue',
-        query: 'toggleAction',
+        action: 'toggleAction',
         sucessMessage: 'activated the action successfully'
     }],
     ['deactivate-action', {
         payload: 'deactivateAction',
         api: 'updateEntityValue',
-        query: 'toggleAction',
+        action: 'toggleAction',
         sucessMessage: 'deactivated the action successfully'
     }],
     ['add-acl', {
         payload: 'addAcl',
         api: 'createEntity',
-        query: 'addAcl',
+        action: 'addAcl',
         sucessMessage: 'created the acl successfully'
     }],
     ['update-acl', {
         payload: 'addAcl',
         api: 'updateEntity',
-        query: 'updateAcl',
+        action: 'updateAcl',
         sucessMessage: 'created the acl successfully'
     }],
     ['deactivate-acl', {
         payload: 'deactivateAcl',
         api: 'updateEntityValue',
-        query: 'toggleAcl',
+        action: 'toggleAcl',
         sucessMessage: 'deactivated the acl successfully'
     }],
     ['activate-acl', {
         payload: 'activateAcl',
         api: 'updateEntityValue',
-        query: 'toggleAcl',
+        action: 'toggleAcl',
         sucessMessage: 'activate the acl successfully'
     }],
     ['add-choicelist', {
         payload: 'addChoiceList',
         api: 'saveCompositeEntity',
-        query: 'addSaveComposite',
+        action: 'addSaveComposite',
         sucessMessage: 'created the choice list successfully'
     }],
     ['update-choicelist', {
         payload: 'addChoiceList',
         api: 'saveCompositeEntity',
-        query: 'updateSaveComposite',
+        action: 'updateSaveComposite',
         sucessMessage: 'updated the choice list successfully'
     }],
     ['activate-choicelist', {
         payload: 'activateChoiceList',
         api: 'updateEntityValue',
-        query: 'toggleChoiceList',
+        action: 'toggleChoiceList',
         sucessMessage: 'activated the choicelist successfully'
     }],
     ['deactivate-choicelist', {
         payload: 'deactivateChoiceList',
         api: 'updateEntityValue',
-        query: 'toggleChoiceList',
+        action: 'toggleChoiceList',
         sucessMessage: 'deactivated the choicelist successfully'
     }],
     ['add-automation', {
         payload: 'addAutomation',
         api: 'saveCompositeEntity',
-        query: 'addSaveComposite',
+        action: 'addSaveComposite',
         sucessMessage: 'created the automation successfully'
     }],
     ['update-automation', {
         payload: 'addAutomation',
         api: 'saveCompositeEntity',
-        query: 'updateSaveComposite',
+        action: 'updateSaveComposite',
         sucessMessage: 'updated the automation successfully'
     }],
     ['activate-automation', {
         payload: 'activateAutomation',
         api: 'updateEntityValue',
-        query: 'toggleAutomation',
+        action: 'toggleAutomation',
         sucessMessage: 'activated the automation successfully'
     }],
     ['deactivate-automation', {
         payload: 'deactivateAutomation',
         api: 'updateEntityValue',
-        query: 'toggleAutomation',
+        action: 'toggleAutomation',
         sucessMessage: 'deactivated the automation successfully'
     }],
     ['add-formrule', {
         payload: 'addFormRule',
         api: 'saveCompositeEntity',
-        query: 'addSaveComposite',
+        action: 'addSaveComposite',
         sucessMessage: 'created the form rule successfully'
     }],
     ['update-formrule', {
         payload: 'addFormRule',
         api: 'saveCompositeEntity',
-        query: 'updateSaveComposite',
+        action: 'updateSaveComposite',
         sucessMessage: 'updated the form rule successfully'
     }],
     ['reorder-formrule', {
         payload: 'updateOrder',
         api: 'bulkUpdateOrder',
-        query: 'updateOrder',
+        action: 'updateOrder',
         sucessMessage: 'reorderd the form rules successfully'
     }],
     ['activate-formrule', {
         payload: 'activateFormrule',
         api: 'updateEntityValue',
-        query: 'toggleFormrule',
+        action: 'toggleFormrule',
         sucessMessage: 'activated the form rule successfully'
     }],
     ['deactivate-formrule', {
         payload: 'deactivateFormrule',
         api: 'updateEntityValue',
-        query: 'toggleFormrule',
+        action: 'toggleFormrule',
         sucessMessage: 'deactivated the form rule successfully'
     }],
     ['reorder-lines', {
         payload: 'updateOrder',
         api: 'bulkUpdateOrder',
-        query: 'updateOrder',
+        action: 'updateOrder',
         sucessMessage: 'reorderd the lines successfully'
     }],
     ['reorder-relatedlist', {
         payload: 'updateOrder',
         api: 'bulkUpdateOrder',
-        query: 'updateOrder',
+        action: 'updateOrder',
         sucessMessage: 'reorderd the realated list successfully'
     }],
     ['update-cardconfig', {
         payload: 'updateCardConfig',
         api: 'updateCardConfig',
-        query: 'updateCardConfig',
+        action: 'updateCardConfig',
         sucessMessage: 'updated the card configuration successfully'
     }]
 ]);
@@ -410,6 +410,26 @@ const formRuleOperatoins= {
     formField: '5b67a8c1-2bef-4250-a7eb-8668260a08cf',
   };
 
+  const faEntitiesName = [
+    'deal',
+    'contact', 
+    'agent',
+    'logo', 
+    'team', 
+    'even',
+    'sync_account_email',
+    'task', 
+    'email_analytics',
+    'task_mention',
+    'import',
+    'import_column', 
+    'import_row', 
+    'import_cell_error', 
+    'fa_entity_value',
+    'catalog',
+    'fa_entities',
+];
+
 const modelForFieldReference = ['fa_entity_config', 'fa_field_config','fa_role', 'layout', 'catalog_type', 'catalog'];
 
 const modelsForEntityValueId = ['fa_role', 'layout', 'catalog_type', 'form_rule', 'rule_set']
@@ -433,5 +453,6 @@ module.exports = {
     formRuleOperatoins,
     formRuleOperatoinValues,
     formRuleTypes,
-    modelsForEntityValueId
+    modelsForEntityValueId,
+    faEntitiesName
 };

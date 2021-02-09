@@ -12,10 +12,10 @@ program
     .description('freeagent changeset generator system');
 
 program
-    .command('init [name]')
+    .command('init <name> [description]')
     .description('initialize the changeset folder')
-    .action((name, option) => {
-        const args = { name }
+    .action((name, description, option) => {
+        const args = { name, description }
         handleOperation(option._name, args, program.editmode, program.interactive)
     });
 

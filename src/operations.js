@@ -11,7 +11,7 @@ const payloads = require('../utils/payloads');
 const questions = require('../utils/questions');
 const chalk = require('chalk');
 const { operations, sucessMessages, errorMessages } = require('../utils/constants');
-const { runQuery } = require('./actions');
+const { runAction } = require('./actions');
  
 const getPayload = (operation, args) => {
     const payload = {...get(payloads, operation)}
@@ -25,9 +25,13 @@ const runOperation = async (operation, args={}) => {
         console.log(get(errorMessages, operation.payload)); 
         return;
     }
-    const data = getPayload(operation.payload, args);
+    const payload = getPayload(operation.payload, args);
     const file = `${Date.now()}_${operation.api}_${v4()}.json`;
-    await runQuery[operation.query](data, file);
+    const data = await runAction[operation.action](payload, file);
+    if(!data){
+        console.log(chalk(operation.errorMessages));
+        return;
+    }
     const jsonData =  JSON.stringify(data, null, 4);
     const filePath = `${dir}/${file}`;
     await fs.writeFileSync(`${filePath}`, jsonData);
@@ -82,7 +86,7 @@ const exportChangeset = async () => {
         console.log(errorMessages.app_created);
         return false;
     };
-    await runQuery['remapSaveComposite']();
+    await runAction['remapSaveComposite']();
     const zipFolderName = "fa_changeset.zip";
     const archive = archiver('zip', { zlib: { level: 9 }});
     const data = fs.createWriteStream(zipFolderName);
