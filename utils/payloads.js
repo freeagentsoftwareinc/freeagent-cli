@@ -11,11 +11,7 @@ const payloads = {
             description: '',
             created_at: new Date().toISOString()
         },
-        transports:[{
-            id: v4(),
-            field: 'transport_id',
-            model: 'changeset'
-        }]
+        transports:[]
     },
 
     addEntity: {
@@ -474,20 +470,23 @@ const payloads = {
 
 
     updateCardConfig: {
-        args: {
+        args:{
+            id:'',
             entity: '',
-            card_config_mappings: {
-                still_looking: '',
-                card_title: '',
-                team_member: '',
-                first_line: '',
-                second_line: '',
-                third_line: '',
-                forth_line: '',
-                fifith_line: '',
-            }
+            card_title: '',
+            team_member: '',
+            first_line: '',
+            second_line: '',
+            third_line: '',
+            forth_line: '',
+            fifith_line: '',
+            primary_action: '',
+            show_related_list: '',
+            show_app_icon: false,
+            landscape_mode: false,
+            show_seq_id: false,
         },
-        transports: []
+        transports:[]
     },
 };
 

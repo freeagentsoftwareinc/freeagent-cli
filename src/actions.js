@@ -13,17 +13,16 @@ const {
     reWriteUpdateOrderFiles,
     reWriteCardConfigFiles,
 } = require('./reComposeFiles');
-const { option } = require('commander');
 
 const addChangeset = (data) => {
     const option = {
         name: data.args.name
     }
-    const changeset = findOne('fa_changeset', option);
-    if( changeset){
-        console.log(chalk.red(`changeset name ${data.args.name} exists, please use different name`));
-        return;
-    }
+    // const changeset = findOne('fa_changeset', option);
+    // if( changeset){
+    //     console.log(chalk.red(`changeset name ${data.args.name} exists, please use different name`));
+    //     return;
+    // }
     data = createRecord(data, 'fa_changeset', option);
     return { ...data };
 };
@@ -183,7 +182,7 @@ const updateCardConfig = (data, file) => {
     insert('cards', {
         file,
         entity: data.args.entity,
-        isExport: false
+        isExported: false
     });
     return { ...data }
 };
@@ -476,6 +475,6 @@ const runAction = {
     toggleFormrule
 }
 
-module.exports ={
+module.exports = {
     runAction
 }

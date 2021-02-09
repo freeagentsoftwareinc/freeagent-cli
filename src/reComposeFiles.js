@@ -1,8 +1,8 @@
 const fs = require('fs');
-const { set, get, camelCase, toPairs, sortBy, find } = require('lodash');
+const { set, get, camelCase, toPairs, sortBy, find, omit } = require('lodash');
 const { findAll, update, insert, findOne } = require('./db');
-const { choiceListOrderTypes, automationsTriggers } = require('../utils/constants');
-const { getSavedData } = require('./helper');
+const { choiceListOrderTypes, automationsTriggers, updateEntityConfigKeys } = require('../utils/constants');
+const { getSavedData, saveDataToFile } = require('./helper');
 const { validate, v4 }  = require('uuid');
 const dir = './fa_changeset';
 const {
@@ -19,6 +19,7 @@ const {
     formRuleOperatoins,
     formRuleTypes,
 } = require('../utils/constants');
+const chalk = require('chalk');
 
 const findInAllModels = (id) => {
     const foundRecord = {};
@@ -63,8 +64,7 @@ const reWriteUpdateEntityConfigFiles = () => {
         set(savedData, `args.${field}`, '');
         delete savedData.args.id;
         delete savedData.args.parent_id;
-        const jsonData =  JSON.stringify(savedData, null, 4);
-        await fs.writeFileSync(`${dir}/${file}`, jsonData);
+        await saveDataToFile(savedData, file);
         update('fa_entity_config', { name: instance.label, isExported: false }, { isExported: true });
     });
 };
@@ -131,8 +131,7 @@ const reWriteFieldsFiles = () => {
                 });
             };
         };
-        const jsonData =  JSON.stringify(savedData, null, 4);
-        await fs.writeFileSync(`${dir}/${file}`, jsonData);
+        await savedDataTofile(data, file);
         update('fa_field_config', { name: instance.name, app: instance.app, isExported: false }, { isExported: true });
     });
 };
@@ -161,8 +160,7 @@ const reWriteUpdateOrderFiles = () => {
         });
         delete savedData.args.order;
         delete savedData.args.entityName;
-        const jsonData =  JSON.stringify(savedData, null, 4);
-        await fs.writeFileSync(`${dir}/${file}`, jsonData);
+        await saveDataToFile(savedData, file);
         update('reorder', { entity: instance.entity, entityName: instance.entityName }, { isExported: true });
     });
 };
@@ -170,32 +168,64 @@ const reWriteUpdateOrderFiles = () => {
 const reWriteCardConfigFiles = () => {
     const instances = findAll('cards');
     instances.map(async (instance) => {
-        if(!instance || instance.isExported){
-            return;
-        }
-
         const file = instance.file;
-        if(!fs.existsSync(`${dir}/${file}`)){
+        const savedData = await getSavedData(instance);
+        if(!savedData || instance.isExported){
             return;
+        };
+        const entityId = get(savedData, 'args.id');
+        if(!entityId){
+            return console.log(chalk.red(`please valid it into arguements to file ${file}`));
         }
-        const fileData = await fs.readFileSync(`${dir}/${file}`);
-        const savedData = JSON.parse(fileData);
-        const transports = {};
-        Object.keys(savedData.args.card_config_mappings).map((key)=> {
-            const value = get(savedData.args.card_config_mappings, `${key}`);
-            if(!validate(value)){
-                const field = findOne('fa_field_config', { app: savedData.args.entity, name: value });
-                field ? set(transports, get(cardConfigFieldsId, key), field.id)
-                    : set(savedData.args.card_config_mappings, get(cardConfigFieldsId, key), value);
-                delete savedData.args.card_config_mappings[key];
-            }
+        const cardTransports = {};
+        const entityName = get(savedData, 'args.entity');
+        const id =  validate(entityId) ? entityId : findOne('fa_field_config', { name: entityName }).id
+        const updateEntityConfigFile = `${Date.now()}_updateEntityConfig_${v4()}.json`;
+        const savedArgs = get(savedData, 'args');
+        const args = omit(savedArgs, ['entity', 'id']);
+        const entityConfigArgs = {
+            args: {
+                id: '',
+                label: entityName,
+                is_visible: true
+            },
+            transports: [{
+                id,
+                field: 'id',
+                model: 'fa_entity_config'
+            }]
+        };
+        Object.keys(args).map((key) => {
+            const value = get(args, key);
+            const transportId = ((typeof value === 'boolean') ||  validate(value))
+                ? value : findOne('fa_field_config', { app: entityName, name: value }).id || null;
+            if(updateEntityConfigKeys.includes(key)){
+                if(typeof transportId === 'boolean'){
+                    return set(entityConfigArgs, `args.${key}`, transportId);
+                }
+                set(entityConfigArgs, `args.${key}`, '');
+                return entityConfigArgs.transports.push({
+                    id: transportId,
+                    field: key,
+                    model: 'fa_field_config'
+                });
+            };
+            set(cardTransports, get(cardConfigFieldsId, key), transportId);
         });
-        savedData.transports.push({
-            card_config_mappings: { ...transports }
-        });
-        const jsonData =  JSON.stringify(savedData, null, 4);
-        await fs.writeFileSync(`${dir}/${file}`, jsonData);
-        update('cards',{ file: file },{ isExported: true });
+        const cardConfigArgs = {
+            args:{
+                entity: entityName,
+                card_config_mappings: null,
+            },
+            transports: [{
+                card_config_mappings:{
+                    ...cardTransports
+                }
+            }]
+        };
+        await saveDataToFile(cardConfigArgs, file);
+        await saveDataToFile(entityConfigArgs, updateEntityConfigFile);
+        update('cards',{ file, entity: entityName, isExported: false }, { isExported: true });
     });
 };
 
@@ -322,8 +352,7 @@ const reWriteCreateUpdateEntityFiles = (instances, model) => {
             reMapAcl(savedData);
         };
 
-        const jsonData =  JSON.stringify(savedData, null, 4);
-        await fs.writeFileSync(`${dir}/${file}`, jsonData);
+        await saveDataToFile(savedData, file);
         update(model, { name: instance.name, isUpdate: true, isExported: false }, { isExported: true });
     });
 };
@@ -529,8 +558,7 @@ const reWriteSaveCompositeEntityFiles = async (instances) => {
         };
             //for active or deactive case
         covertDataForupdateEntityValueApi(savedData, model);
-        const jsonData =  JSON.stringify({...savedData}, null, 4);
-        await fs.writeFileSync(`${dir}/${file}`, jsonData);
+        await saveDataToFile(savedData, file);
         update(model, { file: file, isExported: false }, { isExported: true });
     });
 };

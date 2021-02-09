@@ -15,7 +15,7 @@ program
     .command('init <name> [description]')
     .description('initialize the changeset folder')
     .action((name, description, option) => {
-        const args = { name, description }
+        const args = { name, description: description || '' }
         handleOperation(option._name, args, program.editmode, program.interactive)
     });
 

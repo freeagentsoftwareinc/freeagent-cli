@@ -432,7 +432,9 @@ const formRuleOperatoins= {
 
 const modelForFieldReference = ['fa_entity_config', 'fa_field_config','fa_role', 'layout', 'catalog_type', 'catalog'];
 
-const modelsForEntityValueId = ['fa_role', 'layout', 'catalog_type', 'form_rule', 'rule_set']
+const modelsForEntityValueId = ['fa_role', 'layout', 'catalog_type', 'form_rule', 'rule_set'];
+
+const updateEntityConfigKeys = [ 'primary_action', 'show_related_list', 'show_app_icon', 'landscape_mode', 'show_seq_id' ]
 
 module.exports = {
     operations,
@@ -454,5 +456,6 @@ module.exports = {
     formRuleOperatoinValues,
     formRuleTypes,
     modelsForEntityValueId,
-    faEntitiesName
+    faEntitiesName,
+    updateEntityConfigKeys
 };
