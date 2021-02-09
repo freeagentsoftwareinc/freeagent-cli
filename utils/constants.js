@@ -351,7 +351,7 @@ const appActionPlacemenTypes = {
 
 const actionTypes = {
     customCode: 'b635cae1-8529-45bd-8b99-c157b166a554',
-    automation: '93083487-cad0-4c15-a9e5-37bd9c58ba59',
+    automation: 'b635cae1-8529-45bd-8b99-c157b166a553',
     system: '4aa48ded-3741-434e-aa4b-1415485d8286',
 };
 const appearanceTypes = {
