@@ -43,7 +43,7 @@ const update = (model, where, data) => db.get(model)
 const resetDb = () => {
     db.setState({});
     db.write()
-    console.log(chalk.green('your data is erased successfully'))
+    console.log(chalk.green('Data is removed successfully'))
 };
 
 module.exports = {

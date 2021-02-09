@@ -20,6 +20,7 @@ const {
     formRuleTypes,
 } = require('../utils/constants');
 const chalk = require('chalk');
+const { relative } = require('path');
 
 const findInAllModels = (id) => {
     const foundRecord = {};
@@ -51,8 +52,8 @@ const reWriteUpdateEntityConfigFiles = () => {
         }
         const id = get(savedData, 'args.id') || get(savedData, 'args.parent_id');
         if(!id && !validate(id)){
-            console.log(`please provide the id to ${file}`);
-            throw new Error('empty or invalid id provided for update');
+            console.log(`please provide the correct id to ${file}`);
+            return;
         };
 
         const field = !instance.isLine ? 'id' : 'parent_id';
@@ -81,8 +82,8 @@ const reWriteFieldsFiles = () => {
         const id = get(savedData, 'args.id');
         const layout = get(savedData, 'args.layout_id');
         if(instance.isSystem && instance.isUpdate && !id && !validate(id)){
-            console.log(`please provide the id to ${file}`);
-            throw new Error('empty or invalid id provided for update');
+            console.log(`please provide the correct id to ${file}`);
+           return;
         };
 
         if(instance.isSystem && instance.isUpdate && !instance.isDelete) {
@@ -175,7 +176,8 @@ const reWriteCardConfigFiles = () => {
         };
         const entityId = get(savedData, 'args.id');
         if(!entityId){
-            return console.log(chalk.red(`please valid it into arguements to file ${file}`));
+            console.log(chalk.red(`please provide the correct id to ${file}`));
+            return;
         }
         const cardTransports = {};
         const entityName = get(savedData, 'args.entity');
@@ -318,8 +320,8 @@ const reWriteCreateUpdateEntityFiles = (instances, model) => {
         const id = get(savedData, 'args.id');
         const entityValueId = get(savedData, 'args.entity_value_id');
         if(instance.isSystem && instance.isUpdate && !entityValueId && !id && !validate(id)){
-            console.log(`please provide the id to ${file}`);
-            throw new Error('empty or invalid id provided for update');
+            console.log(`please provide the correct id to ${file}`);
+            return;
         };
         if(instance.isSystem && instance.isUpdate && !entityValueId) {
             savedData.transports.push({

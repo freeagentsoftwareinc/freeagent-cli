@@ -98,7 +98,7 @@ const exportChangeset = async () => {
 
     archive.finalize()
     .then(() => {
-        console.log(chalk.green('please find at root'),chalk.yellow(': changeset.zip'));
+        console.log(chalk.green(`please find changeset.zip at`), chalk.yellow(`${process.cwd()}`));
         return true;
     });
 };

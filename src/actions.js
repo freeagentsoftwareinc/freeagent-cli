@@ -35,7 +35,7 @@ const addApp = (data, file) => {
         isLine: false
     };
     if(faEntitiesName.includes(snakeCase(data.args.label))){
-        console.log(chalk.red(`The system app existis with name ${data.args.label}, please user the different name`));
+        console.log(chalk.red(`The system app exists called ${data.args.label}, please use the different name`));
         return;
     };
     data = createRecord(data, 'fa_entity_config', option);
@@ -108,7 +108,7 @@ const addField = (data, file) => {
     }
     const app = findOne('fa_entity_config', { name: data.args.entity });
     if(!app){
-        console.log(chalk.red('The app is not present in current changeset must be adding field to system / other changeset app'));
+        console.log(chalk.red('Targeted app is not present in current changeset, adding field considering the system / other changeset app'));
     };
     set(data, 'args.related_list_name', (app && app.label_plural) || data.args.entity);
     set(data, 'args.related_list_name_plural', (app && app.label_plural) || data.args.entity);
@@ -221,7 +221,7 @@ const addSection = (data, file) => {
     }
     const app = findOne('fa_entity_config', { name: data.args.field_values.entityName });
     if(!app){
-        console.log(chalk.red('The app is not present in current changeset must be adding section to system / other changeset app'));
+        console.log(chalk.red('Targeted app is not present in current changeset, adding section considering the system / other changeset app'));
     };
     data = createRecord(data, 'layout', option);
     return { ...data }
@@ -256,7 +256,7 @@ const addAppAction = (data, file) => {
     };
     const app = findOne('fa_entity_config', { name: data.args.field_values.entityName });
     if(!app){
-        console.log(chalk.red('The app is not present in current changeset must be adding action to system / other changeset app'));
+        console.log(chalk.red('Targeted app is not present in current changeset, adding action considering the system / other changeset app'));
     };
     data = createRecord(data, 'app_action', option);
     return { ...data }
@@ -290,7 +290,7 @@ const addAcl = (data, file) => {
     };
     const app = findOne('fa_entity_config', { name: data.args.field_values.entityName });
     if(!app){
-        console.log(chalk.red('The app is not present in current changeset must be adding action to system / other changeset app'));
+        console.log(chalk.red('Targeted app is not present in current changeset, adding ACL considering the system / other changeset app'));
     };
     data = createRecord(data, 'fa_acl', option);
     return { ...data }
@@ -357,7 +357,7 @@ const addSaveComposite = async (data, file) => {
     }
     const isExisingChoiceList = findOne(model, option);
     if(isExisingChoiceList){
-       console.log(chalk.red('name aleady is there, please new one'));
+       console.log(chalk.red('name already exists in current changeset, please use different name'));
         throw new Error(
            'name exisits'
         )
@@ -369,7 +369,7 @@ const addSaveComposite = async (data, file) => {
 const createTransportIdsForChildren = async (instance) => {
     const savedData = await getSavedData(instance);
     if(!savedData){
-        console.log(chalk.red('please provide correct choicelist name, if you are not editing system one'))
+        log(chalk.red('Data is not exists in current changeset'))
         return;
     };
     const children = savedData.args.children.map((child) => {
@@ -406,7 +406,7 @@ const updateSaveComposite = async (data, file) => {
 
     const instance = findLast(model, option);
     if(!instance){
-        console.log(chalk.red('data is not present please to update, must be updating system one'));
+        console.log(chalk.red('Data is not exists in current changeset'));
     };
     const updateSavedData = await createTransportIdsForChildren(instance);
     if(updateSavedData){
