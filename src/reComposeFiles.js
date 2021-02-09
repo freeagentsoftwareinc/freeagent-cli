@@ -85,11 +85,22 @@ const reWriteFieldsFiles = () => {
             throw new Error('empty or invalid id provided for update');
         };
 
-        if(instance.isSystem && (instance.isUpdate || instance.isDelete)) {
+        if(instance.isSystem && instance.isUpdate && !instance.isDelete) {
             savedData.transports.push({
                 id,
                 field: 'id',
                 model: 'fa_field_config'
+            });
+            set(savedData, 'args.id', '');
+        };
+        
+        if(instance.isSystem && instance.isUpdate && instance.isDelete) {
+            savedData.transports.push({
+                delete_custom_field: {
+                    id,
+                    field: 'id',
+                    model: 'fa_field_config'
+                }
             });
             set(savedData, 'args.id', '');
         };
