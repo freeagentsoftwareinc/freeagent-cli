@@ -367,7 +367,7 @@ const setTransportidForChildValues = (children) => {
             }
             if(props[0] === 'field_name' && props[1]){
                 transports.push({
-                    id: (validate(props[1]) ? props[1] : find('fa_field_config', { name: props[1]})),
+                    id: (validate(props[1]) ? props[1] : findOne('fa_field_config', { name: props[1]}).id),
                     filed: `children[${parentIndex}].custom_fields[${index}][1]`,
                     model: 'fa_field_config'
                 })
@@ -375,7 +375,7 @@ const setTransportidForChildValues = (children) => {
            
             if(props[0] === 'section_name' && props[1]){
                 transports.push({
-                    id: (validate(props[1]) ? props[1] : find('layout', { name: props[1]})),
+                    id: (validate(props[1]) ? props[1] : findOne('layout', { name: props[1]}).id),
                     filed: `children[${parentIndex}].custom_fields[${index}][1]`,
                     model: 'layout'
                 })
@@ -383,7 +383,7 @@ const setTransportidForChildValues = (children) => {
 
             if(props[0] === 'app_action_id' && props[1]){
                 transports.push({
-                    id: (validate(props[1]) ? props[1] : find('app_action', { name: props[1]})),
+                    id: (validate(props[1]) ? props[1] : findOne('app_action', { name: props[1]}).id),
                     filed: `children[${parentIndex}].custom_fields[${index}][1]`,
                     model: 'app_action'
                 })
@@ -408,7 +408,7 @@ const setTransportidForChildValues = (children) => {
         transports,
         updatedCildren
     }
-};
+};  
 
 const reMapChildrend = (children, instance) => {
     const { name, file, childModel } = instance;
