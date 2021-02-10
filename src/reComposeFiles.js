@@ -131,7 +131,7 @@ const reWriteFieldsFiles = () => {
                 });
             };
         };
-        await savedDataTofile(data, file);
+        await saveDataTofile(data, file);
         update('fa_field_config', { name: instance.name, app: instance.app, isExported: false }, { isExported: true });
     });
 };
