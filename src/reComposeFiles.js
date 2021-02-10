@@ -365,7 +365,7 @@ const setTransportidForChildValues = (children) => {
             if(!props[1]){
                 return [props[0], props[1]];
             }
-            if(props[0] === 'field_name'){
+            if(props[0] === 'field_name' && props[1]){
                 transports.push({
                     id: (validate(props[1]) ? props[1] : find('fa_field_config', { name: props[1]})),
                     filed: `children[${parentIndex}].custom_fields[${index}][1]`,
@@ -373,7 +373,7 @@ const setTransportidForChildValues = (children) => {
                 })
             };
            
-            if(props[0] === 'section_name'){
+            if(props[0] === 'section_name' && props[1]){
                 transports.push({
                     id: (validate(props[1]) ? props[1] : find('layout', { name: props[1]})),
                     filed: `children[${parentIndex}].custom_fields[${index}][1]`,
@@ -381,7 +381,7 @@ const setTransportidForChildValues = (children) => {
                 })
             };
 
-            if(props[0] === 'app_action_id'){
+            if(props[0] === 'app_action_id' && props[1]){
                 transports.push({
                     id: (validate(props[1]) ? props[1] : find('app_action', { name: props[1]})),
                     filed: `children[${parentIndex}].custom_fields[${index}][1]`,
