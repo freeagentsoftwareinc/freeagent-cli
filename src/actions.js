@@ -176,6 +176,7 @@ const updateOrder = (data, file) => {
         entityName,
         isExported: false,
     });
+    return { ...data }
 };
 
 const updateCardConfig = (data, file) => {

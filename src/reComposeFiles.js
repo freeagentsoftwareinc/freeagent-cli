@@ -20,7 +20,6 @@ const {
     formRuleTypes,
 } = require('../utils/constants');
 const chalk = require('chalk');
-const { relative } = require('path');
 
 const findInAllModels = (id) => {
     const foundRecord = {};
