@@ -3,7 +3,7 @@ const chalk = require('chalk');
 const { v4 }  = require('uuid');
 const { set, get, snakeCase } = require('lodash');
 const { modelsMap, createEntityMap, faEntitiesName, errorMessages } = require('../utils/constants');
-const { findOne, findLast, findAll, insert } = require('./db');
+const { findOne, findLast, findAll, insert, resetDb } = require('./db');
 const { createRecord, updateRecord, getSavedData, saveDataToFile } = require('./helper');
 const {
     reWriteUpdateEntityConfigFiles,
@@ -410,7 +410,7 @@ const updateSaveComposite = async (data, file) => {
     if(!instance){
         console.log(chalk.red('Data is not exists in current changeset'));
     };
-    const updateSavedData = await createTransportIdsForChildren(instance);
+    const updateSavedData = instance && await createTransportIdsForChildren(instance);
     if(updateSavedData){
         await saveDataToFile(updateSavedData, instance.file);
         data.args = {...updateSavedData.args };
@@ -439,6 +439,7 @@ const remapSaveComposite = async () => {
         reWriteFieldsFiles();
         reWriteUpdateOrderFiles();
         reWriteCardConfigFiles();
+        resetDb(false);
     } catch(e) {
         throw e;
     }

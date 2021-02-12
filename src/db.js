@@ -40,10 +40,10 @@ const update = (model, where, data) => db.get(model)
     .assign(data)
     .write();
 
-const resetDb = () => {
+const resetDb = (isMessage=true) => {
     db.setState({});
     db.write()
-    console.log(chalk.green('Data is removed successfully'))
+    isMessage && console.log(chalk.green('Data is removed successfully'))
 };
 
 module.exports = {
