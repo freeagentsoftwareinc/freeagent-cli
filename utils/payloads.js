@@ -218,7 +218,7 @@ const payloads = {
         args:{
             entity: 'fa_role',
             entity_value_id: '',
-            custom_fields: [['is_visible', 'true']]
+            custom_fields: [['is_visible', 'false']]
         },
         transports:[]
     },
@@ -227,7 +227,7 @@ const payloads = {
         args:{
             entity: 'fa_role',
             entity_value_id: '',
-            custom_fields: [['is_visible', 'false']]
+            custom_fields: [['is_visible', 'true']]
         },
         transports:[]
     },
