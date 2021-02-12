@@ -180,7 +180,7 @@ const payloads = {
     activateField: {
         args: {
             id: '',
-            isVisible: true,
+            is_visible: true,
             is_filterable: true
         },
         transports: []
@@ -189,7 +189,7 @@ const payloads = {
     deactivateField: {
         args: {
             id: '',
-            isVisible: false,
+            is_visible: false,
             is_filterable: false
         },
         transports: []
