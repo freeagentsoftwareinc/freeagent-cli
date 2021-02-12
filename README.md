@@ -61,19 +61,19 @@ Run `freeagent-cli init` To initialize the changset
   
   `deactivate-action <targetApp> <name>`             deactivate the app action
   
-  `add-acl <targetApp> <tragetField>`                add new ACL
+  `add-acl <targetApp> <targetField>`                add new ACL
   
-  `update-acl <targetApp> <tragetField>`             update the ACL
+  `update-acl <targetApp> <targetField>`             update the ACL
   
-  `activate-acl <targetApp> <tragetField>`           activate the ACL
+  `activate-acl <targetApp> <targetField>`           activate the ACL
   
-  `deactivate-acl <targetApp> <tragetField>`         deactivate the ACL
+  `deactivate-acl <targetApp> <targetField>`         deactivate the ACL
   
   `add-choicelist <name>`                            add new choice list
   
   `update-choicelist <name>`                         update the choice list
   
-  `add-automation <name> <targetApp> [tragetField]`  add new automation
+  `add-automation <name> <targetApp> [targetField]`  add new automation
   
   `update-automation <name>`                         update the automation
   

@@ -9,7 +9,6 @@ const payloads = {
         args: {
             name: '',
             description: '',
-            created_at: new Date().toISOString()
         },
         transports:[]
     },

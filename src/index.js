@@ -61,7 +61,7 @@ program
 
 program
     .command('add-line <targetApp> <name> <pluralName>')
-    .description('create new line to the traget app')
+    .description('create new line to the target app')
     .action((targetApp, name, pluralName, option) => {
        const args = { label: name, label_plural: pluralName, parent_id: targetApp }
         handleOperation(option._name, args, program.editmode, program.interactive)
@@ -245,36 +245,36 @@ program
     });
 
 program
-    .command('add-acl <targetApp> <tragetField>')
+    .command('add-acl <targetApp> <targetField>')
     .description('add new ACL')
-    .action((targetApp, tragetField, option) => {
+    .action((targetApp, targetField, option) => {
         const args = { ...payloads.addAcl.args }
-        args.field_values = { ...args.field_values, ...{ entityName: targetApp, fa_field_id: tragetField }}
+        args.field_values = { ...args.field_values, ...{ entityName: targetApp, fa_field_id: targetField }}
         handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
 program
-    .command('update-acl <targetApp> <tragetField>')
+    .command('update-acl <targetApp> <targetField>')
     .description('update the ACL')
-    .action((targetApp, tragetField, option) => {
+    .action((targetApp, targetField, option) => {
         const args = { ...payloads.addAcl.args }
-        args.field_values = { ...args.field_values, ...{ entityName: targetApp, fa_field_id: tragetField }}
+        args.field_values = { ...args.field_values, ...{ entityName: targetApp, fa_field_id: targetField }}
         handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
 program
-    .command('activate-acl  <targetApp> <tragetField>')
+    .command('activate-acl  <targetApp> <targetField>')
     .description('activate the ACL')
-    .action((targetApp, tragetField, option) => {
-        handleOperation(option._name, { targetApp, tragetField }, program.editmode, program.interactive)
+    .action((targetApp, targetField, option) => {
+        handleOperation(option._name, { targetApp, targetField }, program.editmode, program.interactive)
     });
    
    
 program
-    .command('deactivate-acl  <targetApp> <tragetField>')
+    .command('deactivate-acl  <targetApp> <targetField>')
     .description('deactivate the ACL')
-    .action((targetApp, tragetField, option) => {
-        handleOperation(option._name, { targetApp, tragetField }, program.editmode, program.interactive)
+    .action((targetApp, targetField, option) => {
+        handleOperation(option._name, { targetApp, targetField }, program.editmode, program.interactive)
     });
 
 program
@@ -407,7 +407,7 @@ program
 
 program
     .command('export')
-    .description('compalete and zip the created changeset')
+    .description('complete and zip the created changeset')
     .action(() => {
         return exportChangeset();
     });

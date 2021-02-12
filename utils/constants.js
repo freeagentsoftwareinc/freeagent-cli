@@ -6,7 +6,7 @@ const operations = new Map([
         payload: 'addChangeset',
         api: 'changeset',
         action: 'addChangeset',
-        sucessMessage: 'changeset folder initialized'
+        sucessMessage: `new changeset initialized, please find fa_changeset folder at ${process.cwd()}`
     }],
     ['add-app', {
         payload: 'addEntity',

@@ -16,15 +16,16 @@ const {
 
 const addChangeset = (data) => {
     const option = {
-        name: data.args.name
+        name: data.args.name,
+        description: data.args.description
     }
     // const changeset = findOne('fa_changeset', option);
     // if( changeset){
     //     console.log(chalk.red(`changeset name ${data.args.name} exists, please use different name`));
     //     return;
     // }
-    data = createRecord(data, 'fa_changeset', option);
-    return { ...data };
+    createRecord(data, 'fa_changeset', option);
+    return option;
 };
 
 const addApp = (data, file) => {
@@ -309,7 +310,7 @@ const updateAcl = (data, file) => {
 const toggleAcl = (data, file) => {
     const option = {
         app: data.args.targetApp,
-        name: data.args.tragetField,
+        name: data.args.targetField,
     };
     data = updateRecord(data, file, 'fa_acl', option, false, true);
     delete data.args.targetApp;
