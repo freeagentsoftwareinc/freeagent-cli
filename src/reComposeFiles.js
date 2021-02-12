@@ -296,8 +296,8 @@ const reMapAcl = (data) => {
         });
         set(data, 'args.field_values.fa_field_id', '');
     };
-    set(data, 'args.field_values.acl_type', get(aclTypes, aclType) || null);
-    set(data, 'args.field_values.operation', get(operantionTypes, operaionType) || null);
+    set(data, 'args.field_values.acl_type', get(aclTypes,  camelCase(aclType)) || null);
+    set(data, 'args.field_values.operation', get(operantionTypes, camelCase(operaionType)) || null);
     set(data, 'args.field_values.entity_operation', get(entityOperationTypes, entityOperationType) || null);
 };
 
@@ -368,7 +368,7 @@ const setTransportidForChildValues = (children) => {
             if(props[0] === 'field_name' && props[1]){
                 transports.push({
                     id: (validate(props[1]) ? props[1] : findOne('fa_field_config', { name: props[1]}).id),
-                    filed: `children[${parentIndex}].custom_fields[${index}][1]`,
+                    field: `children[${parentIndex}].custom_fields[${index}][1]`,
                     model: 'fa_field_config'
                 })
             };
@@ -376,7 +376,7 @@ const setTransportidForChildValues = (children) => {
             if(props[0] === 'section_name' && props[1]){
                 transports.push({
                     id: (validate(props[1]) ? props[1] : findOne('layout', { name: props[1]}).id),
-                    filed: `children[${parentIndex}].custom_fields[${index}][1]`,
+                    field: `children[${parentIndex}].custom_fields[${index}][1]`,
                     model: 'layout'
                 })
             };
@@ -384,7 +384,7 @@ const setTransportidForChildValues = (children) => {
             if(props[0] === 'app_action_id' && props[1]){
                 transports.push({
                     id: (validate(props[1]) ? props[1] : findOne('app_action', { name: props[1]}).id),
-                    filed: `children[${parentIndex}].custom_fields[${index}][1]`,
+                    field: `children[${parentIndex}].custom_fields[${index}][1]`,
                     model: 'app_action'
                 })
             };

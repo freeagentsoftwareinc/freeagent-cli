@@ -180,7 +180,7 @@ const updateOrder = (data, file) => {
     return { ...data }
 };
 
-const updateCardConfig = (data, file) => {
+const updateCardConfigs = (data, file) => {
     insert('cards', {
         file,
         entity: data.args.entity,
@@ -371,7 +371,7 @@ const addSaveComposite = async (data, file) => {
 const createTransportIdsForChildren = async (instance) => {
     const savedData = await getSavedData(instance);
     if(!savedData){
-        log(chalk.red('Data is not exists in current changeset'))
+        console.log(chalk.red('Data is not exists in current changeset'))
         return;
     };
     const children = savedData.args.children.map((child) => {
@@ -472,7 +472,7 @@ const runAction = {
     addSaveComposite,
     updateSaveComposite,
     remapSaveComposite,
-    updateCardConfig,
+    updateCardConfigs,
     toggleAutomation,
     toggleFormrule
 }

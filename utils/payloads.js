@@ -97,7 +97,7 @@ const payloads = {
     activateApp: {
         args: {
             id: '',
-            isVisible: true,
+            is_visible: true,
         },
         transports: []
     },
@@ -105,7 +105,7 @@ const payloads = {
     deactivateApp: {
         args: {
             id: '',
-            isVisible: false,
+            is_visible: false,
         },
         transports: []
     },
@@ -468,7 +468,7 @@ const payloads = {
     },
 
 
-    updateCardConfig: {
+    updateCardConfigs: {
         args:{
             id:'',
             entity: '',
@@ -477,8 +477,8 @@ const payloads = {
             first_line: '',
             second_line: '',
             third_line: '',
-            forth_line: '',
-            fifith_line: '',
+            fourth_line: '',
+            fifth_line: '',
             primary_action: '',
             show_related_list: '',
             show_app_icon: false,

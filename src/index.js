@@ -390,13 +390,13 @@ program
         handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
-program
-    .command('reorder-relatedlist <targetApp>')
-    .description('reorder related lists')
-    .action((targetApp, option) => {
-        const args =  { entity: 'fa_related_list', entityName: targetApp, field_name: 'entityName', field_value: targetApp }
-        handleOperation(option._name, args, program.editmode, program.interactive)
-    });
+// program
+//     .command('reorder-relatedlist <targetApp>')
+//     .description('reorder related lists')
+//     .action((targetApp, option) => {
+//         const args =  { entity: 'fa_related_list', entityName: targetApp, field_name: 'entityName', field_value: targetApp }
+//         handleOperation(option._name, args, program.editmode, program.interactive)
+//     });
 
 program
     .command('update-cardconfig <targetApp>')

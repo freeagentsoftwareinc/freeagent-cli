@@ -285,9 +285,9 @@ const operations = new Map([
         sucessMessage: 'reorderd the realated list successfully'
     }],
     ['update-cardconfig', {
-        payload: 'updateCardConfig',
-        api: 'updateCardConfig',
-        action: 'updateCardConfig',
+        payload: 'updateCardConfigs',
+        api: 'updateCardConfigs',
+        action: 'updateCardConfigs',
         sucessMessage: 'updated the card configuration successfully'
     }]
 ]);
@@ -322,8 +322,8 @@ const cardConfigFieldsId = {
     first_line: "7d37035b-c3ac-4a6c-a468-1e1b42d5e2c5",
     second_line: "407534b0-938e-4919-9223-1a9e922d5e0e",
     third_line: "07762e81-a620-4a3a-a24f-905837797e1a",
-    forth_line: "d16ef822-d217-4020-bc20-2ff57a7bd757",
-    fifith_line: "e17e3d22-6c9e-41e8-ae12-1d93f84eeb24",
+    fourth_line: "d16ef822-d217-4020-bc20-2ff57a7bd757",
+    fifth_line: "e17e3d22-6c9e-41e8-ae12-1d93f84eeb24",
 };
 
 const fieldReferenceKeys = new Map([
