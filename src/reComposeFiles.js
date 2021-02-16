@@ -173,14 +173,14 @@ const reWriteCardConfigFiles = () => {
         if(!savedData || instance.isExported){
             return;
         };
-        const entityId = get(savedData, 'args.id');
-        if(!entityId){
+        const entityName = get(savedData, 'args.entity');
+        const changeSetAppId = get(findOne('fa_entity_config', { name: entityName }), 'id');
+        const id = changeSetAppId ? changeSetAppId : validate(get(savedData, 'args.id')) || null;
+        if(!id){
             console.log(chalk.red(`please provide the correct id to ${file}`));
             return;
         }
         const cardTransports = {};
-        const entityName = get(savedData, 'args.entity');
-        const id =  validate(entityId) ? entityId : get(findOne('fa_field_config', { name: entityName }), 'id') || null;
         const updateEntityConfigFile = `${Date.now()}_updateEntityConfig_${v4()}.json`;
         const savedArgs = get(savedData, 'args');
         const args = omit(savedArgs, ['entity', 'id']);
