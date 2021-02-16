@@ -124,6 +124,15 @@ program
     });
 
 program
+    .command('add-stage <targetApp> <targetField> <name>')
+    .description('add new satge to stage type field')
+    .action((targetApp, targetField, name, option) => {
+        const args = { ...payloads.addCatalog.args }
+        args.catalog = { ...args.catalog, ...{ entityName: targetApp, custom_field_id: targetField, name }}
+        handleOperation(option._name, args, program.editmode, program.interactive)
+    });
+
+program
     .command('reorder-field <targetApp>')
     .description('reorder fields')
     .action((targetApp, option) => {

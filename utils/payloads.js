@@ -487,6 +487,20 @@ const payloads = {
         },
         transports:[]
     },
+
+    addCatalog: {
+        args:{
+            catalog: {
+                name: '',
+                order: '',
+                icon: '',
+                color: '',
+                custom_field_id: ''
+            },
+            catalog_mappings: '[]'
+        },
+        transports: []
+    }
 };
 
 module.exports = payloads;

@@ -566,11 +566,42 @@ const reWriteSaveCompositeEntityFiles = async (instances) => {
     });
 };
 
+const reWriteStageFields = () => {
+    const instances = findAll('catalog');
+    instances.map( async(instance) => {
+        if(!instance){
+            return;
+        }
+        const savedData = await getSavedData(instance);
+        const { model, file, isExported } = instance;
+        if(!savedData || isExported){
+            return;
+        };
+        const customFieldId = get(savedData, 'args.catalog.custom_field_id');
+        const entityName = get(savedData,'args.catalog.entityName' );
+        const id = (customFieldId && validate(customFieldId)) ? customFieldId : get(findOne('fa_field_config', { name: id,  app: entityName }), 'id') || null;
+        if(!id){
+            console.log(chalk.red(`empty or invalid id provided for stage field ${file}`));
+            return;
+        };
+        delete savedData.args.catalog.targetApp;
+        set(savedData, 'args.catalog.custom_field_id', '');
+        savedData.transports.push({
+            id,
+            field: 'custom_field_id',
+            model: 'catalog.fa_field_config'
+        });
+        await saveDataToFile(savedData, file);
+        update(model, { file: file, isExported: false }, { isExported: true });
+    });
+}
+
 module.exports = {
     reWriteUpdateEntityConfigFiles,
     reWriteCreateUpdateEntityFiles,
     reWriteFieldsFiles,
     reWriteUpdateOrderFiles,
     reWriteCardConfigFiles,
-    reWriteSaveCompositeEntityFiles
+    reWriteSaveCompositeEntityFiles,
+    reWriteStageFields
 };

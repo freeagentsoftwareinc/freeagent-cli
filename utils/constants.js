@@ -289,6 +289,12 @@ const operations = new Map([
         api: 'updateCardConfigs',
         action: 'updateCardConfigs',
         sucessMessage: 'updated the card configuration successfully'
+    }],
+    ['add-stage',{
+        payload: 'addCatalog',
+        api: 'addCatalog',
+        action: 'addCatalog',
+        sucessMessage: 'new stage got added to the field successfully'
     }]
 ]);
 

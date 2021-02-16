@@ -12,6 +12,7 @@ const {
     reWriteSaveCompositeEntityFiles,
     reWriteUpdateOrderFiles,
     reWriteCardConfigFiles,
+    reWriteStageFields,
 } = require('./reComposeFiles');
 
 const addChangeset = (data) => {
@@ -156,6 +157,28 @@ const toggleField = (data, file) => {
     delete data.args.entity;
     delete data.args.name_label;
     return { ...data }
+};
+
+const addCatalog = (data, file) => {
+    const option = {
+        file,
+        name: data.args.catalog.name,
+        app: data.args.catalog.entityName,
+        field: data.args.catalog.custom_field_id,
+    };
+    const field = findOne('fa_field_config', { name: option.field, app: option.entityName });
+    if(!field){
+        set(data, 'args.catalog.custom_field_id', '');
+        console.log(chalk.red('Targeted field is not present in current changeset, adding stage considering the system / other changeset app'));
+    };
+    const catalog = findLast('catalog', { name: option.name, field: option.field, app: option.entityName });
+    const order = (catalog && catalog.order) ? (catalog.order + 1) : 1;
+    set(data, 'args.catalog.order', order);
+    set(option, 'order', order);
+    data = createRecord(data, 'catalog', option);
+    return {
+        ...data
+    }
 };
 
 const updateOrder = (data, file) => {
@@ -439,6 +462,7 @@ const remapSaveComposite = async () => {
         reWriteFieldsFiles();
         reWriteUpdateOrderFiles();
         reWriteCardConfigFiles();
+        reWriteStageFields();
     } catch(e) {
         throw e;
     }
@@ -474,7 +498,8 @@ const runAction = {
     remapSaveComposite,
     updateCardConfigs,
     toggleAutomation,
-    toggleFormrule
+    toggleFormrule,
+    addCatalog
 }
 
 module.exports = {
