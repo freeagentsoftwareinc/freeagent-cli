@@ -584,12 +584,12 @@ const reWriteStageFields = () => {
             console.log(chalk.red(`empty or invalid id provided for stage field ${file}`));
             return;
         };
-        delete savedData.args.catalog.targetApp;
+        delete savedData.args.catalog.entityName;
         set(savedData, 'args.catalog.custom_field_id', '');
         savedData.transports.push({
             id,
-            field: 'custom_field_id',
-            model: 'catalog.fa_field_config'
+            field: 'catalog.custom_field_id',
+            model: 'fa_field_config'
         });
         await saveDataToFile(savedData, file);
         update(model, { file: file, isExported: false }, { isExported: true });
