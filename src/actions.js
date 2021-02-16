@@ -133,7 +133,7 @@ const deleteField = (data, file) => {
     }
     data = updateRecord(data, file, 'fa_field_config', option, true);
     if(data.transports.length){
-        const id = data.transports.pop().id;
+        const id = get(data.transports.pop(), 'id');
         data.transports.push({
             delete_custom_field: {
             id,

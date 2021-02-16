@@ -106,7 +106,7 @@ const reWriteFieldsFiles = () => {
         };
 
         if(layout){
-            const layoutId = validate(layout) ? layout : findOne('layout', {name: layout}).id;
+            const layoutId = validate(layout) ? layout : get(findOne('layout', { name: layout }), 'id') || null;
             savedData.transports.push({
                 id: layoutId,
                 field: 'layout_id',
@@ -180,7 +180,7 @@ const reWriteCardConfigFiles = () => {
         }
         const cardTransports = {};
         const entityName = get(savedData, 'args.entity');
-        const id =  validate(entityId) ? entityId : findOne('fa_field_config', { name: entityName }).id
+        const id =  validate(entityId) ? entityId : get(findOne('fa_field_config', { name: entityName }), 'id') || null;
         const updateEntityConfigFile = `${Date.now()}_updateEntityConfig_${v4()}.json`;
         const savedArgs = get(savedData, 'args');
         const args = omit(savedArgs, ['entity', 'id']);
@@ -199,7 +199,7 @@ const reWriteCardConfigFiles = () => {
         Object.keys(args).map((key) => {
             const value = get(args, key);
             const transportId = ((typeof value === 'boolean') ||  validate(value))
-                ? value : findOne('fa_field_config', { app: entityName, name: value }).id || null;
+                ? value : get(findOne('fa_field_config', { app: entityName, name: value }), 'id') || null;
             if(updateEntityConfigKeys.includes(key)){
                 if(typeof transportId === 'boolean'){
                     return set(entityConfigArgs, `args.${key}`, transportId);
@@ -264,7 +264,7 @@ const reMapAppAction = (data) => {
         set(data, 'args.field_values.placement', placement);
     };
     if(automationId) {
-        const id = validate(automationId) ? automationId : findOne('rule_set', { name: automationId }).id;
+        const id = validate(automationId) ? automationId : get(findOne('rule_set', { name: automationId }), 'id') || null;
         data.transports.push({
             id,
             field: `field_values.rule_set_id`,
@@ -288,7 +288,7 @@ const reMapAcl = (data) => {
         set(data, 'args.field_values.fa_acl_field_roles', []);
     };
     if(fieldId){
-        const id = validate(fieldId) ? fieldId : findOne('fa_field_config', { name: fieldId }).id;
+        const id = validate(fieldId) ? fieldId : get(findOne('fa_field_config', { name: fieldId }), 'id') || null;
         data.transports.push({
             id,
             field: `field_values.fa_field_id`,
@@ -367,7 +367,7 @@ const setTransportidForChildValues = (children) => {
             }
             if(props[0] === 'field_name' && props[1]){
                 transports.push({
-                    id: (validate(props[1]) ? props[1] : findOne('fa_field_config', { name: props[1]}).id),
+                    id: (validate(props[1]) ? props[1] : get(findOne('fa_field_config', { name: props[1]}), 'id') || null),
                     field: `children[${parentIndex}].custom_fields[${index}][1]`,
                     model: 'fa_field_config'
                 })
@@ -375,7 +375,7 @@ const setTransportidForChildValues = (children) => {
            
             if(props[0] === 'section_name' && props[1]){
                 transports.push({
-                    id: (validate(props[1]) ? props[1] : findOne('layout', { name: props[1]}).id),
+                    id: (validate(props[1]) ? props[1] : get(findOne('layout', { name: props[1]}), 'id') || null),
                     field: `children[${parentIndex}].custom_fields[${index}][1]`,
                     model: 'layout'
                 })
@@ -383,7 +383,7 @@ const setTransportidForChildValues = (children) => {
 
             if(props[0] === 'app_action_id' && props[1]){
                 transports.push({
-                    id: (validate(props[1]) ? props[1] : findOne('app_action', { name: props[1]}).id),
+                    id: (validate(props[1]) ? props[1] : get(findOne('app_action', { name: props[1]}), 'id') || null),
                     field: `children[${parentIndex}].custom_fields[${index}][1]`,
                     model: 'app_action'
                 })
