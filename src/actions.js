@@ -439,7 +439,6 @@ const remapSaveComposite = async () => {
         reWriteFieldsFiles();
         reWriteUpdateOrderFiles();
         reWriteCardConfigFiles();
-        resetDb(false);
     } catch(e) {
         throw e;
     }

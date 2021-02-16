@@ -205,11 +205,13 @@ const reWriteCardConfigFiles = () => {
                     return set(entityConfigArgs, `args.${key}`, transportId);
                 }
                 set(entityConfigArgs, `args.${key}`, '');
-                return entityConfigArgs.transports.push({
-                    id: transportId,
-                    field: key,
-                    model: 'fa_field_config'
-                });
+                if(transportId){
+                    entityConfigArgs.transports.push({
+                        id: transportId,
+                        field: key,
+                        model: 'fa_field_config'
+                    });
+                }
             };
             set(cardTransports, get(cardConfigFieldsId, key), transportId);
         });
