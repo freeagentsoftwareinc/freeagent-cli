@@ -168,7 +168,7 @@ const addCatalog = (data, file) => {
     };
     const field = findOne('fa_field_config', { name: option.field, app: option.entityName });
     if(!field){
-        set(data, 'args.catalog.custom_field_id', '');
+        set(data, 'args.catalog.fa_field_config_id', '');
         console.log(chalk.red('Targeted field is not present in current changeset, adding stage considering the system / other changeset app'));
     };
     const catalog = findLast('catalog', { name: option.name, field: option.field, app: option.entityName });

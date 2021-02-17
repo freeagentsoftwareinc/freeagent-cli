@@ -436,7 +436,7 @@ const formRuleOperatoins= {
     'fa_entities',
 ];
 
-const modelForFieldReference = ['fa_entity_config', 'fa_field_config','fa_role', 'layout', 'catalog_type', 'catalog'];
+const modelForFieldReference = ['fa_entity_config', 'fa_field_config','fa_role', 'layout', 'catalog_type', 'catalog', 'fa_related_field_config'];
 
 const modelsForEntityValueId = ['fa_role', 'layout', 'catalog_type', 'form_rule', 'rule_set', 'app_action'];
 
