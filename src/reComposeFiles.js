@@ -588,7 +588,7 @@ const reWriteStageFields = () => {
         set(savedData, 'args.catalog.custom_field_id', '');
         savedData.transports.push({
             id,
-            field: 'catalog.custom_field_id',
+            field: 'catalog.fa_field_config_id',
             model: 'fa_field_config'
         });
         await saveDataToFile(savedData, file);

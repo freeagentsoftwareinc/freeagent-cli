@@ -495,7 +495,7 @@ const payloads = {
                 order: '',
                 icon: '',
                 color: '',
-                custom_field_id: ''
+                fa_field_config_id: '',
             },
             catalog_mappings: '[]'
         },
