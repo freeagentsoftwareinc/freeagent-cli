@@ -32,6 +32,12 @@ const operations = new Map([
         action: 'toggleApp',
         sucessMessage: 'deactivated the app successfully'
     }],
+    ['reorder-app', {
+        payload: 'updateOrder',
+        api: 'bulkUpdateOrder',
+        action: 'updateOrder',
+        sucessMessage: 'reorderd the apps successfully'
+    }],
     ['add-line', {
         payload: 'addEntity',
         api: 'addEntity',
@@ -436,7 +442,7 @@ const formRuleOperatoins= {
     'fa_entities',
 ];
 
-const modelForFieldReference = ['fa_entity_config', 'fa_field_config','fa_role', 'layout', 'catalog_type', 'catalog', 'fa_related_field_config'];
+const modelForFieldReference = ['fa_entity_config', 'fa_field_config','fa_role', 'layout', 'catalog_type', 'catalog'];
 
 const modelsForEntityValueId = ['fa_role', 'layout', 'catalog_type', 'form_rule', 'rule_set', 'app_action'];
 

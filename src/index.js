@@ -60,6 +60,14 @@ program
     });
 
 program
+    .command('reorder-app')
+    .description('reorder apps')
+    .action((option) => {
+        const args =  { entity: 'fa_entity_config', field_name: 'fa_entity.is_primary', field_value: true }
+        handleOperation(option._name, args, program.editmode, program.interactive)
+    });
+
+program
     .command('add-line <targetApp> <name> <pluralName>')
     .description('create new line to the target app')
     .action((targetApp, name, pluralName, option) => {
