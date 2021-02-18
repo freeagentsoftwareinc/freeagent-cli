@@ -115,21 +115,19 @@ const reWriteFieldsFiles = () => {
         };
          
         if(!instance.delete){
-            const referenceTypes = ['reference_array', 'reference'];
-            if(referenceTypes.includes(savedData.args.data_type)){
-                fieldReferenceKeys.forEach((value, key) => {
-                    const id = get(savedData, `args.${key}`);
-                    const transport = !(id && validate(id)) ? findInAllModels(id) : id;
-                    if(typeof transport === 'string' || transport.id){
-                        savedData.transports.push({
-                            id: transport.id || transport,
-                            field: key,
-                            model: transport.model || value
-                        });
-                        set(savedData, `args.${key}`, '');
-                    }
-                });
-            };
+            fieldReferenceKeys.forEach((value, key) => {
+                const id = get(savedData, `args.${key}`);
+                const transport = !(id && validate(id)) ? findInAllModels(id) : id;
+                console.log("adadas", key, id, value);
+                if(typeof transport === 'string' || transport.id){
+                    savedData.transports.push({
+                        id: transport.id || transport,
+                        field: key,
+                        model: transport.model || value
+                    });
+                    set(savedData, `args.${key}`, '');
+                }
+            });
         };
         await saveDataToFile(savedData, file);
         update('fa_field_config', { name: instance.name, app: instance.app, isExported: false }, { isExported: true });
