@@ -346,7 +346,6 @@ const fieldReferenceKeys = new Map([
     ['reference_qualifier', 'fa_field_config'],
     ['reference_fa_field_id', 'fa_field_config'],
     ['parent_custom_field_id', 'fa_field_config'],
-    ['reference_fa_entity_id', 'fa_entity'],
     ['reference_custom_field_id','fa_field_config'],
     ['reference_qualifier_value', 'fa_field_config'],
     ['fa_related_field_config_id', 'fa_field_config']

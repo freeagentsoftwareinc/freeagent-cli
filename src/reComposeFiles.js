@@ -118,7 +118,6 @@ const reWriteFieldsFiles = () => {
             fieldReferenceKeys.forEach((value, key) => {
                 const id = get(savedData, `args.${key}`);
                 const transport = !(id && validate(id)) ? findInAllModels(id) : id;
-                console.log("adadas", key, id, value);
                 if(typeof transport === 'string' || transport.id){
                     savedData.transports.push({
                         id: transport.id || transport,
