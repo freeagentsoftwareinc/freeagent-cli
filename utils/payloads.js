@@ -470,7 +470,6 @@ const payloads = {
 
     updateCardConfigs: {
         args:{
-            id:'',
             entity: '',
             card_title: '',
             team_member: '',
@@ -481,6 +480,7 @@ const payloads = {
             fifth_line: '',
             primary_action: '',
             show_related_list: '',
+            next_step_card_template_field_id: '',
             show_app_icon: false,
             landscape_mode: false,
             show_seq_id: false,

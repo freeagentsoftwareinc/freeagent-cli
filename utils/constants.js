@@ -328,7 +328,6 @@ const modelsMap = new Map([
 ]);
 
 const cardConfigFieldsId = {
-    still_looking: "3ee6c6c7-3a5e-4a53-9735-154300aebd4f",
     card_title: "99250395-196f-46e9-8a72-046d497a06ca",
     team_member:"2837a12e-d3ef-41ec-9a31-166b9aad1149",
     first_line: "7d37035b-c3ac-4a6c-a468-1e1b42d5e2c5",
@@ -336,6 +335,7 @@ const cardConfigFieldsId = {
     third_line: "07762e81-a620-4a3a-a24f-905837797e1a",
     fourth_line: "d16ef822-d217-4020-bc20-2ff57a7bd757",
     fifth_line: "e17e3d22-6c9e-41e8-ae12-1d93f84eeb24",
+    next_step_card_template_field_id: "3ee6c6c7-3a5e-4a53-9735-154300aebd4f",
 };
 
 const fieldReferenceKeys = new Map([

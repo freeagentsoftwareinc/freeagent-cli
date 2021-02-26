@@ -171,33 +171,21 @@ const reWriteCardConfigFiles = () => {
             return;
         };
         const entityName = get(savedData, 'args.entity');
-        const changeSetAppId = get(findOne('fa_entity_config', { name: entityName }), 'id');
-        const id = changeSetAppId ? changeSetAppId : validate(get(savedData, 'args.id')) || null;
-        if(!id){
-            console.log(chalk.red(`please provide the correct id to ${file}`));
-            return;
-        }
         const cardTransports = {};
         const updateEntityConfigFile = `${Date.now()}_updateEntityConfig_${v4()}.json`;
         const savedArgs = get(savedData, 'args');
-        const args = omit(savedArgs, ['entity', 'id']);
+        const args = omit(savedArgs, ['entity']);
         const entityConfigArgs = {
             args: {
-                id: '',
-                label: entityName,
+                entityName: entityName,
                 is_visible: true
-            },
-            transports: [{
-                id,
-                field: 'id',
-                model: 'fa_entity_config'
-            }]
+            }
         };
         Object.keys(args).map((key) => {
             const value = get(args, key);
-            const transportId = ((typeof value === 'boolean') ||  validate(value))
+            const transportId = ((typeof value === 'boolean') || validate(value))
                 ? value : get(findOne('fa_field_config', { app: entityName, name: value }), 'id') || null;
-            if(updateEntityConfigKeys.includes(key)){
+            if (updateEntityConfigKeys.includes(key)) {
                 if(typeof transportId === 'boolean'){
                     return set(entityConfigArgs, `args.${key}`, transportId);
                 }
@@ -209,6 +197,7 @@ const reWriteCardConfigFiles = () => {
                         model: 'fa_field_config'
                     });
                 }
+                return;
             };
             set(cardTransports, get(cardConfigFieldsId, key), transportId);
         });
