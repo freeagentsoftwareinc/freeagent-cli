@@ -379,6 +379,11 @@ const addView = (data, file) => {
         app: data.args.entity,
         name: data.args.name,
     };
+    const view = findOne('view', { app: data.args.entity, name: data.args.name });
+    if(view){
+        console.log(chalk.red('given view name already present, please use name different name'));
+        return;
+    };
     data = createRecord(data, 'view', option);
     return { ...data }
 };
@@ -388,7 +393,7 @@ const updateView = (data, file) => {
         app: data.args.entity,
         name: data.args.name,
     };
-    data = data = updateRecord(data, file, 'view', option);
+    data = updateRecord(data, file, 'view', option);
     return { ...data }
 };
 
@@ -397,7 +402,12 @@ const addDashboard = (data, file) => {
         file,
         name: data.args.title,
     };
-    data = data = createRecord(data, 'dashboard', option);
+    const dashboard = findOne('dashboard', { name: data.args.title});
+    if(dashboard){
+        console.log(chalk.red('given dashboard name already present, please use name different name'));
+        return;
+    };
+    data = createRecord(data, 'dashboard', option);
     return { ...data }
 };
 
