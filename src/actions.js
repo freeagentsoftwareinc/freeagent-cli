@@ -14,6 +14,7 @@ const {
     reWriteCardConfigFiles,
     reWriteStageFields,
     reWriteViewFiles,
+    reWriteDashboardFiles
 } = require('./reComposeFiles');
 
 const addChangeset = (data) => {
@@ -389,7 +390,24 @@ const updateView = (data, file) => {
     };
     data = data = updateRecord(data, file, 'view', option);
     return { ...data }
-}
+};
+
+const addDashboard = (data, file) => {
+    const option = {
+        file,
+        name: data.args.title,
+    };
+    data = data = createRecord(data, 'dashboard', option);
+    return { ...data }
+};
+
+const updateDashboard = (data, file) => {
+    const option = {
+        name: data.args.title,
+    };
+    data = updateRecord(data, file, 'dashboard', option);
+    return { ...data }
+};
 
 
 const addSaveComposite = async (data, file) => {
@@ -487,6 +505,7 @@ const remapSaveComposite = async () => {
         reWriteCardConfigFiles();
         reWriteStageFields();
         reWriteViewFiles();
+        reWriteDashboardFiles();
     } catch(e) {
         throw e;
     }
@@ -525,7 +544,9 @@ const runAction = {
     toggleFormrule,
     addCatalog,
     addView,
-    updateView
+    updateView,
+    addDashboard,
+    updateDashboard
 }
 
 module.exports = {

@@ -423,6 +423,20 @@ program
         handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
+program
+    .command('add-dashboard <name>')
+    .description('add the new dashboard')
+    .action((name, option) => {
+        handleOperation(option._name, { title: name }, program.editmode, program.interactive)
+    });
+
+program
+    .command('update-dashboard <name>')
+    .description('udpate the dashboard')
+    .action((name, option) => {
+        handleOperation(option._name, { title: name }, program.editmode, program.interactive)
+    });
+
 // program
 //     .command('reorder-relatedlist <targetApp>')
 //     .description('reorder related lists')

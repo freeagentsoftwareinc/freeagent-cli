@@ -33,30 +33,53 @@ const findInAllModels = (id) => {
     return foundRecord;
 };
 
-const reMapWidgets = (widgets) => {
-    return (widgets || []).map((widget) => {
+const reMapWidgets = (widgets, isDasboard=false) => {
+    const transports = [];
+    const updatedWidgets = (widgets || []).map((widget, index) => {
         const id = validate(widget.type)? widget.type : get(chartIds, snakeCase(widget.type));
         const type = get(chartTypes, snakeCase(widget.type)) || widget.type;
+        const viewId = get(widget, 'meta.viewId');
+        if (viewId) {
+            const viewTransportId = findOne('view', { name: viewId })
+                ? findOne('view', { name: viewId }).id
+                : viewId;
+            if (validate(viewTransportId)) {
+                set(widget, 'meta.viewId', viewTransportId)
+                transports.push({
+                    id: viewTransportId,
+                    field: isDasboard ? `widgets[${index}].meta.viewId` : `value.common.widgets[${index}].meta.viewId`,
+                    model: 'view'
+                })
+            }
+        }
         set(widget, 'type', id);
         set(widget, 'meta.widgetType', id);
         set(widget, 'meta.type', type);
         return widget;
     });
+    return {
+        transports,
+        widgets: updatedWidgets
+    }
 };
 
 const getMappedColumnsAndTransports = (app, columns) => {
     const transports = [];
     const updateCoulmns = columns.map((column, index) => {
-        const name = column.id;
+        const name = column.field_id;
         if(name){
-            const id = validate(name) ? name : findOne('fa_field_config', { app, name }).id;
-            set(column, 'id', id);
-            transports.push({
-                id,
-                field: `value.list.columns[${index}]`,
-                setKey: true,
-                model: 'fa_field_config',
-            });
+            const id = findOne('fa_field_config', { app, name })
+                ? findOne('fa_field_config', { app, name }).id
+                : name;
+            if(validate(id)){
+                set(column, 'field_id', id);
+                transports.push({
+                    id,
+                    field: `value.list.columns[${index}]`,
+                    setKey: true,
+                    model: 'fa_field_config',
+                });
+            }    
         };
         return {
             ...column
@@ -617,7 +640,7 @@ const reWriteStageFields = () => {
     });
 };
 
-const reWriteViewFiles = async () => {
+const reWriteViewFiles = () => {
     const instances = findAll('view');
     instances.map(async(instance) => {
         if(!instance){
@@ -629,16 +652,36 @@ const reWriteViewFiles = async () => {
             return;
         };
 
-        const name = get(savedData, 'args.name');
         const entityName = get(savedData,'args.entity');
         const widgets = get(savedData, 'args.value.common.widgets');
         const columns = get(savedData, 'args.value.list.columns');
-        const mappedColumns = getMappedColumnsAndTransports(entityName, columns);
-        set(savedData, 'args.value.common.widgets', reMapWidgets(widgets));
-        set(savedData, 'args.value.list.columns', mappedColumns.columns);
-        set(savedData, 'transports', [...savedData.transports,...mappedColumns.transports]);
+        const reMappedColumns = getMappedColumnsAndTransports(entityName, columns);
+        const reMappedwidgets = reMapWidgets(widgets);
+        set(savedData, 'args.value.common.widgets', reMappedwidgets.widgets);
+        set(savedData, 'args.value.list.columns', reMappedColumns.columns);
+        set(savedData, 'transports', [...savedData.transports, ...reMappedColumns.transports, ...reMappedwidgets.transports]);
         await saveDataToFile(savedData, file);
         update('view', { file: file, isExported: false }, { isExported: true });
+    });
+};
+
+const reWriteDashboardFiles = () => {
+    const instances = findAll('dashboard');
+    instances.map(async(instance) => {
+        if(!instance){
+            return;
+        }
+        const savedData = await getSavedData(instance);
+        const { file, isExported, isUpdate } = instance;
+        if(!savedData || isExported || !isUpdate){
+            return;
+        };
+        const widgets = get(savedData, 'args.widgets');
+        const reMappedwidgets = reMapWidgets(widgets, true);
+        set(savedData, 'args.widgets', reMappedwidgets.widgets);
+        set(savedData, 'transports', [...savedData.transports,...reMappedwidgets.transports]);
+        await saveDataToFile(savedData, file);
+        update('dashboard', { file: file, isExported: false }, { isExported: true });
     });
 };
 
@@ -650,5 +693,6 @@ module.exports = {
     reWriteCardConfigFiles,
     reWriteSaveCompositeEntityFiles,
     reWriteStageFields,
-    reWriteViewFiles
+    reWriteViewFiles,
+    reWriteDashboardFiles
 };

@@ -19,6 +19,7 @@ db.defaults({
     reorder: [],
     cards: [],
     view: [],
+    dashboard: []
 })
 .write();
 

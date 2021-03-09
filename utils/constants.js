@@ -306,13 +306,25 @@ const operations = new Map([
         payload: 'addView',
         api: 'saveView',
         action: 'addView',
-        sucessMessage: 'new view got added entity successfully'
+        sucessMessage: 'the new view got added entity successfully'
     }],
     ['update-view',{
         payload: 'addView',
         api: 'updateView',
         action: 'updateView',
         sucessMessage: 'updated the view successfully'
+    }],
+    ['add-dashboard',{
+        payload: 'addDashboard',
+        api: 'upsertDashboard',
+        action: 'addDashboard',
+        sucessMessage: 'the dashboard got added successfully'
+    }],
+    ['update-dashboard',{
+        payload: 'updateDashboard',
+        api: 'upsertDashboard',
+        action: 'updateDashboard',
+        sucessMessage: 'updated dashboard successfully'
     }]
 ]);
 

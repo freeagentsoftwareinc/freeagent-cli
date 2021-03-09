@@ -573,7 +573,7 @@ const payloads = {
                 },
                 list:{
                     columns:[{
-                        id: '',
+                        field_id: '',
                         width: null,
                         order: 0
                     }],
@@ -606,6 +606,78 @@ const payloads = {
         },
         transports: []
     },
+
+    addDashboard: {
+        args: {
+            title: '',
+            shareWithTeamAccess: '',
+        },
+        transports: []
+    },
+
+    updateDashboard: {
+        args: {
+            title: '',
+            shareWithTeamAccess: '',
+            widgets: [{
+                layout:{
+                    x: 0,
+                    y: 0,
+                    w: 0,
+                    h: 0
+                },
+                type: '',
+                meta:{
+                    type: '',
+                    viewId: '',
+                    caption: '',
+                    aggregationField: '',
+                    fa_title: '',
+                    showLabels: true,
+                    labelPosition: '',
+                    labelDisplay: 'auto',
+                    showValues: 0,
+                    showLegend: 0,
+                    lowerLimit: 0,
+                    upperLimit: 0,
+                    showTickMarks: 0,
+                    faFieldFormat: 0,
+                    numberPrefix: null,
+                    formatNumberScale: 0,
+                    showvalue: 0,
+                    xAxisName: '',
+                    yAxisName: '',
+                    placeValuesInside: 0,
+                    rotateValues:true,
+                    stack100Percent:true,
+                    valueOnRight: '',
+                    valuePosition: '',
+                    startingAngle: 0,
+                    colorRange:{
+                        color:[
+                            {
+                                minValue: 0,
+                                maxValue: 0,
+                                code: ''
+                            }
+                        ]
+                    },
+                    trendLine:[
+                    {
+                        startValue: 0,
+                        code: '',
+                        displayValue: ''
+                    }],
+                    showSum: '',
+                    isTrendZone : '',
+                    trendlineThickness: 0,
+                    widgetType: ''
+                },
+                id: ''
+            }]
+        },
+        transports: []
+    }
 };
 
 module.exports = payloads;
