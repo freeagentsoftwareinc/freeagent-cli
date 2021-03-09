@@ -53,7 +53,7 @@ const getMappedColumnsAndTransports = (app, columns) => {
             set(column, 'id', id);
             transports.push({
                 id,
-                field: `list.columns[${index}]`,
+                field: `value.list.columns[${index}]`,
                 setKey: true,
                 model: 'fa_field_config',
             });
@@ -631,12 +631,12 @@ const reWriteViewFiles = async () => {
 
         const name = get(savedData, 'args.name');
         const entityName = get(savedData,'args.entity');
-        const widgets = get(savedData, 'args.common.widgets');
-        const columns = get(savedData, 'args.list.columns');
+        const widgets = get(savedData, 'args.value.common.widgets');
+        const columns = get(savedData, 'args.value.list.columns');
         const mappedColumns = getMappedColumnsAndTransports(entityName, columns);
-        set(savedData, 'args.common.widgets', reMapWidgets(widgets));
-        set(savedData, 'args.list.columns', mappedColumns.columns);
-        set(savedData, 'transports', [...savedData.transports,...mappedColumns.columns]);
+        set(savedData, 'args.value.common.widgets', reMapWidgets(widgets));
+        set(savedData, 'args.value.list.columns', mappedColumns.columns);
+        set(savedData, 'transports', [...savedData.transports,...mappedColumns.transports]);
         await saveDataToFile(savedData, file);
         update('view', { file: file, isExported: false }, { isExported: true });
     });
