@@ -1,7 +1,7 @@
 const fs = require('fs');
-const { set, get, camelCase, toPairs, sortBy, find, omit } = require('lodash');
+const { set, get, camelCase, toPairs, sortBy, find, omit, snakeCase } = require('lodash');
 const { findAll, update, insert, findOne } = require('./db');
-const { choiceListOrderTypes, automationsTriggers, updateEntityConfigKeys } = require('../utils/constants');
+const { choiceListOrderTypes, automationsTriggers, updateEntityConfigKeys, chartIds, chartTypes } = require('../utils/constants');
 const { getSavedData, saveDataToFile } = require('./helper');
 const { validate, v4 }  = require('uuid');
 const dir = './fa_changeset';
@@ -31,6 +31,35 @@ const findInAllModels = (id) => {
         }
     });
     return foundRecord;
+};
+
+const reMapWidgets = (widgets) => {
+    return (widgets || []).map((widget) => {
+        const id = validate(widget.type)? widget.type : get(chartIds, snakeCase(widget.type));
+        const type = get(chartTypes, snakeCase(widget.type)) || widget.type;
+        set(widget, 'type', id);
+        set(widget, 'meta.widgetType', id);
+        set(widget, 'meta.type', type);
+        return widget;
+    });
+};
+
+const getListColumnsTransports = (app, columns) => {
+    const transports = [];
+    columns.forEach((column, index) => {
+        const name = column.id;
+        if(name){
+            const id = validate(name) ? name : findOne('fa_field_config', { app, name }).id;
+            transports.push({
+                id,
+                field: `list.columns[${index}]`,
+                setKey: true,
+                model: 'fa_field_config',
+            });
+            delete column.id;
+        };
+    });
+    return transports;
 };
 
 const reWriteUpdateEntityConfigFiles = () => {
@@ -580,7 +609,30 @@ const reWriteStageFields = () => {
         await saveDataToFile(savedData, file);
         update(model, { file: file, isExported: false }, { isExported: true });
     });
-}
+};
+
+const reWriteViewFiles = async () => {
+    const instances = findAll('view');
+    instances.map(async(instance) => {
+        if(!instance){
+            return;
+        }
+        const savedData = await getSavedData(instance);
+        const { model, file, isExported } = instance;
+        if(!savedData || isExported){
+            return;
+        };
+
+        const name = get(savedData, 'args.name');
+        const entityName = get(savedData,'args.entity');
+        const widgets = get(savedData, 'args.common.widgets');
+        const columns = get(savedData, 'args.list.columns');
+        set(savedData, 'args.common.widgets', reMapWidgets(widgets));
+        savedData.transports.push(getListColumnsTransports(entityName, columns));
+        await saveDataToFile(savedData, file);
+        update(model, { file: file, isExported: false }, { isExported: true });
+    });
+};
 
 module.exports = {
     reWriteUpdateEntityConfigFiles,
@@ -589,5 +641,6 @@ module.exports = {
     reWriteUpdateOrderFiles,
     reWriteCardConfigFiles,
     reWriteSaveCompositeEntityFiles,
-    reWriteStageFields
+    reWriteStageFields,
+    reWriteViewFiles
 };

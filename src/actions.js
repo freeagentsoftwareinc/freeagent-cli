@@ -4,7 +4,7 @@ const { v4 }  = require('uuid');
 const { set, get, snakeCase } = require('lodash');
 const { modelsMap, createEntityMap, faEntitiesName, errorMessages } = require('../utils/constants');
 const { findOne, findLast, findAll, insert, resetDb } = require('./db');
-const { createRecord, updateRecord, getSavedData, saveDataToFile } = require('./helper');
+const { createRecord, updateRecord, getSavedData, saveDataToFile, createDefaultField } = require('./helper');
 const {
     reWriteUpdateEntityConfigFiles,
     reWriteFieldsFiles,
@@ -13,6 +13,7 @@ const {
     reWriteUpdateOrderFiles,
     reWriteCardConfigFiles,
     reWriteStageFields,
+    reWriteViewFiles,
 } = require('./reComposeFiles');
 
 const addChangeset = (data) => {
@@ -41,6 +42,8 @@ const addApp = (data, file) => {
         return;
     };
     data = createRecord(data, 'fa_entity_config', option);
+    const defaultFeildTransports = createDefaultField(data.args.label);
+    data.transports.push(defaultFeildTransports);
     return { ...data }
 };
 
@@ -369,6 +372,16 @@ const toggleFormrule = (data, file) => {
     return { ...data }
 };
 
+const addView = (data, file) => {
+    const option = {
+        file,
+        app: data.args.entity,
+        name: data.args.name,
+    };
+    data = createRecord(data, 'view', option);
+    return { ...data }
+}
+
 const addSaveComposite = async (data, file) => {
     const { model, childModel } = modelsMap.get(data.args.parent_entity_id);
     const option = {
@@ -463,6 +476,7 @@ const remapSaveComposite = async () => {
         reWriteUpdateOrderFiles();
         reWriteCardConfigFiles();
         reWriteStageFields();
+        reWriteViewFiles();
     } catch(e) {
         throw e;
     }
@@ -499,7 +513,8 @@ const runAction = {
     updateCardConfigs,
     toggleAutomation,
     toggleFormrule,
-    addCatalog
+    addCatalog,
+    addView
 }
 
 module.exports = {

@@ -29,21 +29,6 @@ const payloads = {
         {
             order_transport_id_map: {
                 1: v4(),
-                2: v4(),
-                3: v4(),
-                4: v4(),
-                5: v4(),
-                6: v4(),
-                7: v4(),
-                8: v4(),
-                9: v4(),
-                10: v4()
-            },
-            model: 'fa_field_config'
-        },
-        {
-            order_transport_id_map: {
-                1: v4(),
                 2: v4()
             },
             model: 'app_action'
@@ -314,7 +299,7 @@ const payloads = {
                 entityName: '',
                 entity_operation: '',
                 resource_type: 'field',
-                conditions: '[{ "field_name": "" , "values": [], "operator": "" }]',
+                conditions: [{ field_name: '' , values: [], operator: '' }],
             }
         },
         transports:[]
@@ -372,7 +357,7 @@ const payloads = {
         args:{
             entity_value_id: '',
             entity: 'catalog_type',
-            custom_fields:  [["is_visible", 'false' ]]
+            custom_fields:  [['is_visible', 'false' ]]
         },
         transports:[]
     },
@@ -389,7 +374,7 @@ const payloads = {
                 schedule_cron: '',
                 schedule_datetime_field: null,
                 on_update_field: null,
-                filter_conditions: '[{ "field_name": "" , "values": [], "operator": "" }]',
+                filter_conditions: [{ field_name: '' , values: [], operator: '' }],
             },
             children: [{
                 entity_id: '37a890a4-01c4-56a7-8be0-6466b65db0dd',
@@ -419,7 +404,7 @@ const payloads = {
         args:{
             entity_value_id: '',
             entity: 'rule_set',
-            custom_fields:  [["is_visible", 'false' ]]
+            custom_fields:  [['is_visible', 'false' ]]
         },
         transports:[]
     },
@@ -432,7 +417,7 @@ const payloads = {
                 entityName: '',
                 description: '',
                 roles: [],
-                conditions: '[{ "field_name": "" , "values": [], "operator": "" }]',
+                conditions: [{ field_name: '' , values: [], operator: '' }],
             },
             children: [{
                 entity_id: '101328d1-3b44-4f19-a19e-9a645776761b',
@@ -462,7 +447,7 @@ const payloads = {
         args:{
             entity_value_id: '',
             entity: 'form_rule',
-            custom_fields:  [["is_visible", 'false' ]]
+            custom_fields:  [['is_visible', 'false' ]]
         },
         transports:[]
     },
@@ -500,7 +485,125 @@ const payloads = {
             catalog_mappings: '[]'
         },
         transports: []
-    }
+    },
+
+    addView: {
+        args:{
+            entity: '',
+            is_all_view: false,
+            name: '',
+            share_with_team_access: '',
+            common:{
+                visualization:'list',
+                title: '',
+                pattern: '',
+                filters: [{
+                    field_name: '',
+                    operator: '',
+                    values: []
+                }],
+                sorts: [{
+                field_name: '',
+                sort_type: ''
+                }],
+                groups:[{
+                    field_name: ''
+                }],
+                aggregates:[{
+                    field_name: '',
+                    aggregate_function: ''
+                }],
+                widgets:[{
+                    layout:{
+                        x: 0,
+                        y: 0,
+                        w: 0,
+                        h: 0
+                    },
+                    type: '',
+                    meta:{
+                        type: '',
+                        viewId: '',
+                        caption: '',
+                        aggregationField: '',
+                        fa_title: '',
+                        showLabels: true,
+                        labelPosition: '',
+                        labelDisplay: 'auto',
+                        showValues: 0,
+                        showLegend: 0,
+                        lowerLimit: 0,
+                        upperLimit: 0,
+                        showTickMarks: 0,
+                        faFieldFormat: 0,
+                        numberPrefix: null,
+                        formatNumberScale: 0,
+                        showvalue: 0,
+                        xAxisName: '',
+                        yAxisName: '',
+                        placeValuesInside: 0,
+                        rotateValues:true,
+                        stack100Percent:true,
+                        valueOnRight: '',
+                        valuePosition: '',
+                        startingAngle: 0,
+                        colorRange:{
+                            color:[
+                                {
+                                    minValue: 0,
+                                    maxValue: 0,
+                                    code: ''
+                                }
+                            ]
+                        },
+                        trendLine:[
+                        {
+                            startValue: 0,
+                            code: '',
+                            displayValue: ''
+                        }],
+                        showSum: '',
+                        isTrendZone : '',
+                        trendlineThickness: 0,
+                        widgetType: ''
+                    },
+                    id: ''
+                }]
+            },
+            list:{
+                columns:[{
+                    id: '',
+                    width: null,
+                    order: 0
+                }],
+            chart:{
+                type: null,
+                showEmptyGroups: false
+            },
+            pivotMode:false
+            },
+            rolodex:{
+            
+            },
+            board:{
+            columns:[
+
+            ]
+            },
+            calendar:{
+            viewField: '',
+            dateField: '',
+            timeSlot: '',
+            resourceField: '',
+            resourceValue:[]
+            },
+            layout:{
+                dashboardSize: 0,
+                showDashboard: false
+            }
+        },
+        transports: []
+    },
 };
 
 module.exports = payloads;

@@ -301,6 +301,12 @@ const operations = new Map([
         api: 'addCatalog',
         action: 'addCatalog',
         sucessMessage: 'new stage got added to the field successfully'
+    }],
+    ['add-view',{
+        payload: 'addView',
+        api: 'saveView',
+        action: 'addView',
+        sucessMessage: 'new view got added entity successfully'
     }]
 ]);
 
@@ -381,7 +387,7 @@ const aclTypes = {
     record: 'ada73cdb-4e7b-482c-bf41-ef9746324853'
 };
 
-const entityOperationTypes = {
+const entityOperationTypes = {  
     create: 'b22d45c0-f2fe-43ad-86e5-b31bf3e4f3db',
     delete: 'd22d45c0-f2fe-43ad-86e5-b31bf3e4f3db',
     read: 'a22d45c0-f2fe-43ad-86e5-b31bf3e4f3db',
@@ -421,6 +427,15 @@ const formRuleOperatoins= {
     formField: '5b67a8c1-2bef-4250-a7eb-8668260a08cf',
   };
 
+//   const chartTypes = {
+//     horizontalBarChart: '112a90c8-0ac3-4584-abe6-c6ae26d455f8',
+//     pieChart: '6382dbb6-cf0d-4ad6-8c4c-24c4e99911d2',
+//     barChart: '4270f50a-4acf-4236-9bda-75764b13d596',
+//     donutChart: '03eac40b-f356-40a3-b798-c34f7e676713',
+//     funnelChart: '69fabbb1-7bb4-4ada-8686-8fb6027b54fd',
+//     cycletime: 'f13f96ba-5cfc-464b-bead-e88912fa9a61',
+//   }
+
   const faEntitiesName = [
     'deal',
     'contact', 
@@ -445,7 +460,29 @@ const modelForFieldReference = ['fa_entity_config', 'fa_field_config','fa_role',
 
 const modelsForEntityValueId = ['fa_role', 'layout', 'catalog_type', 'form_rule', 'rule_set', 'app_action'];
 
-const updateEntityConfigKeys = [ 'primary_action', 'show_related_list', 'show_app_icon', 'landscape_mode', 'show_seq_id' ]
+const updateEntityConfigKeys = [ 'primary_action', 'show_related_list', 'show_app_icon', 'landscape_mode', 'show_seq_id' ];
+
+const chartIds = {
+    column_chart: '112a90c8-0ac3-4584-abe6-c6ae26d455f8',
+    pie_chart: '6382dbb6-cf0d-4ad6-8c4c-24c4e99911d2',
+    bar_chart: '4270f50a-4acf-4236-9bda-75764b13d596',
+    donut_chart: '03eac40b-f356-40a3-b798-c34f7e676713',
+    funnel: '69fabbb1-7bb4-4ada-8686-8fb6027b54fd',
+    cycle_time: 'f13f96ba-5cfc-464b-bead-e88912fa9a61',
+    number: '39734cbf-7133-4944-8194-4edf68299b0e'
+};
+  
+const chartTypes = {
+    column_chart: 'bar2d',
+    pie_chart: 'pie2d',
+    bar_chart: 'column2d',
+    donut_chart: 'doughnut2d',
+    funnel: 'funnel',
+    cycle_time: 'cycleTime',
+    number: 'number'
+};
+
+const defaultFields = ['seq_id', 'description', 'owner_id', 'created_at', 'updated_at', 'created_by', 'updated_by', 'last_activity', 'subteam_id', 'subscribers']
 
 module.exports = {
     operations,
@@ -468,5 +505,8 @@ module.exports = {
     formRuleTypes,
     modelsForEntityValueId,
     faEntitiesName,
-    updateEntityConfigKeys
+    updateEntityConfigKeys,
+    chartTypes,
+    chartIds,
+    defaultFields
 };

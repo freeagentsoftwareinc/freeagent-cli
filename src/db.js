@@ -17,7 +17,8 @@ db.defaults({
     rule_set: [],
     form_rule:[],
     reorder: [],
-    cards: []
+    cards: [],
+    view: [],
 })
 .write();
 

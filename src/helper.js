@@ -2,7 +2,7 @@
 const fs = require('fs');
 const { set } = require('lodash');
 const { v4 }  = require('uuid');
-const { errorMessages, modelsForEntityValueId } = require('../utils/constants');
+const { errorMessages, modelsForEntityValueId, defaultFields } = require('../utils/constants');
 const { insert, findOne, findAll } = require('./db');
 const dir = './fa_changeset';
 
@@ -100,9 +100,31 @@ const saveDataToFile = async (data, file) => {
     await fs.writeFileSync(`${filePath}`, jsonData);
 };
 
+const createDefaultField = (app) => {
+    const transportObj = {
+        order_transport_id_map: {},
+        model: 'fa_field_config'
+    };
+    defaultFields.map((name, index)=> {
+        const id = v4();
+        insert('fa_field_config', {
+            name,
+            app,
+            id,
+            isDelete: false,
+            isSystem: false,
+            isExported: false,
+            isUpdate: false
+        });
+        set(transportObj, `order_transport_id_map.${index+1}`, id);
+    });
+    return transportObj;
+};
+
 module.exports = {
     createRecord,
     updateRecord,
     getSavedData,
-    saveDataToFile
+    saveDataToFile,
+    createDefaultField
 }
