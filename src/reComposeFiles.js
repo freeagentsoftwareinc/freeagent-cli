@@ -636,7 +636,7 @@ const reWriteViewFiles = async () => {
         const mappedColumns = getMappedColumnsAndTransports(entityName, columns);
         set(savedData, 'args.common.widgets', reMapWidgets(widgets));
         set(savedData, 'args.list.columns', mappedColumns.columns);
-        savedData.transports.push(mappedColumns.transports);
+        set(savedData, 'transports', [...savedData.transports,...mappedColumns.columns]);
         await saveDataToFile(savedData, file);
         update('view', { file: file, isExported: false }, { isExported: true });
     });
