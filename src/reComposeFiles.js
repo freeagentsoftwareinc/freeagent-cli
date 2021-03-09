@@ -44,22 +44,28 @@ const reMapWidgets = (widgets) => {
     });
 };
 
-const getListColumnsTransports = (app, columns) => {
+const getMappedColumnsAndTransports = (app, columns) => {
     const transports = [];
-    columns.forEach((column, index) => {
+    const updateCoulmns = columns.map((column, index) => {
         const name = column.id;
         if(name){
             const id = validate(name) ? name : findOne('fa_field_config', { app, name }).id;
+            set(column, 'id', id);
             transports.push({
                 id,
                 field: `list.columns[${index}]`,
                 setKey: true,
                 model: 'fa_field_config',
             });
-            delete column.id;
         };
+        return {
+            ...column
+        }
     });
-    return transports;
+    return {
+        transports,
+        columns: updateCoulmns
+    };
 };
 
 const reWriteUpdateEntityConfigFiles = () => {
@@ -618,7 +624,7 @@ const reWriteViewFiles = async () => {
             return;
         }
         const savedData = await getSavedData(instance);
-        const { model, file, isExported } = instance;
+        const { file, isExported } = instance;
         if(!savedData || isExported){
             return;
         };
@@ -627,10 +633,12 @@ const reWriteViewFiles = async () => {
         const entityName = get(savedData,'args.entity');
         const widgets = get(savedData, 'args.common.widgets');
         const columns = get(savedData, 'args.list.columns');
+        const mappedColumns = getMappedColumnsAndTransports(entityName, columns);
         set(savedData, 'args.common.widgets', reMapWidgets(widgets));
-        savedData.transports.push(getListColumnsTransports(entityName, columns));
+        set(savedData, 'args.list.columns', mappedColumns.columns);
+        savedData.transports.push(mappedColumns.transports);
         await saveDataToFile(savedData, file);
-        update(model, { file: file, isExported: false }, { isExported: true });
+        update('view', { file: file, isExported: false }, { isExported: true });
     });
 };
 

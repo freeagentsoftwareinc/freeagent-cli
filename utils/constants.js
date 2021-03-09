@@ -307,6 +307,12 @@ const operations = new Map([
         api: 'saveView',
         action: 'addView',
         sucessMessage: 'new view got added entity successfully'
+    }],
+    ['update-view',{
+        payload: 'addView',
+        api: 'updateView',
+        action: 'updateView',
+        sucessMessage: 'updated the view successfully'
     }]
 ]);
 

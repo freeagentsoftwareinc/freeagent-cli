@@ -380,7 +380,17 @@ const addView = (data, file) => {
     };
     data = createRecord(data, 'view', option);
     return { ...data }
+};
+
+const updateView = (data, file) => {
+    const option = {
+        app: data.args.entity,
+        name: data.args.name,
+    };
+    data = data = updateRecord(data, file, 'view', option);
+    return { ...data }
 }
+
 
 const addSaveComposite = async (data, file) => {
     const { model, childModel } = modelsMap.get(data.args.parent_entity_id);
@@ -514,7 +524,8 @@ const runAction = {
     toggleAutomation,
     toggleFormrule,
     addCatalog,
-    addView
+    addView,
+    updateView
 }
 
 module.exports = {

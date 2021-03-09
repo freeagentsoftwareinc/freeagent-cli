@@ -415,6 +415,14 @@ program
         handleOperation(option._name, args, program.editmode, program.interactive)
     });
 
+program
+    .command('update-view <targetApp> <name>')
+    .description('update the view')
+    .action((targetApp, name, option) => {
+        const args = { ...payloads.addView.args, name, entity: targetApp };
+        handleOperation(option._name, args, program.editmode, program.interactive)
+    });
+
 // program
 //     .command('reorder-relatedlist <targetApp>')
 //     .description('reorder related lists')
