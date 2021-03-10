@@ -12,6 +12,7 @@ const updateArgs = (data, file) => {
     }
     const fileData = fs.readFileSync(`${dir}/${file}`);
     const savedData = JSON.parse(fileData);
+    delete savedData.args.widgets;
     data.args = { ...data.args, ...savedData.args };
 };
 

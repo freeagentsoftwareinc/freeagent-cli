@@ -521,6 +521,7 @@ const payloads = {
                             w: 0,
                             h: 0
                         },
+                        title: '',
                         type: '',
                         meta:{
                             type: '',
@@ -611,6 +612,7 @@ const payloads = {
         args: {
             title: '',
             shareWithTeamAccess: '',
+            widgets: []
         },
         transports: []
     },
@@ -626,6 +628,7 @@ const payloads = {
                     w: 0,
                     h: 0
                 },
+                title: '',
                 type: '',
                 meta:{
                     type: '',

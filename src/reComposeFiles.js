@@ -36,8 +36,8 @@ const findInAllModels = (id) => {
 const reMapWidgets = (widgets, isDasboard=false) => {
     const transports = [];
     const updatedWidgets = (widgets || []).map((widget, index) => {
-        const id = validate(widget.type)? widget.type : get(chartIds, snakeCase(widget.type));
-        const type = get(chartTypes, snakeCase(widget.type)) || widget.type;
+        const id = validate(widget.type)? widget.type : get(chartIds, snakeCase(widget.type)) || null;
+        const type = get(chartTypes, snakeCase(widget.type)) || widget.type || null;
         const viewId = get(widget, 'meta.viewId');
         if (viewId) {
             const viewTransportId = findOne('view', { name: viewId })
