@@ -1,7 +1,7 @@
 const fs = require('fs');
 const { set, get, camelCase, toPairs, sortBy, find, omit, snakeCase } = require('lodash');
 const { findAll, update, insert, findOne } = require('./db');
-const { choiceListOrderTypes, automationsTriggers, updateEntityConfigKeys, chartIds, chartTypes } = require('../utils/constants');
+const { choiceListOrderTypes, automationsTriggers, updateEntityConfigKeys, chartIds, chartTypes, teamAccess } = require('../utils/constants');
 const { getSavedData, saveDataToFile } = require('./helper');
 const { validate, v4 }  = require('uuid');
 const dir = './fa_changeset';
@@ -665,6 +665,12 @@ const reWriteViewFiles = () => {
     });
 };
 
+const setTeamAccess = (savedData) => {
+    const shareType = get(savedData, 'args.shareWithTeamAccess');
+    const shareTypeId = !shareType ? teamAccess.private : get(teamAccess, shareType);
+    set(savedData, 'args.shareWithTeamAccess', shareTypeId);
+};
+
 const reWriteDashboardFiles = () => {
     const instances = findAll('dashboard');
     instances.map(async(instance) => {
@@ -673,13 +679,22 @@ const reWriteDashboardFiles = () => {
         }
         const savedData = await getSavedData(instance);
         const { file, isExported, isUpdate } = instance;
-        if(!savedData || isExported || !isUpdate){
+        if(!savedData || isExported){
             return;
         };
-        const widgets = get(savedData, 'args.widgets');
-        const reMappedwidgets = reMapWidgets(widgets, true);
-        set(savedData, 'args.widgets', reMappedwidgets.widgets);
-        set(savedData, 'transports', [...savedData.transports,...reMappedwidgets.transports]);
+
+        if(!isUpdate){
+            setTeamAccess(savedData);
+        } else {
+            const shareType = get(savedData, 'args.shareWithTeamAccess');
+            if(!validate(shareType)){
+                setTeamAccess(savedData);
+            }
+            const widgets = get(savedData, 'args.widgets');
+            const reMappedwidgets = reMapWidgets(widgets, true);
+            set(savedData, 'args.widgets', reMappedwidgets.widgets);
+            set(savedData, 'transports', [...savedData.transports,...reMappedwidgets.transports]);
+        }
         await saveDataToFile(savedData, file);
         update('dashboard', { file: file, isExported: false }, { isExported: true });
     });

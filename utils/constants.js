@@ -502,6 +502,13 @@ const chartTypes = {
 
 const defaultFields = ['seq_id', 'description', 'owner_id', 'created_at', 'updated_at', 'created_by', 'updated_by', 'last_activity', 'subteam_id', 'subscribers']
 
+
+const teamAccess = {
+    private: 'cf526280-1be0-441c-b59a-49167556ef01',
+    readonly: 'cf526280-1be0-441c-b59a-49167556ef02',
+    editable: 'cf526280-1be0-441c-b59a-49167556ef03',
+  };
+
 module.exports = {
     operations,
     errorMessages,
@@ -526,5 +533,6 @@ module.exports = {
     updateEntityConfigKeys,
     chartTypes,
     chartIds,
-    defaultFields
+    defaultFields,
+    teamAccess
 };
