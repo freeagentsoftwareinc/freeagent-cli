@@ -1,1 +1,27 @@
-{}
+{
+  "fa_changeset": [
+    {
+      "name": "one",
+      "description": "one",
+      "id": "1af61beb-ebe9-4cbc-b391-f4ecedd70b31",
+      "isDelete": false,
+      "isSystem": false,
+      "isExported": false,
+      "isUpdate": false
+    }
+  ],
+  "fa_entity_config": [],
+  "fa_field_config": [],
+  "fa_role": [],
+  "layout": [],
+  "app_action": [],
+  "fa_acl": [],
+  "catalog_type": [],
+  "catalog": [],
+  "rule_set": [],
+  "form_rule": [],
+  "reorder": [],
+  "cards": [],
+  "view": [],
+  "dashboard": []
+}

@@ -4,6 +4,7 @@ const { program } = require('commander');
 const payloads = require('../utils/payloads');
 const { handleOperation, exportChangeset } = require('./operations');
 const { resetDb } = require('./db');
+const { reMapTransports } = require('./transportGenerator');
 
 program
     .version('0.1')
@@ -467,3 +468,5 @@ program
     });
 
 program.parse(process.argv);
+
+exports.reMapTransports = reMapTransports;
