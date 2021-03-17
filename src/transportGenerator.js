@@ -1,7 +1,11 @@
 const { get, set } = require('lodash');
-const config = require('./config.json');
+const config = require('../config.json');
 
 const getTransportIdFromLocalDB = async (id, config) => {};
+
+const setResultIds = (args, opration, result) => {
+    (opration === 'addEntity') ? set(args, 'id', result.fa_entity_id) : set(args, 'id', result.id);
+};
 
 const findTransportId = async (models, modelName, where) => {
   const result = await models[modelName].find({
@@ -66,9 +70,12 @@ const getArgsWithTransports = async (args, configurations, models) => {
   });
 };
 
-const reMapTransports = async (args, operation, models) => {
+const reMapTransports = async (args, result, operation, models) => {
   const configurations = get(config, operation);
+  setResultIds(operation, args, result);
   return await getArgsWithTransports(args, configurations, models);
 };
 
-exports.reMapTransports = reMapTransports;
+module.exports = {
+    reMapTransports
+};
