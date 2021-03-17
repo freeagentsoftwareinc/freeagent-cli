@@ -1,0 +1,84 @@
+{
+    "addCustomField" : [
+        {
+            "model": "fa_field_config",
+            "field": "id",
+            "transport_field": true,
+            "where_field": "custom_field_id"
+        }, 
+        {
+            "model": "catalog_type",
+            "field": "catalog_type_id"
+        },
+        {
+            "model": "catalog",
+            "field": "default_value"
+        },
+        { 
+            "model": "layout",
+            "field": "layout_id"
+        },
+        {
+            "model": "fa_entity_config",
+            "field": "fa_entity_config_id"
+        },
+        {
+            "model": "fa_field_config",
+            "field": "reference_qualifier"
+        },
+        {
+            "model": "parent_field_id",
+            "field": "fa_field_config"
+        },
+        {
+            "model": "parent_fa_field_id",
+            "field": "fa_field_config"
+        },
+        {
+            "model": "reference_fa_field_id",
+            "field": "fa_field_config"
+        },
+        {
+            "model": "reference_custom_field_id",
+            "field": "fa_field_config"
+        },
+        {
+            "model": "fa_related_field_config_id",
+            "field": "fa_field_config"
+        },
+        {
+            "model": "fa_field_config",
+            "field": "parent_custom_field_id"
+        }
+    ],
+
+    "addEntity" : [
+        {
+            "model": "fa_entity_config",
+            "field": "id",
+            "transport_field": true,
+            "where_field": "fa_entity_id"
+        },
+        {
+            "model": "fa_related_list",
+            "transport_field": true,
+            "field": "id",
+            "where_field": "fa_entity_id",
+            "bulk": true
+        },
+        {
+            "model": "app_action",
+            "transport_field": true,
+            "field": "id",
+            "where_field": "fa_entity_id",
+            "bulk": true
+        },
+        {
+            "model": "fa_field_config",
+            "transport_field": true,
+            "field": "id",
+            "where_field": "fa_entity_id",
+            "bulk": true
+        }
+    ]
+}
