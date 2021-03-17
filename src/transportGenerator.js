@@ -1,5 +1,5 @@
-import { get, set } from 'lodash';
-import config from './config.json';
+const { get, set } = require('lodash');
+const config = require('./config.json');
 
 const getTransportIdFromLocalDB = async (id, config) => {};
 
@@ -66,7 +66,9 @@ const getArgsWithTransports = async (args, configurations, models) => {
   });
 };
 
-export const reMapTransports = async (args, operation, models) => {
+const reMapTransports = async (args, operation, models) => {
   const configurations = get(config, operation);
   return await getArgsWithTransports(args, configurations, models);
 };
+
+exports.reMapTransports = reMapTransports;
