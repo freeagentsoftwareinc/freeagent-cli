@@ -6,7 +6,7 @@ const { errorMessages, modelsForEntityValueId, defaultFields } = require('../uti
 const { insert, findOne, findAll } = require('./db');
 const dir = './fa_changeset';
 
-const updateArgs = (data, file) => {
+const updateArgs = (operation, data, file) => {
     if(!fs.existsSync(`${dir}/${file}`)){
         return;
     }
@@ -23,7 +23,7 @@ const createRecord = (data, model, option, isDelete=false) => {
         field: 'transport_id',
         model
     };
-    data.transports.push(tansport);
+    // data.transports.push(tansport);
     insert(model, {
         ...option,
         id,

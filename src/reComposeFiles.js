@@ -4,10 +4,10 @@ const { findAll, update, insert, findOne } = require('./db');
 const { choiceListOrderTypes, automationsTriggers, updateEntityConfigKeys, chartIds, chartTypes, teamAccess } = require('../utils/constants');
 const { getSavedData, saveDataToFile } = require('./helper');
 const { validate, v4 }  = require('uuid');
+const { reMapTransports }  = require('./transportGenerator');
 const dir = './fa_changeset';
 const {
     cardConfigFieldsId,
-    fieldReferenceKeys,
     appearanceTypes,
     appActionPlacemenTypes,
     actionTypes,
@@ -19,18 +19,6 @@ const {
     formRuleTypes,
 } = require('../utils/constants');
 const chalk = require('chalk');
-
-const findInAllModels = (id) => {
-    const foundRecord = {};
-    modelForFieldReference.forEach((model) => {
-        const instance = findOne(model, { name: id });
-        if(instance && instance.id && !foundRecord.id){
-            set(foundRecord, 'id', instance.id);
-            set(foundRecord, 'model', model);
-        }
-    });
-    return foundRecord;
-};
 
 const reMapWidgets = (widgets, isDasboard=false) => {
     const transports = [];
@@ -132,60 +120,12 @@ const reWriteFieldsFiles = () => {
         const file = instance.file;
         const savedData = await getSavedData(instance)
 
-        if(!savedData){
+        if(!savedData || instance.isExported){
             return;
         };
-        const id = get(savedData, 'args.id');
-        const layout = get(savedData, 'args.layout_id');
-        if(instance.isSystem && instance.isUpdate && !id && !validate(id)){
-            console.log(`please provide the correct id to ${file}`);
-           return;
-        };
 
-        if(instance.isSystem && instance.isUpdate && !instance.isDelete) {
-            savedData.transports.push({
-                id,
-                field: 'id',
-                model: 'fa_field_config'
-            });
-            set(savedData, 'args.id', '');
-        };
-        
-        if(instance.isSystem && instance.isUpdate && instance.isDelete) {
-            savedData.transports.push({
-                delete_custom_field: {
-                    id,
-                    field: 'id',
-                    model: 'fa_field_config'
-                }
-            });
-            set(savedData, 'args.id', '');
-        };
-
-        if(layout){
-            const layoutId = validate(layout) ? layout : get(findOne('layout', { name: layout }), 'id') || null;
-            savedData.transports.push({
-                id: layoutId,
-                field: 'layout_id',
-                model: 'layout'
-            });
-        };
-         
-        if(!instance.delete){
-            fieldReferenceKeys.forEach((value, key) => {
-                const id = get(savedData, `args.${key}`);
-                const transport = !(id && validate(id)) ? findInAllModels(id) : id;
-                if(typeof transport === 'string' || transport.id){
-                    savedData.transports.push({
-                        id: transport.id || transport,
-                        field: key,
-                        model: transport.model || value
-                    });
-                    set(savedData, `args.${key}`, '');
-                }
-            });
-        };
-        await saveDataToFile(savedData, file);
+        const data = await reMapTransports(savedData, instance, instance.operation);
+        await saveDataToFile(data, file);
         update('fa_field_config', { name: instance.name, app: instance.app, isExported: false }, { isExported: true });
     });
 };

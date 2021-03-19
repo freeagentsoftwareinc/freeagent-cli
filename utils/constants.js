@@ -507,7 +507,21 @@ const teamAccess = {
     private: 'cf526280-1be0-441c-b59a-49167556ef01',
     readonly: 'cf526280-1be0-441c-b59a-49167556ef02',
     editable: 'cf526280-1be0-441c-b59a-49167556ef03',
-  };
+};
+
+const entities = {
+    '10913ac7-852e-516e-a2d7-3c24c34600d4': 'catalog_type',
+    '8ab345d6-4870-4dd7-abaa-dab6217c4361': 'catalog',
+    'cf7de345-a40b-56cb-b70a-7fb707a5b4b0' : 'rule_set',
+    '2c05c9fa-568e-49e2-b435-b84f79fe1d32': 'form_rule'
+};
+
+const parentRefKeys = {
+    '10913ac7-852e-516e-a2d7-3c24c34600d4': 'catalog_type_id',
+    '8ab345d6-4870-4dd7-abaa-dab6217c4361': 'catalog',
+    'cf7de345-a40b-56cb-b70a-7fb707a5b4b0' : 'rule_set',
+    '2c05c9fa-568e-49e2-b435-b84f79fe1d32': 'form_rule'
+};
 
 module.exports = {
     operations,
@@ -534,5 +548,7 @@ module.exports = {
     chartTypes,
     chartIds,
     defaultFields,
-    teamAccess
+    teamAccess,
+    entities,
+    parentRefKeys
 };

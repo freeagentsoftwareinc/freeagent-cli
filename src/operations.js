@@ -15,7 +15,7 @@ const { runAction } = require('./actions');
  
 const getPayload = (operation, args) => {
     const payload = {...get(payloads, operation)}
-    const data = { args: {...payload.args, ...args}, transports: [ ...payload.transports]};
+    const data = {...payload, ...args};
     return data;
 };
 
@@ -27,7 +27,7 @@ const runOperation = async (operation, args={}) => {
     }
     const payload = getPayload(operation.payload, args);
     const file = `${Date.now()}_${operation.api}_${v4()}.json`;
-    const data = await runAction[operation.action](payload, file);
+    const data = await runAction[operation.action](operation.api, payload, file);
     if(!data){
         console.log(chalk(operation.errorMessages));
         return;

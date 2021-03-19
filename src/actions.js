@@ -17,7 +17,7 @@ const {
     reWriteDashboardFiles
 } = require('./reComposeFiles');
 
-const addChangeset = (data) => {
+const addChangeset = (operation, data) => {
     const option = {
         name: data.args.name,
         description: data.args.description
@@ -31,8 +31,9 @@ const addChangeset = (data) => {
     return option;
 };
 
-const addApp = (data, file) => {
+const addApp = (operation, data, file) => {
     const option = {
+        operation,
         file,
         name: data.args.label,
         label_plural: data.args.label_plural,
@@ -48,8 +49,9 @@ const addApp = (data, file) => {
     return { ...data }
 };
 
-const updateApp = (data, file) => {
+const updateApp = (operation, data, file) => {
     const option = {
+        operation,
         name: data.args.label,
         isLine: false,
     }
@@ -57,8 +59,9 @@ const updateApp = (data, file) => {
     return { ...data }
 };
 
-const toggleApp = (data, file) => {
+const toggleApp = (operation, data, file) => {
     const option = {
+        operation,
         name: data.args.name,
     };
     data = updateRecord(data, file, 'fa_entity_config', option, false, true);
@@ -66,7 +69,7 @@ const toggleApp = (data, file) => {
     return { ...data }
 };
 
-const addLine = (data, file) => {
+const addLine = (operation, data, file) => {
     const where = {
         name: data.args.parent_id,
         isLine: false,
@@ -77,6 +80,7 @@ const addLine = (data, file) => {
         console.log(errorMessages.notFoundEror);
     }
     const option = {
+        operation,
         file,
         name: data.args.label,
         label_plural: data.args.label_plural,
@@ -89,7 +93,7 @@ const addLine = (data, file) => {
     return { ...data }
 };
 
-const toggleLine = (data, file) => {
+const toggleLine = (operation, data, file) => {
     const where = {
         name: data.args.parent_id,
         isLine: false,
@@ -97,6 +101,7 @@ const toggleLine = (data, file) => {
     const app = findOne('fa_entity_config', where);
     const parentId = (app && app.id) ? app.id : '';
     const option = {
+        operation,
         name: data.args.label,
         parent_id: parentId,
         isLine: true,
@@ -106,24 +111,26 @@ const toggleLine = (data, file) => {
     delete data.args.label;
     return { ...data }
 }
-const addField = (data, file) => {
+const addField = (operation, data, file) => {
     const option = {
+        operation,
         file,
-        app: data.args.entity,
-        name: data.args.name_label
+        app: data.entity,
+        name: data.name_label
     }
-    const app = findOne('fa_entity_config', { name: data.args.entity });
+    const app = findOne('fa_entity_config', { name: data.entity });
     if(!app){
         console.log(chalk.red('Targeted app is not present in current changeset, adding field considering the system / other changeset app'));
     };
-    set(data, 'args.related_list_name', (app && app.label_plural) || data.args.entity);
-    set(data, 'args.related_list_name_plural', (app && app.label_plural) || data.args.entity);
+    set(data, 'related_list_name', (app && app.label_plural) || data.entity);
+    set(data, 'related_list_name_plural', (app && app.label_plural) || data.entity);
     data = createRecord(data, 'fa_field_config', option);
     return { ...data }
 };
 
-const updateField = (data, file) => {
+const updateField = (operation, data, file) => {
     const option = {
+        operation,
         app: data.args.entity,
         name: data.args.name_label
     }
@@ -131,8 +138,9 @@ const updateField = (data, file) => {
     return { ...data }
 };
 
-const deleteField = (data, file) => {
+const deleteField = (operation, data, file) => {
     const option = {
+        operation,
         app: data.args.entity,
         name: data.args.name_label
     }
@@ -152,8 +160,9 @@ const deleteField = (data, file) => {
     return { ...data }
 };
 
-const toggleField = (data, file) => {
+const toggleField = (operation, data, file) => {
     const option = {
+        operation,
         app: data.args.entity,
         name: data.args.name_label
     }
@@ -163,8 +172,9 @@ const toggleField = (data, file) => {
     return { ...data }
 };
 
-const addCatalog = (data, file) => {
+const addCatalog = (operation, data, file) => {
     const option = {
+        operation,
         file,
         name: data.args.catalog.name,
         app: data.args.catalog.entityName,
@@ -185,7 +195,7 @@ const addCatalog = (data, file) => {
     }
 };
 
-const updateOrder = (data, file) => {
+const updateOrder = (operation, data, file) => {
     const entityName = get(data, 'args.entityName');
     const entity = get(data, 'args.entity');
     const field_name = get(data, 'args.field_name');
@@ -199,6 +209,7 @@ const updateOrder = (data, file) => {
         delete data.args.field_value;
     }
     insert('reorder', {
+        operation,
         file,
         entity,
         entityName,
@@ -207,8 +218,9 @@ const updateOrder = (data, file) => {
     return { ...data }
 };
 
-const updateCardConfigs = (data, file) => {
+const updateCardConfigs = (operation, data, file) => {
     insert('cards', {
+        operation,
         file,
         entity: data.args.entity,
         isExported: false
@@ -216,8 +228,9 @@ const updateCardConfigs = (data, file) => {
     return { ...data }
 };
 
-const addRole = (data, file) => {
+const addRole = (operation, data, file) => {
     const option = {
+        operation,
         file,
         name: data.args.field_values.name
     };
@@ -225,16 +238,18 @@ const addRole = (data, file) => {
     return { ...data }
 };
 
-const updateRole = (data, file) => {
+const updateRole = (operation, data, file) => {
     const option = {
+        operation,
         name: data.args.field_values.name
     };
     data = updateRecord(data, file, 'fa_role', option);
     return { ...data }
 };
 
-const toggleRole = (data, file) => {
+const toggleRole = (operation, data, file) => {
     const option = {
+        operation,
         name: data.args.name
     };
     data = updateRecord(data, file, 'fa_role', option, false, true);
@@ -242,8 +257,9 @@ const toggleRole = (data, file) => {
     return { ...data }
 };
 
-const addSection = (data, file) => {
+const addSection = (operation, data, file) => {
     const option = {
+        operation,
         file,
         app: data.args.field_values.entityName,
         name: data.args.field_values.title,
@@ -256,8 +272,9 @@ const addSection = (data, file) => {
     return { ...data }
 };
 
-const updateSection = (data, file) => {
+const updateSection = (operation, data, file) => {
     const option = {
+        operation,
         app: data.args.field_values.entityName,
         name: data.args.field_values.title,
     }
@@ -266,8 +283,9 @@ const updateSection = (data, file) => {
 };
 
 
-const toggleSection = (data, file) => {
+const toggleSection = (operation, data, file) => {
     const option = {
+        operation,
         app: data.args.targetApp,
         name: data.args.name,
     };
@@ -277,8 +295,9 @@ const toggleSection = (data, file) => {
     return { ...data }
 };
 
-const addAppAction = (data, file) => {
+const addAppAction = (operation, data, file) => {
     const option = {
+        operation,
         file,
         app: data.args.field_values.entityName,
         name: data.args.field_values.name,
@@ -291,8 +310,9 @@ const addAppAction = (data, file) => {
     return { ...data }
 };
 
-const updateAppAction = (data, file) => {
+const updateAppAction = (operation, data, file) => {
     const option = {
+        operation,
         app: data.args.field_values.entityName,
         name: data.args.field_values.name,
     };
@@ -300,8 +320,9 @@ const updateAppAction = (data, file) => {
     return { ...data }
 };
 
-const toggleAction = (data, file) => {
+const toggleAction = (operation, data, file) => {
     const option = {
+        operation,
         app: data.args.targetApp,
         name: data.args.name,
     };
@@ -311,8 +332,9 @@ const toggleAction = (data, file) => {
     return { ...data }
 };
 
-const addAcl = (data, file) => {
+const addAcl = (operation, data, file) => {
     const option = {
+        operation,
         file,
         app: data.args.field_values.entityName,
         name: data.args.field_values.fa_field_id,
@@ -325,8 +347,9 @@ const addAcl = (data, file) => {
     return { ...data }
 };
 
-const updateAcl = (data, file) => {
+const updateAcl = (operation, data, file) => {
     const option = {
+        operation,
         app: data.args.field_values.entityName,
         name: data.args.field_values.fa_field_id,
     };
@@ -334,8 +357,9 @@ const updateAcl = (data, file) => {
     return { ...data }
 };
 
-const toggleAcl = (data, file) => {
+const toggleAcl = (operation, data, file) => {
     const option = {
+        operation,
         app: data.args.targetApp,
         name: data.args.targetField,
     };
@@ -345,8 +369,9 @@ const toggleAcl = (data, file) => {
     return { ...data }
 };
 
-const toggleChoiceList = (data, file) => {
+const toggleChoiceList = (operation, data, file) => {
     const option = {
+        operation,
         name: data.args.name,
     };
     data = updateRecord(data, file, 'catalog_type', option, false, true);
@@ -354,8 +379,9 @@ const toggleChoiceList = (data, file) => {
     return { ...data }
 };
 
-const toggleAutomation = (data, file) => {
+const toggleAutomation = (operation, data, file) => {
     const option = {
+        operation,
         name: data.args.name,
     };
     data = updateRecord(data, file, 'rule_set', option, false, true);
@@ -363,8 +389,9 @@ const toggleAutomation = (data, file) => {
     return { ...data }
 };
 
-const toggleFormrule = (data, file) => {
+const toggleFormrule = (operation, data, file) => {
     const option = {
+        operation,
         name: data.args.description,
     };
     data = updateRecord(data, file, 'form_rule', option, false, true);
@@ -373,8 +400,9 @@ const toggleFormrule = (data, file) => {
     return { ...data }
 };
 
-const addView = (data, file) => {
+const addView = (operation, data, file) => {
     const option = {
+        operation,
         file,
         app: data.args.entity,
         name: data.args.name,
@@ -388,8 +416,9 @@ const addView = (data, file) => {
     return { ...data }
 };
 
-const updateView = (data, file) => {
+const updateView = (operation, data, file) => {
     const option = {
+        operation,
         app: data.args.entity,
         name: data.args.name,
     };
@@ -397,8 +426,9 @@ const updateView = (data, file) => {
     return { ...data }
 };
 
-const addDashboard = (data, file) => {
+const addDashboard = (operation, data, file) => {
     const option = {
+        operation,
         file,
         name: data.args.title,
     };
@@ -411,8 +441,9 @@ const addDashboard = (data, file) => {
     return { ...data }
 };
 
-const updateDashboard = (data, file) => {
+const updateDashboard = (operation, data, file) => {
     const option = {
+        operation,
         name: data.args.title,
     };
     data = updateRecord(data, file, 'dashboard', option);
@@ -420,9 +451,10 @@ const updateDashboard = (data, file) => {
 };
 
 
-const addSaveComposite = async (data, file) => {
+const addSaveComposite = async (operation, data, file) => {
     const { model, childModel } = modelsMap.get(data.args.parent_entity_id);
     const option = {
+        operation,
         model,
         childModel,
         name: data.args.parent_fields.name,
@@ -468,9 +500,10 @@ const createTransportIdsForChildren = async (instance) => {
     }
 };
 
-const updateSaveComposite = async (data, file) => {
+const updateSaveComposite = async (operation, data, file) => {
     const { model, childModel } = modelsMap.get(data.args.parent_entity_id);
     const option = {
+        operation,
         model,
         childModel,
         name: data.args.parent_fields.name,

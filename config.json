@@ -1,84 +1,267 @@
 {
-    "addCustomField" : [
-        {
-            "model": "fa_field_config",
-            "field": "id",
-            "transport_field": true,
-            "where_field": "custom_field_id"
-        }, 
-        {
-            "model": "catalog_type",
-            "field": "catalog_type_id"
+    "addCustomField" : {
+        "args": {
+            "field": "id"
         },
-        {
-            "model": "catalog",
-            "field": "default_value"
-        },
-        { 
-            "model": "layout",
-            "field": "layout_id"
-        },
-        {
-            "model": "fa_entity_config",
-            "field": "fa_entity_config_id"
-        },
-        {
-            "model": "fa_field_config",
-            "field": "reference_qualifier"
-        },
-        {
-            "model": "parent_field_id",
-            "field": "fa_field_config"
-        },
-        {
-            "model": "parent_fa_field_id",
-            "field": "fa_field_config"
-        },
-        {
-            "model": "reference_fa_field_id",
-            "field": "fa_field_config"
-        },
-        {
-            "model": "reference_custom_field_id",
-            "field": "fa_field_config"
-        },
-        {
-            "model": "fa_related_field_config_id",
-            "field": "fa_field_config"
-        },
-        {
-            "model": "fa_field_config",
-            "field": "parent_custom_field_id"
-        }
-    ],
+        "excludes": ["id"],
+        "transports": [
+            {
+                "model": "fa_field_config",
+                "field": "id",
+                "transport_field": true,
+                "where_field": "custom_field_id"
+            },
+            {
+                "model": "catalog_type",
+                "field": "catalog_type_id"
+            },
+            {
+                "model": "catalog",
+                "field": "default_value"
+            },
+            { 
+                "model": "layout",
+                "field": "layout_id"
+            },
+            {
+                "model": "fa_entity_config",
+                "field": "fa_entity_config_id"
+            },
+            {
+                "model": "fa_field_config",
+                "field": "reference_qualifier"
+            },
+            {
+                "model": "parent_field_id",
+                "field": "fa_field_config"
+            },
+            {
+                "model": "parent_fa_field_id",
+                "field": "fa_field_config"
+            },
+            {
+                "model": "reference_fa_field_id",
+                "field": "fa_field_config"
+            },
+            {
+                "model": "reference_custom_field_id",
+                "field": "fa_field_config"
+            },
+            {
+                "model": "fa_related_field_config_id",
+                "field": "fa_field_config"
+            },
+            {
+                "model": "fa_field_config",
+                "field": "parent_custom_field_id"
+            }
+        ]
+    },
 
-    "addEntity" : [
-        {
-            "model": "fa_entity_config",
-            "field": "id",
-            "transport_field": true,
-            "where_field": "fa_entity_id"
+    "updateFieldConfig" :{
+        "transports":  [
+            {
+                "model": "fa_field_config",
+                "field": "id"
+            }, 
+            {
+                "model": "catalog_type",
+                "field": "catalog_type_id"
+            },
+            {
+                "model": "catalog",
+                "field": "default_value"
+            },
+            { 
+                "model": "layout",
+                "field": "layout_id"
+            },
+            {
+                "model": "fa_entity_config",
+                "field": "fa_entity_config_id"
+            },
+            {
+                "model": "fa_field_config",
+                "field": "reference_qualifier"
+            },
+            {
+                "model": "parent_field_id",
+                "field": "fa_field_config"
+            },
+            {
+                "model": "parent_fa_field_id",
+                "field": "fa_field_config"
+            },
+            {
+                "model": "reference_fa_field_id",
+                "field": "fa_field_config"
+            },
+            {
+                "model": "reference_custom_field_id",
+                "field": "fa_field_config"
+            },
+            {
+                "model": "fa_related_field_config_id",
+                "field": "fa_field_config"
+            },
+            {
+                "model": "fa_field_config",
+                "field": "parent_custom_field_id"
+            }
+        ]
+    },
+    
+    "addEntity" : {
+        "args": {
+            "field": "fa_entity_id"
         },
-        {
-            "model": "fa_related_list",
-            "transport_field": true,
-            "field": "id",
-            "where_field": "fa_entity_id",
-            "bulk": true
+        "excludes": ["id"],
+        "transports": [
+            {
+                "model": "fa_entity_config",
+                "field": "id",
+                "transport_field": true,
+                "where_field": "fa_entity_id"
+            },
+            {
+                "model": "fa_related_list",
+                "transport_field": true,
+                "field": "id",
+                "where_field": "fa_entity_id",
+                "bulk": true
+            },
+            {
+                "model": "app_action",
+                "transport_field": true,
+                "field": "id",
+                "where_field": "fa_entity_id",
+                "bulk": true
+            },
+            {
+                "model": "fa_field_config",
+                "transport_field": true,
+                "field": "id",
+                "where_field": "fa_entity_id",
+                "bulk": true
+            }
+        ]
+    },
+
+    "updateEntityConfig": {
+        "transports": [
+            {
+                "model": "fa_entity_config",
+                "field": "id"
+            },
+            {
+                "model": "fa_role",
+                "field": "roles"
+            }
+        ]
+    },
+
+    "bulkUpdateOrder": {
+        "set_dyanamic_transport": true,
+        "array_prop": "entities",
+        "model_key": "entity",
+        "field": "id",
+        "args": {
+            "field": "id"
         },
-        {
-            "model": "app_action",
-            "transport_field": true,
+        "excludes": ["id"],
+        "transports": [] 
+    },
+
+    "addCatalog": {
+        "args": {
+            "field": "id"
+        },
+        "excludes": ["id"],
+        "transports": [{
+            "model": "catalog",
             "field": "id",
-            "where_field": "fa_entity_id",
-            "bulk": true
+            "transport_field": true
         },
         {
             "model": "fa_field_config",
-            "transport_field": true,
+            "field": "catalog.custom_field_id",
+            "where_field": "custom_field_id"
+        }] 
+    },
+
+    "createEntity": {
+        "model_key": "entity",
+        "args": {
+            "field": "entity_value.id"
+        },
+        "excludes": ["id", "field_values.fa_entity_id", "cache_key", "field_values.target_entity_id"],
+        "transports": [{
             "field": "id",
-            "where_field": "fa_entity_id",
-            "bulk": true
-        }
-    ]
+            "transport_field": true
+        },
+        {
+            "model": "fa_role",
+            "field": "field_values.roles"
+        },
+        {
+            "model": "fa_role",
+            "field": "field_values.fa_acl_field_roles"
+        },
+        {
+            "model": "rule_set",
+            "field": "field_values.rule_set_id"
+        }] 
+    },
+
+    "updateEntity": {
+        "model_key": "entity",
+        "args": {
+            "field": "entity_value.id"
+        },
+        "excludes": ["id", "field_values.fa_entity_id", "cache_key", "field_values.target_entity_id"],
+        "transports": [{
+            "field": "id"
+        },
+        {
+            "model": "fa_role",
+            "field": "field_values.roles"
+        },
+        {
+            "model": "fa_role",
+            "field": "field_values.fa_acl_field_roles"
+        },
+        {
+            "model": "rule_set",
+            "field": "field_values.rule_set_id"
+        }] 
+    },
+
+    "updateEntityValue": {
+        "model_key": "entity",
+        "args": {
+            "field": "id"
+        },
+        "excludes": ["id", "entity_value_id"],
+        "transports": [{
+            "field": "entity_value_id"
+        }] 
+    },
+
+    "saveCompositeEntity": {
+        "has_child": true,
+        "upsert": true,
+        "field": "instance_id",
+        "parent_model_key": "parent_entity_id",
+        "parent_prop": "parent_fields",
+        "child_prop": "children",
+        "child_model_key": "entity_id",
+        "fields": [{
+
+        }],
+        "transports": [{
+            "field": "id",
+            "transport_field": true
+        }] 
+    }
+
 }
