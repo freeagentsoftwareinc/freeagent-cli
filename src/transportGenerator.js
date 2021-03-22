@@ -73,12 +73,12 @@ const reMapUpsertConfigurations = async (configurations, args, result) => {
   const childTransports = getCompositeTransports(args, configurations, childProp, parentId);
 };
 
-
 const reMapArgsAndConfigurations = (configurations, args, result) => {
+  const resultObj = { ...result.dataValues, ...result }
   const field = get(configurations, 'args.field');
   const modelKey = get(configurations, 'model_key');
   if (field) {
-    const id = get(result, field);
+    const id = get(resultObj, field);
     set(args, 'id', id);;
   }
 

@@ -1,15 +1,14 @@
 {
     "addCustomField" : {
         "args": {
-            "field": "id"
+            "field": "fa_field_config_id"
         },
         "excludes": ["id"],
         "transports": [
             {
                 "model": "fa_field_config",
                 "field": "id",
-                "transport_field": true,
-                "where_field": "custom_field_id"
+                "transport_field": true
             },
             {
                 "model": "catalog_type",
