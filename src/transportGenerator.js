@@ -215,13 +215,13 @@ const reMapTransports = async (args, result, operation, models) => {
   const configurations = get(config, operation);
   const hasExcludeFlag = get(configurations, 'exclude_entities');
   if(!configurations) {
-    return result;
+    return;
   }
 
   if (hasExcludeFlag) {
     const isExcluded = checkIfExcluded(args, configurations);
     if (isExcluded){
-      return result;
+      return;
     }
   }
   
@@ -230,14 +230,12 @@ const reMapTransports = async (args, result, operation, models) => {
   }
 
   if (configurations.has_child) {
-    getCompositeArgsWithTransports(configurations, args, result, models);
-    return result;
+    return getCompositeArgsWithTransports(configurations, args, result, models);
   }
 
   reMapArgsAndConfigurations(configurations, args, result, operation);
   const data = await getArgsWithTransports(args, configurations.transports, models);
-  excludeProps(data, configurations);
-  return result;
+  return excludeProps(data, configurations);
 };
 
 module.exports = {
