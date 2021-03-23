@@ -1,6 +1,6 @@
-const { validate } = require('graphql');
-const { get, set, isArray, omit, find } = require('lodash');
-const { entities, parentRefKeys } = require('../utils/constants');
+const { validate } = require('uuid');
+const { get, set, isArray, omit, find, fromPairs, has } = require('lodash');
+const { entities, parentRefKeys } = require('../utils/constants.js');
 const config = require('../config.json');
 
 const getTransportIdFromLocalDB = async (id, config) => {};
@@ -20,57 +20,80 @@ const excludeProps = (data, configurations) => {
   return data;
 };
 
-const getCompositeTransports = async (fields, models, modelName, configurations, parentId) => {
-  const transports = [];
-  if (fields) {
-    return await Promise.all(fields.map(async(field, index) => {
-      const fieldName = field[0];
-      const fieldValue = field[1];
-      let filedConfig = find(configurations.fields, { field: fieldName })
-      if (fieldValue && fieldName === 'id' || fieldName === 'name') {
-        filedConfig = {
-          model: modelName,
-        }
-      };
-
-      if (filedConfig) {
-        let where = filedConfig.where ? set({}, filedConfig.where, fieldValue) : set({}, 'id', fieldValue);
-        if(fieldName === 'name' && parentId) {
-          const parentRefKey = get(parentRefKeys)
-          where = {
-
-          }
-        }
-        const model = filedConfig.model;
-        const transportId = await findTransportId(models, model, where);
-        transports.push({
-          id: transportId,
-          field: `${propName}[${index}].[0][1]`,
-          model 
-        });
-      }
-    }))
-    .then(()=> {
-      return transports;
+const getCompositeTransports = async (info, configurations, transports, models, parent=null, newInstanceTrasports=null) => {
+  const fieldObj =  parent && fromPairs(info.props)
+  const isNewInstance = fieldObj && !has(fieldObj, 'id');
+  await Promise.all(info.props.map(async(field, index) => {
+    const fieldName = field[0];
+    const fieldValue = field[1];
+    const isUniqeField = configurations.unique_fields.includes(fieldName) && parent;
+    let filedConfig = find(configurations.fields, { field: fieldName });
+    const model = filedConfig ? filedConfig.model : info.model;
+    const conditionField = isUniqeField ? fieldName : 'id';
+    if(!fieldValue || (!filedConfig && !isUniqeField)){
+      return;
+    }
+    
+    const where = set({}, conditionField, fieldValue);
+    parent && set(where, get(parentRefKeys, parent.model), parent.id);
+    const transportId = await findTransportId(models, model, where);
+    if(!transportId){
+      return;
+    }
+    isNewInstance && isUniqeField
+      ? newInstanceTrasports.push(transportId)
+      : transports.push({
+      id: transportId,
+      field: `${info.key}[${index}][1]`,
+      model
     });
-  }
+  }));
 };
 
-const reMapUpsertConfigurations = async (configurations, args, result) => {
-  const modelName = getModel(args, configurations.parent_model_key);
-  const id = get(args, configurations.field);
-  const parentId = get(result.parent_id);
-  const parentProp = get(configurations, parent_prop);
-  const childProp = get(configurations, child_prop);
-  const where = { id: parentId };
-  const transportId = await findTransportId(models, modelName, where);
-  const transports = [{
-    id: transportId,
-    field: id ? 'configurations.field' : 'tranpsort_id',
-    model: modelName
-  }];
-  const parentTransports = getCompositeTransports(args, configurations, parentProp, parentId);
-  const childTransports = getCompositeTransports(args, configurations, childProp, parentId);
+const getCompositeArgsWithTransports = async (configurations, args, result, models) => {
+  let childModelName;
+  const transports = [];
+  const newInstanceTrasports = []
+  const parentInfo = {
+    id: get(result, 'parent_id'),
+    model: getModel(args, configurations.parent_model_key),
+    key: 'parent_fields',
+    props: get(args, 'parent_fields'),
+    field: get(args, configurations.field)
+  };
+  const childInfo = {
+    fields: get(args, 'children'),
+    modelKey: get(configurations, 'child_model_key'),
+  };
+  const where = { id: parentInfo.id };
+  const transportId = await findTransportId(models, parentInfo.model, where);
+  await getCompositeTransports(parentInfo, configurations, transports, models);
+  await Promise.all(childInfo.fields.map(async (child, index) => {
+    set(childInfo, 'key', `children[${index}].custom_fields`);
+    set(childInfo, 'props', child.custom_fields);
+    !childModelName && set(childInfo, 'model', getModel(child, childInfo.modelKey));
+    await getCompositeTransports(childInfo, configurations, transports, models, parentInfo, newInstanceTrasports);
+  }));
+
+  if(transportId) {
+    transports.push({
+      id: transportId,
+      field: parentInfo.field ? 'id' : 'transport_id',
+      model: parentInfo.model
+    });
+  }
+
+  if(newInstanceTrasports.length) {
+    transports.push({
+      id: newInstanceTrasports,
+      field: 'transport_id',
+      model: childInfo.model
+    })
+  };
+  return {
+    args: { ...args },
+    transports: [...transports],
+  };
 };
 
 const reMapArgsAndConfigurations = (configurations, args, result) => {
@@ -148,7 +171,6 @@ const setDyanamicConfigurations = (args, configurations) => {
   const arrayProp = configurations.array_prop;
   const data = get(args, arrayProp);
   const field = configurations.field;
-  // const transports = dynamicTransports(data, );  
   const transports = data.map((obj, index) => {
     return {
       field: `${arrayProp}[${index}].${field}`,
@@ -189,9 +211,9 @@ const reMapTransports = async (args, result, operation, models) => {
     setDyanamicConfigurations(args, configurations)
   }
 
-  // if (configurations.has_child && configurations.has_child){
-  //   reMapUpsertConfigurations(configurations, args, result);
-  // }
+  if (configurations.has_child) {
+    return getCompositeArgsWithTransports(configurations, args, result, models);
+  }
   reMapArgsAndConfigurations(configurations, args, result, operation);
   const data = await getArgsWithTransports(args, configurations.transports, models);
   return excludeProps(data, configurations);

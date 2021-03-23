@@ -248,14 +248,24 @@
 
     "saveCompositeEntity": {
         "has_child": true,
-        "upsert": true,
+        "args": {
+            "field": "instance_id"
+        },
         "field": "instance_id",
         "parent_model_key": "parent_entity_id",
-        "parent_prop": "parent_fields",
-        "child_prop": "children",
         "child_model_key": "entity_id",
+        "unique_fields": ["name", "description"],
         "fields": [{
-
+            "field": "on_update_field",
+            "model": "fa_field_config"
+        },
+        {
+            "field": "schedule_datetime_field",
+            "model": "fa_field_config"
+        },
+        {
+            "field": "app_action_id",
+            "model": "app_action"
         }],
         "transports": [{
             "field": "id",
