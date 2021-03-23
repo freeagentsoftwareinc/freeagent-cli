@@ -193,6 +193,8 @@
         "args": {
             "field": "entity_value.id"
         },
+        "include_entities": ["layout", "fa_acl", "app_action", "fa_role", "rule_set", "catalog", "catalog_type", "rule_action"],
+        "entity_field": "entity",
         "excludes": ["id", "field_values.fa_entity_id", "cache_key", "field_values.target_entity_id"],
         "transports": [{
             "field": "id",
@@ -217,6 +219,8 @@
         "args": {
             "field": "entity_value.id"
         },
+        "include_entities": ["layout", "fa_acl", "app_action", "fa_role", "rule_set", "catalog", "catalog_type", "rule_action"],
+        "entity_field": "entity",
         "excludes": ["id", "field_values.fa_entity_id", "cache_key", "field_values.target_entity_id"],
         "transports": [{
             "field": "id"
@@ -240,6 +244,7 @@
         "args": {
             "field": "id"
         },
+        "include_entities": ["layout", "fa_acl", "app_action", "fa_role", "rule_set", "catalog", "catalog_type", "rule_action"],
         "exclude_entities": ["changeset"],
         "entity_field": "entity",
         "excludes": ["id", "entity_value_id"],
@@ -253,6 +258,7 @@
         "args": {
             "field": "instance_id"
         },
+        "include_entities": ["layout", "fa_acl", "app_action", "fa_role", "rule_set", "catalog", "catalog_type", "rule_action"],
         "exclude_entities": ["changeset"],
         "entity_field": "parent_entity_id",
         "field": "instance_id",

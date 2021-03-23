@@ -118,21 +118,25 @@ const reMapArgsAndConfigurations = (configurations, args, result) => {
 };
 
 const findTransportId = async (models, modelName, where) => {
-  const result = await models[modelName].find({
-    raw: true,
-    attributes: ['transport_id'],
-    where,
-  });
-  return get(result, 'transport_id');
+  if(models[modelName]) {
+    const result = await models[modelName].find({
+      raw: true,
+      attributes: ['transport_id'],
+      where,
+    });
+    return get(result, 'transport_id');
+  }
 };
 
 const findAllTransportIds = async (models, modelName, where) => {
-  const results = await models[modelName].findAll({
-    raw: true,
-    attributes: ['transport_id'],
-    where,
-  });
-  return results.map((result) => get(result, 'transport_id'));
+  if(models[modelName]) {
+    const results = await models[modelName].findAll({
+      raw: true,
+      attributes: ['transport_id'],
+      where,
+    });
+    return results.map((result) => get(result, 'transport_id'));
+  }
 };
 
 const getTransportIdFromDB = async (id, config, models) => {
@@ -201,8 +205,8 @@ const getArgsWithTransports = async (args, configurations, models) => {
   });
 };
 
-const checkIfExcluded = (args, configurations) => {
-  const excludeEntities = get(configurations, 'exclude_entities');
+const checkForEntities = (args, configurations) => {
+  const excludeEntities = get(configurations, 'include_entities');
   const propPath = get(configurations, 'entity_field');
   const entity = get(args, propPath);
   const entityName = validate(entity) ? get(entities, entity) : entity;
@@ -213,14 +217,14 @@ const checkIfExcluded = (args, configurations) => {
 
 const reMapTransports = async (args, result, operation, models) => {
   const configurations = get(config, operation);
-  const hasExcludeFlag = get(configurations, 'exclude_entities');
+  const hasIncludedFlag = get(configurations, 'include_entities');
   if(!configurations) {
     return;
   }
 
-  if (hasExcludeFlag) {
-    const isExcluded = checkIfExcluded(args, configurations);
-    if (isExcluded){
+  if (hasIncludedFlag) {
+    const isIncluded = checkForEntities(args, configurations);
+    if (!isIncluded){
       return;
     }
   }
