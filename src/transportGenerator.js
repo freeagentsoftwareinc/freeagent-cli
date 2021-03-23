@@ -33,7 +33,7 @@ const getCompositeTransports = async (info, configurations, transports, models, 
     if(!fieldValue || (!filedConfig && !isUniqeField)){
       return;
     }
-    
+
     const where = set({}, conditionField, fieldValue);
     parent && set(where, get(parentRefKeys, parent.model), parent.id);
     const transportId = await findTransportId(models, model, where);
@@ -201,22 +201,43 @@ const getArgsWithTransports = async (args, configurations, models) => {
   });
 };
 
+const checkIfExcluded = (args, configurations) => {
+  const excludeEntities = get(configurations, 'exclude_entities');
+  const propPath = get(configurations, 'entity_field');
+  const entity = get(args, propPath);
+  const entityName = validate(entity) ? get(entities, entity) : entity;
+  if(entityName){
+    return excludeEntities.includes(entityName);
+  }
+};
+
 const reMapTransports = async (args, result, operation, models) => {
   const configurations = get(config, operation);
+  const hasExcludeFlag = get(configurations, 'exclude_entities');
   if(!configurations) {
-    return;
+    return result;
+  }
+
+  if (hasExcludeFlag) {
+    const isExcluded = checkIfExcluded(args, configurations);
+    if (isExcluded){
+      return result;
+    }
   }
   
-  if(configurations.set_dyanamic_transport){
+  if (configurations.set_dyanamic_transport) {
     setDyanamicConfigurations(args, configurations)
   }
 
   if (configurations.has_child) {
-    return getCompositeArgsWithTransports(configurations, args, result, models);
+    getCompositeArgsWithTransports(configurations, args, result, models);
+    return result;
   }
+
   reMapArgsAndConfigurations(configurations, args, result, operation);
   const data = await getArgsWithTransports(args, configurations.transports, models);
-  return excludeProps(data, configurations);
+  excludeProps(data, configurations);
+  return result;
 };
 
 module.exports = {

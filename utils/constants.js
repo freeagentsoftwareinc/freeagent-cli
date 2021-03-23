@@ -513,7 +513,8 @@ const entities = {
     '10913ac7-852e-516e-a2d7-3c24c34600d4': 'catalog_type',
     '6fc34d02-c890-5661-a157-565d99a4fe37': 'catalog',
     'cf7de345-a40b-56cb-b70a-7fb707a5b4b0' : 'rule_set',
-    '2c05c9fa-568e-49e2-b435-b84f79fe1d32': 'form_rule'
+    '2c05c9fa-568e-49e2-b435-b84f79fe1d32': 'form_rule',
+    'b8bc20b4-cd64-4bc3-98d1-f4584bc8e4ad': 'changeset'
 };
 
 const parentRefKeys = {

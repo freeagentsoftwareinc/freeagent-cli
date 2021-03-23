@@ -240,6 +240,8 @@
         "args": {
             "field": "id"
         },
+        "exclude_entities": ["changeset"],
+        "entity_field": "entity",
         "excludes": ["id", "entity_value_id"],
         "transports": [{
             "field": "entity_value_id"
@@ -251,6 +253,8 @@
         "args": {
             "field": "instance_id"
         },
+        "exclude_entities": ["changeset"],
+        "entity_field": "parent_entity_id",
         "field": "instance_id",
         "parent_model_key": "parent_entity_id",
         "child_model_key": "entity_id",
