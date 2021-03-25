@@ -1,8 +1,8 @@
 const { validate } = require('uuid');
 const { get, set, isArray, omit, find, fromPairs, has, filter } = require('lodash');
-const { entities, parentRefKeys } = require('../utils/constants.js');
+const { entities, parentRefKeys }  = require('../utils/constants');
 const config = require('../config.json');
-const { findAll, findOne } = require('./db.js');
+const { findOne, findAll }  = require('./db.js');
 
 const findAllTransportIdsFromLocal = (modelName, where) => {
   const instances = findAll(modelName);
