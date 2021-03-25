@@ -14,69 +14,49 @@ const payloads = {
     },
 
     addEntity: {
-        args: {
-            icon: '',
-            label: '',
-            roles: [],
-            is_applet: null,
-            parent_id: null,
-            label_plural: '',
-            info_segment_wide: '1 column',
-            enforce_individual_access: true,
-            fields_configuration_attachment_id: null,
-        },
-        transports:[
-        {
-            order_transport_id_map: {
-                1: v4(),
-                2: v4()
-            },
-            model: 'app_action'
-        },
-        {
-            order_transport_id_map: {
-                1: v4(),
-                2: v4()
-            },
-            model: 'fa_related_list'
-        }]
+        icon: '',
+        label: '',
+        roles: [],
+        is_applet: null,
+        parent_id: null,
+        label_plural: '',
+        info_segment_wide: '1 column',
+        enforce_individual_access: true,
+        fields_configuration_attachment_id: null,
     },
 
     updateApp: {
-        args: {
-            id:'',
-            label: '',
-            label_plural: '',
-            is_visible: true,
-            icon: '',
-            roles: [],
-            show_related_list: null,
-            enforce_individual_access: true,
-            info_segment_wide: '1 column',
-            landscape_mode: null,
-            template_file_url: '',
-            title_field_name: 'seq_id',
-            applet_config: {
-                width: '',
-                height: '',
-                url: '',
-                params:'',
-                applet_id:'',
-            },
-            show_app_icon: null,
-            show_seq_id: null,
-            primary_action: null,
-            enable_quick_add: false,    
-            quick_add_custom_code: '',
-            quick_add_hint: null,
-            description: '',
-            default_sorts: [],
-            color: '',
-            is_applet: null,
-            parent_id: null,
-            fields_configuration_attachment_id: null,
+        id:'',
+        label: '',
+        label_plural: '',
+        is_visible: true,
+        icon: '',
+        roles: [],
+        show_related_list: null,
+        enforce_individual_access: true,
+        info_segment_wide: '1 column',
+        landscape_mode: null,
+        template_file_url: '',
+        title_field_name: 'seq_id',
+        applet_config: {
+            width: '',
+            height: '',
+            url: '',
+            params:'',
+            applet_id:'',
         },
-        transports: []
+        show_app_icon: null,
+        show_seq_id: null,
+        primary_action: null,
+        enable_quick_add: false,    
+        quick_add_custom_code: '',
+        quick_add_hint: null,
+        description: '',
+        default_sorts: [],
+        color: '',
+        is_applet: null,
+        parent_id: null,
+        fields_configuration_attachment_id: null,
     },
 
     activateApp: {

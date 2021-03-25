@@ -15,8 +15,15 @@
                 "field": "catalog_type_id"
             },
             {
+                "field": "default_value",
                 "model": "catalog",
-                "field": "default_value"
+                "accept_string": true
+            },
+            {
+                "field": "default_value",
+                "model": "fa_entity_config",
+                "where_field": "fa_entity_id",
+                "accept_string": true
             },
             { 
                 "model": "layout",
@@ -53,7 +60,19 @@
             {
                 "model": "fa_field_config",
                 "field": "parent_custom_field_id"
-            }
+            },
+            {
+                "model": "fa_field_config",
+                "field": "reference_qualifier"
+            },
+            {
+                "field": "reference_qualifier_value",
+                "model": "fa_role"
+            },
+            {
+                "field": "reference_qualifier_value",
+                "model": "catalog"
+            }       
         ]
     },
 
@@ -68,8 +87,15 @@
                 "field": "catalog_type_id"
             },
             {
+                "field": "default_value",
                 "model": "catalog",
-                "field": "default_value"
+                "accept_string": true
+            },
+            {
+                "field": "default_value",
+                "model": "fa_entity_config",
+                "where_field": "fa_entity_id",
+                "accept_string": true
             },
             { 
                 "model": "layout",
@@ -106,6 +132,18 @@
             {
                 "model": "fa_field_config",
                 "field": "parent_custom_field_id"
+            },
+            {
+                "model": "fa_field_config",
+                "field": "reference_qualifier"
+            },
+            {
+                "field": "reference_qualifier_value",
+                "model": "fa_role"
+            },
+            {
+                "field": "reference_qualifier_value",
+                "model": "catalog"
             }
         ]
     },

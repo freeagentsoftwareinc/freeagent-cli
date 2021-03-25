@@ -1,9 +1,26 @@
 const { validate } = require('uuid');
-const { get, set, isArray, omit, find, fromPairs, has } = require('lodash');
+const { get, set, isArray, omit, find, fromPairs, has, filter } = require('lodash');
 const { entities, parentRefKeys } = require('../utils/constants.js');
 const config = require('../config.json');
+const { findAll, findOne } = require('./db.js');
 
-const getTransportIdFromLocalDB = async (id, config) => {};
+const findAllTransportIdsFromLocal = (modelName, where) => {
+  const instances = findAll(modelName);
+  const results = filter(instances, where);
+  return results.map((result) => get(result, 'id'));
+}
+
+const getTransportIdFromLocalDB = async (id, config) => {
+  const whereField = get(config, 'where_field') || 'id';
+  const modelName = get(config, 'model');
+  const where = set({}, whereField, id);
+  if (config.bulk) {
+    const r = findAllTransportIdsFromLocal(modelName, where);
+    return r;
+  }
+  const result = findOne(modelName, where);
+  return get(result, 'id');
+};
 
 const getModel = (args, key) => {
   const modelKey = get(args, key);
@@ -152,7 +169,7 @@ const getTransportIdFromDB = async (id, config, models) => {
 const getTransportIds = async (id, config, models, position=null) => {
   const model = config.model;
   const field = get(config, 'transport_field') ? 'transport_id' : config.field;
-  const transportId = models ? await getTransportIdFromDB(id, config, models) : getTransportIdFromLocalDB(id, config);
+  const transportId = models ? await getTransportIdFromDB(id, config, models) : await getTransportIdFromLocalDB(id, config);
   if (!transportId) {
     return null;
   }
@@ -185,24 +202,24 @@ const setDyanamicConfigurations = (args, configurations) => {
 };
 
 const getArgsWithTransports = async (args, configurations, models) => {
-  let transports = [];
-  return await Promise.all(
+  const results = await Promise.all(
     configurations.map(async (config) => {
       const id = get(args, config.field);
       if (id) {
         const transport = await getTransport(id, config, models);
-        if (transport) {
-          transports = transports.concat(transport);
-        }
+        return transport;
       }
-      return config;
     })
-  ).then(() => {
-    return {
-      args: { ...args },
-      transports: [...transports],
-    };
-  });
+  );
+
+  const transports = filter(results, result => result);
+  if(!transports.length){
+    throw new Error('could not find transport_id');
+  }
+  return {
+    args: { ...args },
+    transports,
+  };
 };
 
 const checkForEntities = (args, configurations) => {

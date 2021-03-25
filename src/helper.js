@@ -16,37 +16,28 @@ const updateArgs = (operation, data, file) => {
     data.args = { ...data.args, ...savedData.args };
 };
 
-const createRecord = (data, model, option, isDelete=false) => {
-    const id = v4();
-    const tansport = {
-        id,
-        field: 'transport_id',
-        model
-    };
-    // data.transports.push(tansport);
+const createRecord = (model, operation,  option, isDelete=false) => {
     insert(model, {
         ...option,
-        id,
+        operation,
         isDelete,
         isSystem: false,
         isExported: false,
         isUpdate: false
     });
-    return {
-        ...data
-    }
 };
-const updateRecord = (data, file, model, option, isDelete=false, isToggle=false) => {
+const updateRecord = (data, file, model, operation, option, isDelete=false, isToggle=false) => {
+    console.log(findAll(model), option);
     let instance = findOne(model, { 
         ...option,
         isDelete: false,
         isSystem: false,
         isUpdate: false
     });
-    !isToggle && set(data, 'args.id', '');
     if(!instance || !instance.id){
        insert(model, {
             ...option,
+            operation,
             file,
             isDelete,
             isToggle,
@@ -64,10 +55,10 @@ const updateRecord = (data, file, model, option, isDelete=false, isToggle=false)
         field: (!isToggle || !modelsForEntityValueId.includes(model)) ? 'id' : 'entity_value_id',
         model
     };
-    data.transports.push(tansport);
     (!isToggle && !isDelete) && updateArgs(data, instance.file);
     insert(model, {
         ...option,
+        operation,
         file,
         isDelete,
         isToggle,
@@ -76,7 +67,8 @@ const updateRecord = (data, file, model, option, isDelete=false, isToggle=false)
         isUpdate: true
     });
     return {
-        ...data
+        args: { ...data },
+        transports: [tansport]
     }
 };
 
@@ -101,25 +93,40 @@ const saveDataToFile = async (data, file) => {
     await fs.writeFileSync(`${filePath}`, jsonData);
 };
 
-const createDefaultField = (app) => {
-    const transportObj = {
-        order_transport_id_map: {},
-        model: 'fa_field_config'
-    };
-    defaultFields.map((name, index)=> {
-        const id = v4();
-        insert('fa_field_config', {
+const createDefaultField = (id, app) => {
+    [v4(), v4()].map((newId) => insert('app_action', {
+        id: newId,
+        app,
+        fa_entity_id: id,
+        isDelete: false,
+        isSystem: false,
+        isExported: false,
+        isUpdate: false
+    }));
+
+    [v4(), v4()].map((newId) => insert('fa_related_list', {
+        id: newId,
+        app,
+        fa_entity_id: id,
+        isDelete: false,
+        isSystem: false,
+        isExported: false,
+        isUpdate: false
+    }));
+
+    defaultFields.map((name) => {
+        const option = {
+            id: v4(),
+            fa_entity_id: id,
             name,
             app,
-            id,
             isDelete: false,
             isSystem: false,
             isExported: false,
             isUpdate: false
-        });
-        set(transportObj, `order_transport_id_map.${index+1}`, id);
-    });
-    return transportObj;
+        }
+        insert('fa_field_config', option);
+    })
 };
 
 module.exports = {

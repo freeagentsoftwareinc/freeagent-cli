@@ -20,6 +20,40 @@ const {
 } = require('../utils/constants');
 const chalk = require('chalk');
 
+const getCondition = (instance, whereProps) => {
+    const condition = {};
+    whereProps.map((prop) => {
+        const value = get(instance, prop);
+        if (!value) {
+            return;
+        }
+        set(condition, prop, value, value);
+    });
+    return condition;
+};
+
+const reWriteFiles = (model, whereProps) => {
+    const instances = findAll(model);
+    instances.map(async ( instance ) => {
+        const file = instance.file;
+        const savedData = await getSavedData(instance);
+
+        if(!savedData || instance.isExported){
+            return;
+        };
+        console.log(instance, instance.operation);
+        const data = await reMapTransports(savedData, instance, instance.operation);
+        await saveDataToFile(data, file);
+        const where = getCondition(instance, whereProps);
+        // update(model, where, { isExported: true });
+    });
+};
+
+const reWriteAddEntityFiles = () => {
+    const whereProps = ['id'];
+    reWriteFiles('fa_entity_config', whereProps);
+}
+
 const reMapWidgets = (widgets, isDasboard=false) => {
     const transports = [];
     const updatedWidgets = (widgets || []).map((widget, index) => {
@@ -79,56 +113,65 @@ const getMappedColumnsAndTransports = (app, columns) => {
 };
 
 const reWriteUpdateEntityConfigFiles = () => {
-    const instances = findAll('fa_entity_config');
-    instances.map(async ( instance ) => {
-        const file = instance.file;
-        const savedData = await getSavedData(instance)
-        if(!savedData || instance.isExported){
-            return;
-        }
+    // const instances = findAll('fa_entity_config');
+    // instances.map(async ( instance ) => {
+    //     const file = instance.file;
+    //     const savedData = await getSavedData(instance)
+    //     if(!savedData || instance.isExported){
+    //         return;
+    //     }
 
-        if(!instance.isLine && (!instance.isUpdate || !instance.isSystem)){
-            return;
-        }
+    //     if(!instance.isLine && (!instance.isUpdate || !instance.isSystem)){
+    //         return;
+    //     }
 
-        if(instance.isToggle && !instance.isSystem){
-            return;
-        }
-        const id = get(savedData, 'args.id') || get(savedData, 'args.parent_id');
-        if(!id && !validate(id)){
-            console.log(`please provide the correct id to ${file}`);
-            return;
-        };
+    //     if(instance.isToggle && !instance.isSystem){
+    //         return;
+    //     }
+    //     const id = get(savedData, 'args.id') || get(savedData, 'args.parent_id');
+    //     if(!id && !validate(id)){
+    //         console.log(`please provide the correct id to ${file}`);
+    //         return;
+    //     };
 
-        const field = !instance.isLine ? 'id' : 'parent_id';
-        savedData.transports.push( {
-            id,
-            field,
-            model: 'fa_entity_config'
-        });
-        set(savedData, `args.${field}`, '');
-        delete savedData.args.id;
-        delete savedData.args.parent_id;
-        await saveDataToFile(savedData, file);
-        update('fa_entity_config', { name: instance.label, isExported: false }, { isExported: true });
-    });
+    //     const field = !instance.isLine ? 'id' : 'parent_id';
+    //     savedData.transports.push( {
+    //         id,
+    //         field,
+    //         model: 'fa_entity_config'
+    //     });
+    //     set(savedData, `args.${field}`, '');
+    //     delete savedData.args.id;
+    //     delete savedData.args.parent_id;
+    //     await saveDataToFile(savedData, file);
+    //     update('fa_entity_config', { name: instance.label, isExported: false }, { isExported: true });
+    // });
+
+    const wherepPop = ['name'];
+    reWriteFiles('fa_entity_config', wherepPop);
 };
+
+// const reWriteFieldsFiles = () => {
+//     const instances = findAll('fa_field_config');
+//     instances.map(async ( instance ) => {
+//         const file = instance.file;
+//         const savedData = await getSavedData(instance)
+
+//         if(!savedData || instance.isExported){
+//             return;
+//         };
+
+//         const data = await reMapTransports(savedData, instance, instance.operation);
+//         await saveDataToFile(data, file);
+//         update('fa_field_config', { name: instance.name, app: instance.app, isExported: false }, { isExported: true });
+//     });
+// };
 
 const reWriteFieldsFiles = () => {
-    const instances = findAll('fa_field_config');
-    instances.map(async ( instance ) => {
-        const file = instance.file;
-        const savedData = await getSavedData(instance)
-
-        if(!savedData || instance.isExported){
-            return;
-        };
-
-        const data = await reMapTransports(savedData, instance, instance.operation);
-        await saveDataToFile(data, file);
-        update('fa_field_config', { name: instance.name, app: instance.app, isExported: false }, { isExported: true });
-    });
+    const wherepPop = ['name', 'app'];
+    reWriteFiles('fa_field_config', wherepPop);
 };
+
 
 const reWriteUpdateOrderFiles = () => {
     const instances = findAll('reorder');
@@ -648,5 +691,6 @@ module.exports = {
     reWriteSaveCompositeEntityFiles,
     reWriteStageFields,
     reWriteViewFiles,
-    reWriteDashboardFiles
+    reWriteDashboardFiles,
+    reWriteAddEntityFiles
 };

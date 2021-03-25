@@ -6,15 +6,7 @@ const { modelsMap, createEntityMap, faEntitiesName, errorMessages } = require('.
 const { findOne, findLast, findAll, insert, resetDb } = require('./db');
 const { createRecord, updateRecord, getSavedData, saveDataToFile, createDefaultField } = require('./helper');
 const {
-    reWriteUpdateEntityConfigFiles,
-    reWriteFieldsFiles,
-    reWriteCreateUpdateEntityFiles,
-    reWriteSaveCompositeEntityFiles,
-    reWriteUpdateOrderFiles,
-    reWriteCardConfigFiles,
-    reWriteStageFields,
-    reWriteViewFiles,
-    reWriteDashboardFiles
+    reWriteAddEntityFiles
 } = require('./reComposeFiles');
 
 const addChangeset = (operation, data) => {
@@ -32,30 +24,31 @@ const addChangeset = (operation, data) => {
 };
 
 const addApp = (operation, data, file) => {
+    const id = v4();
+    set(data, 'id', id);
     const option = {
-        operation,
+        id,
+        fa_entity_id: id,
         file,
-        name: data.args.label,
-        label_plural: data.args.label_plural,
+        name: snakeCase(data.label),
+        label_plural: data.label_plural,
         isLine: false
     };
-    if(faEntitiesName.includes(snakeCase(data.args.label))){
-        console.log(chalk.red(`The system app exists called ${data.args.label}, please use the different name`));
+    if(faEntitiesName.includes(snakeCase(data.label))){
+        console.log(chalk.red(`The system app exists called ${data.label}, please use the different name`));
         return;
     };
-    data = createRecord(data, 'fa_entity_config', option);
-    const defaultFeildTransports = createDefaultField(data.args.label);
-    data.transports.push(defaultFeildTransports);
+    createRecord('fa_entity_config', operation, option);
+    createDefaultField(id, option.name);
     return { ...data }
 };
 
 const updateApp = (operation, data, file) => {
     const option = {
-        operation,
-        name: data.args.label,
+        name: snakeCase(data.label),
         isLine: false,
     }
-    data = updateRecord(data, file, 'fa_entity_config', option);
+    data = updateRecord(data, file, 'fa_entity_config', operation,  option);
     return { ...data }
 };
 
@@ -540,15 +533,16 @@ const updateSaveComposite = async (operation, data, file) => {
 
 const remapSaveComposite = async () => {
     try {
-        modelsMap.forEach(async (value) => await reWriteSaveCompositeEntityFiles(findAll(value.model)));
-        createEntityMap.map((model) => reWriteCreateUpdateEntityFiles(findAll(model), model));
-        reWriteUpdateEntityConfigFiles();
-        reWriteFieldsFiles();
-        reWriteUpdateOrderFiles();
-        reWriteCardConfigFiles();
-        reWriteStageFields();
-        reWriteViewFiles();
-        reWriteDashboardFiles();
+        reWriteAddEntityFiles();
+        // modelsMap.forEach(async (value) => await reWriteSaveCompositeEntityFiles(findAll(value.model)));
+        // createEntityMap.map((model) => reWriteCreateUpdateEntityFiles(findAll(model), model));
+        // reWriteUpdateEntityConfigFiles();
+        // reWriteFieldsFiles();
+        // reWriteUpdateOrderFiles();
+        // reWriteCardConfigFiles();
+        // reWriteStageFields();
+        // reWriteViewFiles();
+        // reWriteDashboardFiles();
     } catch(e) {
         throw e;
     }

@@ -19,7 +19,8 @@ db.defaults({
     reorder: [],
     cards: [],
     view: [],
-    dashboard: []
+    dashboard: [],
+    fa_related_list: []
 })
 .write();
 
