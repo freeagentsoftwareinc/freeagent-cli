@@ -1,25 +1,24 @@
 const { validate } = require('uuid');
 const { get, set, isArray, omit, find, fromPairs, has, filter } = require('lodash');
-const { entities, parentRefKeys }  = require('../utils/constants');
+const { entities, parentRefKeys } = require('../utils/constants');
 const config = require('../config.json');
-const { findOne, findAll }  = require('./db.js');
 
-const findAllTransportIdsFromLocal = (modelName, where) => {
-  const instances = findAll(modelName);
-  const results = filter(instances, where);
-  return results.map((result) => get(result, 'id'));
-}
+// const findAllTransportIdsFromLocal = (modelName, where) => {
+//   const instances = findAll(modelName);
+//   const results = filter(instances, where);
+//   return results.map((result) => get(result, 'id'));
+// }
 
 const getTransportIdFromLocalDB = async (id, config) => {
-  const whereField = get(config, 'where_field') || 'id';
-  const modelName = get(config, 'model');
-  const where = set({}, whereField, id);
-  if (config.bulk) {
-    const r = findAllTransportIdsFromLocal(modelName, where);
-    return r;
-  }
-  const result = findOne(modelName, where);
-  return get(result, 'id');
+  // const whereField = get(config, 'where_field') || 'id';
+  // const modelName = get(config, 'model');
+  // const where = set({}, whereField, id);
+  // if (config.bulk) {
+  //   const r = findAllTransportIdsFromLocal(modelName, where);
+  //   return r;
+  // }
+  // const result = findOne(modelName, where);
+  // return get(result, 'id');
 };
 
 const getModel = (args, key) => {
