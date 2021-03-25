@@ -33,7 +33,6 @@ const excludeProps = (data, configurations) => {
     const updatedArgs = omit(data.args, excludes);
     set(data, 'args', updatedArgs);
   }
-  configurations = null;
   return data;
 };
 
@@ -204,7 +203,6 @@ const setDyanamicConfigurations = (args, configurations) => {
 const getArgsWithTransports = async (args, configurations, models) => {
   const results = await Promise.all(
     configurations.map(async (config) => {
-      console.log(config);
       const id = get(args, config.field);
       const acceptString = get(config, 'accept_string');
       if (acceptString && !validate(id)){
@@ -237,8 +235,7 @@ const checkForEntities = (args, configurations) => {
 };
 
 const reMapTransports = async (args, result, operation, models) => {
-  const configurations = get(config, operation);
-  console.log(configurations);
+  const configurations = JSON.parse(JSON.stringify(get(config, operation)));
   const hasIncludedFlag = get(configurations, 'include_entities');
   if(!configurations) {
     return;
@@ -258,7 +255,7 @@ const reMapTransports = async (args, result, operation, models) => {
   if (configurations.has_child) {
     return getCompositeArgsWithTransports(configurations, args, result, models);
   }
-  
+
   reMapArgsAndConfigurations(configurations, args, result, operation);
   const data = await getArgsWithTransports(args, configurations.transports, models);
   return excludeProps(data, configurations);
