@@ -159,10 +159,10 @@ const getTransportIdFromDB = async (id, config, models) => {
   const whereField = get(config, 'where_field') || 'id';
   const modelName = get(config, 'model');
   const where = set({}, whereField, id);
-  if (config.bulk) {
-    return await findAllTransportIds(models, modelName, where);
-  }
-  return await findTransportId(models, modelName, where);
+  const transports = config.bulk 
+    ? await findAllTransportIds(models, modelName, where)
+    : await findTransportId(models, modelName, where);
+    return transports;
 };
 
 const getTransportIds = async (id, config, models, position=null) => {
@@ -180,10 +180,10 @@ const getTransportIds = async (id, config, models, position=null) => {
 }
 
 const getTransport = async (id, config, models) => {
-  if (isArray(id)) {
-    return await Promise.all(id.map(async (value, index) => await getTransportIds(value, config, models, index)));
-  }
-  return await getTransportIds(id, config, models);
+  const transports = isArray(id) 
+    ? await Promise.all(id.map(async (value, index) => await getTransportIds(value, config, models, index)))
+    : await getTransportIds(id, config, models);
+  return transports;
 };
 
 const setDyanamicConfigurations = (args, configurations) => {
@@ -201,24 +201,29 @@ const setDyanamicConfigurations = (args, configurations) => {
 };
 
 const getArgsWithTransports = async (args, configurations, models) => {
-  const results = await Promise.all(
+  const metadata = await Promise.all(
     configurations.map(async (config) => {
       const id = get(args, config.field);
+      const acceptString = get(config, 'accept_string');
+      if (acceptString && !validate(id)){
+        return;
+      }
       if (id) {
         const transport = await getTransport(id, config, models);
         return transport;
       }
     })
-  );
-
-  const transports = filter(results, result => result);
-  if(!transports.length){
-    throw new Error('could not find transport_id');
-  }
-  return {
-    args: { ...args },
-    transports,
-  };
+  ).then((results) => {
+    const transports = filter(results, result => result);
+    if(!transports.length){
+      throw new Error('could not find transport_id');
+    }
+    return {
+      args: { ...args },
+      transports,
+    };
+  });
+  return metadata;
 };
 
 const checkForEntities = (args, configurations) => {
