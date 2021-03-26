@@ -233,7 +233,7 @@
         },
         "include_entities": ["layout", "fa_acl", "app_action", "fa_role", "rule_set", "catalog", "catalog_type", "rule_action"],
         "entity_field": "entity",
-        "excludes": ["id", "field_values.fa_entity_id", "cache_key", "field_values.target_entity_id"],
+        "excludes": ["id", "cache_key"],
         "transports": [{
             "field": "id",
             "transport_field": true
@@ -263,7 +263,7 @@
         },
         "include_entities": ["layout", "fa_acl", "app_action", "fa_role", "rule_set", "catalog", "catalog_type", "rule_action"],
         "entity_field": "entity",
-        "excludes": ["id", "field_values.fa_entity_id", "cache_key", "field_values.target_entity_id"],
+        "excludes": ["id", "cache_key"],
         "transports": [{
             "field": "id"
         },
