@@ -136,7 +136,6 @@ const reMapArgsAndConfigurations = (configurations, args, result) => {
 const findTransportId = async (models, modelName, where) => {
   if(models[modelName]) {
     const result = await models[modelName].find({
-      loging: console.log,
       raw: true,
       attributes: ['transport_id'],
       where,
@@ -161,7 +160,6 @@ const getTransportIdFromDB = async (id, config, models) => {
   const modelName = get(config, 'model');
   const where = set({}, whereField, id);
   const transports = config.bulk 
-  console.log("where...", modelName, where)
     ? await findAllTransportIds(models, modelName, where)
     : await findTransportId(models, modelName, where);
     return transports;
@@ -203,10 +201,8 @@ const setDyanamicConfigurations = (args, configurations) => {
 };
 
 const getArgsWithTransports = async (args, configurations, models) => {
-  console.log("configurations at getArgsWithTransports....", configurations)
   const results = await Promise.all(
     configurations.map(async (config) => {
-      console.log("config...", config)
       const id = get(args, config.field);
       const acceptString = get(config, 'accept_string');
       if (acceptString && !validate(id)){
@@ -218,7 +214,6 @@ const getArgsWithTransports = async (args, configurations, models) => {
       }
     })
   );
-  console.log("transports  results...", results)
   const transports = filter(results, result => result);
   if(!transports.length){
     throw new Error('could not find transport_id');
@@ -260,9 +255,7 @@ const reMapTransports = async (args, result, operation, models) => {
   if (configurations.has_child) {
     return getCompositeArgsWithTransports(configurations, args, result, models);
   }
-console.log("results...", result)
-console.log("args...", args)
-console.log("configurations...", configurations)
+
   reMapArgsAndConfigurations(configurations, args, result, operation);
   const data = await getArgsWithTransports(args, configurations.transports, models);
   return excludeProps(data, configurations);
