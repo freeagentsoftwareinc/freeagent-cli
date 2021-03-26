@@ -1,5 +1,5 @@
 const { validate } = require('uuid');
-const { get, set, isArray, omit, find, fromPairs, has, filter } = require('lodash');
+const { get, set, isArray, omit, find, fromPairs, has, filter, flattenDeep } = require('lodash');
 const { entities, parentRefKeys } = require('../utils/constants');
 const config = require('../config.json');
 
@@ -41,21 +41,36 @@ const getCompositeTransports = async (info, configurations, transports, models, 
   const isNewInstance = fieldObj && !has(fieldObj, 'id');
   await Promise.all(info.props.map(async(field, index) => {
     const fieldName = field[0];
-    const fieldValue = field[1];
+    let fieldValue = field[1];
     const isUniqeField = configurations.unique_fields.includes(fieldName) && parent;
     let filedConfig = find(configurations.fields, { field: fieldName });
     const model = filedConfig ? filedConfig.model : info.model;
     const conditionField = isUniqeField ? fieldName : 'id';
+    const attribute = get(filedConfig, 'attribute') || null;
+    const setField = get(filedConfig, 'set_field');
+    if(get(filedConfig, 'comma_values') && fieldValue) {
+      const arrayValues = fieldValue.split(',');
+      fieldValue = arrayValues[0];
+    }
+
     if(!fieldValue || (!filedConfig && !isUniqeField)){
       return;
     }
 
     const where = set({}, conditionField, fieldValue);
     parent && set(where, get(parentRefKeys, parent.model), parent.id);
-    const transportId = await findTransportId(models, model, where);
+    const transportId = await findTransportId(models, model, where, attribute);
+
     if(!transportId){
       return;
     }
+
+    if (attribute && transportId) {
+      field[0] = setField;
+      field[1] = transportId;
+      return;
+    }
+
     isNewInstance && isUniqeField
       ? newInstanceTrasports.push(transportId)
       : transports.push({
@@ -94,7 +109,7 @@ const getCompositeArgsWithTransports = async (configurations, args, result, mode
   if(transportId) {
     transports.push({
       id: transportId,
-      field: parentInfo.field ? 'id' : 'transport_id',
+      field: parentInfo.field ? 'instance_id' : 'transport_id',
       model: parentInfo.model
     });
   }
@@ -133,14 +148,15 @@ const reMapArgsAndConfigurations = (configurations, args, result) => {
   }
 };
 
-const findTransportId = async (models, modelName, where) => {
+const findTransportId = async (models, modelName, where, attribute = null) => {
   if(models[modelName]) {
+    const attributes = attribute ? attribute : 'transport_id';
     const result = await models[modelName].find({
       raw: true,
-      attributes: ['transport_id'],
+      attributes: [attributes],
       where,
     });
-    return get(result, 'transport_id');
+    return get(result, attributes);
   }
 };
 
@@ -159,6 +175,8 @@ const getTransportIdFromDB = async (id, config, models) => {
   const whereField = get(config, 'where_field') || 'id';
   const modelName = get(config, 'model');
   const where = set({}, whereField, id);
+  console.log(where, "where", modelName);
+
   const transports = config.bulk 
     ? await findAllTransportIds(models, modelName, where)
     : await findTransportId(models, modelName, where);
@@ -180,7 +198,7 @@ const getTransportIds = async (id, config, models, position=null) => {
 }
 
 const getTransport = async (id, config, models) => {
-  const transports = isArray(id) 
+  const transports = isArray(id)
     ? await Promise.all(id.map(async (value, index) => await getTransportIds(value, config, models, index)))
     : await getTransportIds(id, config, models);
   return transports;
@@ -204,6 +222,10 @@ const getArgsWithTransports = async (args, configurations, models) => {
   const results = await Promise.all(
     configurations.map(async (config) => {
       const id = get(args, config.field);
+      
+      if(isArray(id) && !id.length){
+        return;
+      }
       const acceptString = get(config, 'accept_string');
       if (acceptString && !validate(id)){
         return;
@@ -214,7 +236,9 @@ const getArgsWithTransports = async (args, configurations, models) => {
       }
     })
   );
-  const transports = filter(results, result => result);
+  console.log(results);
+  const transports = flattenDeep(filter(results, result => result));
+  
   if(!transports.length){
     throw new Error('could not find transport_id');
   }
