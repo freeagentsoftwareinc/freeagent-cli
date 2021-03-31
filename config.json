@@ -288,7 +288,7 @@
         "include_entities": ["layout", "fa_acl", "app_action", "fa_role", "rule_set", "catalog", "catalog_type", "rule_action", "form_rule"],
         "parent_model_key": "parent_entity_id",
         "child_model_key": "entity_id",
-        "exclude_from_where_condition": ["icon"],
+        "exclude_from_where_condition": ["icon", "delay", "working_calendar", "due_date_field"],
         "transports": [
         {
             "field": "fa_entity_id",
@@ -319,6 +319,7 @@
             "model": "layout"
         },
         {
+
             "field": "field_name",
             "model": "fa_field_config"
         }] 
