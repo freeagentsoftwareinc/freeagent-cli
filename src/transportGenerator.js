@@ -95,7 +95,6 @@ const childrensCompositeTransports = async (childInfo, configurations, transport
     set(where, get(parentRefKeys, childInfo.parent_model), childInfo.parent_id);
     const id = await findTransportId(models, childInfo.model, where, transactionInstance);
     const path = indexOf(keys(fields), 'id');
-    console.log(path);
     if(!has(where, 'id') && id) {
       newInstanceTrasports.push(id)
     }
@@ -168,14 +167,11 @@ const findTransportId = async (models, modelName, where, transactionInstance, at
   if(models[modelName]) {
     const attributes = attribute ? attribute : 'transport_id';
     const result = await models[modelName].findOne({
-      logging: console.log,
       where,
       attributes: [attributes],
       raw: true,
       transaction: transactionInstance
     });
-    console.log("result", result)
-    console.log("result", result)
     return get(result, attributes);
   }
 };
@@ -238,22 +234,39 @@ const setDyanamicConfigurations = (args, configurations) => {
   set(configurations, 'transports', transports);
 };
 
+const setArgsFromDB = async (id, args, config, models, transactionInstance) => {
+  const attribute = get(config, 'attribute') || null;
+  const setField = get(config, 'set_field') || null;
+  const where = set({}, get(config, 'where_field') || 'id', id);
+  if(!id || !setField){
+    return;
+  }
+  const result = await findTransportId(models, config.model, where, transactionInstance, attribute)
+  if(!result){
+    return;
+  }
+
+  set(args, setField, result)
+};
+
 const getArgsWithTransports = async (args, configurations, models, transactionInstance) => {
   const results = await Promise.all(
     configurations.map(async (config) => {
       const id = get(args, config.field);
       
-      if(isArray(id) && !id.length){
+      if(!id || (isArray(id) && !id.length)){
         return;
       }
       const acceptString = get(config, 'accept_string');
       if (acceptString && !validate(id)){
         return;
       }
-      if (id) {
+      if (id && !config.set_field) {
         const transport = await getTransport(id, config, models, transactionInstance);
         return transport;
       }
+      
+      await setArgsFromDB(id, args, config, models, transactionInstance);
     })
   );
   const transports = flattenDeep(filter(results, result => result));
