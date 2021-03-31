@@ -1,9 +1,7 @@
 {
     "addCustomField" : {
-        "args": {
-            "field": "fa_field_config_id"
-        },
-        "excludes": ["id"],
+        "id": "fa_field_config_id",
+        "exclude_fields": ["id"],
         "transports": [
             {
                 "model": "fa_field_config",
@@ -149,10 +147,8 @@
     },
     
     "addEntity" : {
-        "args": {
-            "field": "fa_entity_id"
-        },
-        "excludes": ["id"],
+        "id": "fa_entity_id",
+        "exclude_fields": ["id"],
         "transports": [
             {
                 "model": "fa_entity_config",
@@ -198,22 +194,17 @@
     },
 
     "bulkUpdateOrder": {
+        "id": "id",
+        "entity_field": "entity",
         "set_dyanamic_transport": true,
-        "array_prop": "entities",
-        "model_key": "entity",
-        "field": "id",
-        "args": {
-            "field": "id"
-        },
+        "fields_key": "entities",
         "excludes": ["id"],
         "transports": [] 
     },
 
     "addCatalog": {
-        "args": {
-            "field": "id"
-        },
-        "excludes": ["id"],
+        "id": "id",
+        "exclude_fields": ["id"],
         "transports": [{
             "model": "catalog",
             "field": "id",
@@ -227,13 +218,10 @@
     },
 
     "createEntity": {
-        "model_key": "entity",
-        "args": {
-            "field": "entity_value.id"
-        },
+        "id": "entity_value.id",
         "include_entities": ["layout", "fa_acl", "app_action", "fa_role", "rule_set", "catalog", "catalog_type", "rule_action"],
         "entity_field": "entity",
-        "excludes": ["id", "cache_key"],
+        "exclude_fields": ["id", "cache_key"],
         "transports": [{
             "field": "id",
             "transport_field": true
@@ -257,13 +245,10 @@
     },
 
     "updateEntity": {
-        "model_key": "entity",
-        "args": {
-            "field": "entity_value.id"
-        },
-        "include_entities": ["layout", "fa_acl", "app_action", "fa_role", "rule_set", "catalog", "catalog_type", "rule_action"],
+        "id": "entity_value.id",
         "entity_field": "entity",
-        "excludes": ["id", "cache_key"],
+        "include_entities": ["layout", "fa_acl", "app_action", "fa_role", "rule_set", "catalog", "catalog_type", "rule_action"],
+        "exclude_fields": ["id", "cache_key"],
         "transports": [{
             "field": "id"
         },
@@ -287,32 +272,25 @@
     },
 
     "updateEntityValue": {
-        "model_key": "entity",
-        "args": {
-            "field": "id"
-        },
-        "include_entities": ["layout", "fa_acl", "app_action", "fa_role", "rule_set", "catalog", "catalog_type", "rule_action"],
-        "exclude_entities": ["changeset"],
+        "id": "id",
         "entity_field": "entity",
-        "excludes": ["id", "entity_value_id"],
+        "include_entities": ["layout", "fa_acl", "app_action", "fa_role", "rule_set", "catalog", "catalog_type", "rule_action", "form_rule"],
+        "exclude_field": ["id", "entity_value_id"],
         "transports": [{
             "field": "entity_value_id"
         }] 
     },
 
     "saveCompositeEntity": {
-        "has_child": true,
-        "args": {
-            "field": "instance_id"
-        },
-        "include_entities": ["layout", "fa_acl", "app_action", "fa_role", "rule_set", "catalog", "catalog_type", "rule_action", "form_rule"],
-        "exclude_entities": ["changeset"],
+        "id": "instance_id",
         "entity_field": "parent_entity_id",
-        "field": "instance_id",
+        "has_child": true,
+        "include_entities": ["layout", "fa_acl", "app_action", "fa_role", "rule_set", "catalog", "catalog_type", "rule_action", "form_rule"],
         "parent_model_key": "parent_entity_id",
         "child_model_key": "entity_id",
-        "unique_fields": ["name", "description"],
-        "fields": [{
+        "exclude_from_where_condition": ["icon"],
+        "transports": [
+        {
             "field": "fa_entity_id",
             "model": "fa_entity",
             "set_field": "entityName",
@@ -321,7 +299,7 @@
         {
             "field": "roles",
             "model": "fa_role",
-            "comma_values": true
+            "comma_separated_values": true
         },
         {
             "field": "on_update_field",
@@ -334,10 +312,15 @@
         {
             "field": "app_action_id",
             "model": "app_action"
-        }],
-        "transports": [{
-            "field": "id",
-            "transport_field": true
+        },
+        {
+
+            "field": "section_name",
+            "model": "layout"
+        },
+        {
+            "field": "field_name",
+            "model": "fa_field_config"
         }] 
     }
 

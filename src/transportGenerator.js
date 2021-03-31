@@ -1,7 +1,8 @@
 const { validate } = require('uuid');
-const { get, set, isArray, omit, find, fromPairs, has, filter, flattenDeep } = require('lodash');
-const { entities, parentRefKeys } = require('../utils/constants');
+const { get, set, isArray, omit, find, fromPairs, has, filter, flattenDeep, indexOf, keys } = require('lodash');
+const { entities, parentRefKeys }  = require('../utils/constants.js');
 const config = require('../config.json');
+const { valid } = require('joi');
 
 // const findAllTransportIdsFromLocal = (modelName, where) => {
 //   const instances = findAll(modelName);
@@ -28,7 +29,7 @@ const getModel = (args, key) => {
 };
 
 const excludeProps = (data, configurations) => {
-  const excludes = get(configurations, 'excludes');
+  const excludes = get(configurations, 'exclude_fields');
   if(excludes){
     const updatedArgs = omit(data.args, excludes);
     set(data, 'args', updatedArgs);
@@ -36,31 +37,22 @@ const excludeProps = (data, configurations) => {
   return data;
 };
 
-const getCompositeTransports = async (info, configurations, transports, models, parent=null, newInstanceTrasports=null) => {
-  const fieldObj =  parent && fromPairs(info.props)
-  const isNewInstance = fieldObj && !has(fieldObj, 'id');
+const getCompositeTransports = async (info, configurations, transports, models, transactionInstance) => {
   await Promise.all(info.props.map(async(field, index) => {
     const fieldName = field[0];
     let fieldValue = field[1];
-    const isUniqeField = configurations.unique_fields.includes(fieldName) && parent;
-    let filedConfig = find(configurations.fields, { field: fieldName });
-    const model = filedConfig ? filedConfig.model : info.model;
-    const conditionField = isUniqeField ? fieldName : 'id';
+    let filedConfig = find(configurations.transports, { field: fieldName });
+    if (!fieldValue || !filedConfig || !validate(fieldValue)) {
+      return;
+    }
     const attribute = get(filedConfig, 'attribute') || null;
     const setField = get(filedConfig, 'set_field');
-    if(get(filedConfig, 'comma_values') && fieldValue) {
+    if(get(filedConfig, 'comma_separated_values') && fieldValue) {
       const arrayValues = fieldValue.split(',');
       fieldValue = arrayValues[0];
     }
-
-    if(!fieldValue || (!filedConfig && !isUniqeField)){
-      return;
-    }
-
-    const where = set({}, conditionField, fieldValue);
-    parent && set(where, get(parentRefKeys, parent.model), parent.id);
-    const transportId = await findTransportId(models, model, where, attribute);
-
+    const where = set({}, 'id', fieldValue);
+    const transportId = await findTransportId(models, filedConfig.model, transactionInstance, where, attribute);
     if(!transportId){
       return;
     }
@@ -70,19 +62,63 @@ const getCompositeTransports = async (info, configurations, transports, models, 
       field[1] = transportId;
       return;
     }
-
-    isNewInstance && isUniqeField
-      ? newInstanceTrasports.push(transportId)
-      : transports.push({
+   
+    transports.push({
       id: transportId,
       field: `${info.key}[${index}][1]`,
-      model
+      model: filedConfig.model
     });
   }));
 };
 
-const getCompositeArgsWithTransports = async (configurations, args, result, models) => {
-  let childModelName;
+const getParentsCompositeTransports = async (parentInfo, configurations, transports, models, transactionInstance) => {
+  const where = { id: parentInfo.id };
+  const id = await findTransportId(models, parentInfo.model, transactionInstance, where);
+  if(!id) {
+    return;
+  }
+  transports.push({
+    id,
+    field: parentInfo.field ? 'instance_id' : 'transport_id',
+    model: parentInfo.model
+  });
+  await getCompositeTransports(parentInfo, configurations, transports, models, transactionInstance)
+};
+
+const childrensCompositeTransports = async (childInfo, configurations, transports, models, transactionInstance, newInstanceTrasports) => {
+  await Promise.all(childInfo.fields.map(async (child, index) => {
+    set(childInfo, 'key', `children[${index}].custom_fields`);
+    set(childInfo, 'model', getModel(child, childInfo.modelKey));
+    set(childInfo, 'props', child.custom_fields);
+    const fields = fromPairs(child.custom_fields);
+    const where = omit(fields, configurations.exclude_from_where_condition);
+    set(where, get(parentRefKeys, childInfo.parent_model), childInfo.parent_id);
+    const id = await findTransportId(models, childInfo.model, transactionInstance, where);
+    const path = indexOf(keys(fields), 'id');
+    if(!has(where, 'id') && id) {
+      newInstanceTrasports.push(id)
+    }
+    if (path > 0) {
+      transports.push({
+        id,
+        field: `${childInfo.key}[${indexOf(keys(fields), 'id')}][1]`,
+        model: childInfo.model
+      });
+    }
+    await getCompositeTransports(childInfo, configurations, transports, models, transactionInstance, newInstanceTrasports);
+  }));
+  
+  if(newInstanceTrasports.length) {
+    transports.push({
+      id: newInstanceTrasports,
+      field: 'transport_id',
+      model: childInfo.model
+    })
+  };
+};
+
+
+const getCompositeArgsWithTransports = async (configurations, args, result, models, transactionInstance) => {
   const transports = [];
   const newInstanceTrasports = []
   const parentInfo = {
@@ -95,32 +131,11 @@ const getCompositeArgsWithTransports = async (configurations, args, result, mode
   const childInfo = {
     fields: get(args, 'children'),
     modelKey: get(configurations, 'child_model_key'),
+    parent_model: parentInfo.model,
+    parent_id: parentInfo.id
   };
-  const where = { id: parentInfo.id };
-  const transportId = await findTransportId(models, parentInfo.model, where);
-  await getCompositeTransports(parentInfo, configurations, transports, models);
-  await Promise.all(childInfo.fields.map(async (child, index) => {
-    set(childInfo, 'key', `children[${index}].custom_fields`);
-    set(childInfo, 'props', child.custom_fields);
-    !childModelName && set(childInfo, 'model', getModel(child, childInfo.modelKey));
-    await getCompositeTransports(childInfo, configurations, transports, models, parentInfo, newInstanceTrasports);
-  }));
-
-  if(transportId) {
-    transports.push({
-      id: transportId,
-      field: parentInfo.field ? 'instance_id' : 'transport_id',
-      model: parentInfo.model
-    });
-  }
-
-  if(newInstanceTrasports.length) {
-    transports.push({
-      id: newInstanceTrasports,
-      field: 'transport_id',
-      model: childInfo.model
-    })
-  };
+  await getParentsCompositeTransports(parentInfo, configurations, transports, models, transactionInstance);
+  await childrensCompositeTransports(childInfo, configurations, transports, models, transactionInstance, newInstanceTrasports)
   return {
     args: { ...args },
     transports: [...transports],
@@ -129,11 +144,11 @@ const getCompositeArgsWithTransports = async (configurations, args, result, mode
 
 const reMapArgsAndConfigurations = (configurations, args, result) => {
   const resultObj = { ...result.dataValues, ...result }
-  const field = get(configurations, 'args.field');
-  const modelKey = get(configurations, 'model_key');
+  const field = get(configurations, 'id');
+  const modelKey = get(configurations, 'entity_field');
   if (field) {
     const id = get(resultObj, field);
-    set(args, 'id', id);;
+    set(args, 'id', id);
   }
 
   if (modelKey) {
@@ -148,45 +163,47 @@ const reMapArgsAndConfigurations = (configurations, args, result) => {
   }
 };
 
-const findTransportId = async (models, modelName, where, attribute = null) => {
+const findTransportId = async (models, modelName, transactionInstance, where, attribute = null) => {
   if(models[modelName]) {
     const attributes = attribute ? attribute : 'transport_id';
-    const result = await models[modelName].find({
-      raw: true,
-      attributes: [attributes],
+    const result = await models[modelName].findOne({
       where,
+      attributes: [attributes],
+      raw: true,
+      skipHooks: true,
+      transaction: transactionInstance
     });
     return get(result, attributes);
   }
 };
 
-const findAllTransportIds = async (models, modelName, where) => {
+const findAllTransportIds = async (models, modelName, where, transactionInstance) => {
   if(models[modelName]) {
     const results = await models[modelName].findAll({
       raw: true,
       attributes: ['transport_id'],
       where,
+      transaction: transactionInstance
     });
     return results.map((result) => get(result, 'transport_id'));
   }
 };
 
-const getTransportIdFromDB = async (id, config, models) => {
+const getTransportIdFromDB = async (id, config, models, transactionInstance) => {
   const whereField = get(config, 'where_field') || 'id';
   const modelName = get(config, 'model');
   const where = set({}, whereField, id);
-  console.log(where, "where", modelName);
 
   const transports = config.bulk 
-    ? await findAllTransportIds(models, modelName, where)
-    : await findTransportId(models, modelName, where);
+    ? await findAllTransportIds(models, modelName, where, transactionInstance)
+    : await findTransportId(models, modelName, where, transactionInstance);
     return transports;
 };
 
-const getTransportIds = async (id, config, models, position=null) => {
+const getTransportIds = async (id, config, models, transactionInstance, position=null) => {
   const model = config.model;
   const field = get(config, 'transport_field') ? 'transport_id' : config.field;
-  const transportId = models ? await getTransportIdFromDB(id, config, models) : await getTransportIdFromLocalDB(id, config);
+  const transportId = models ? await getTransportIdFromDB(id, config, models, transactionInstance) : await getTransportIdFromLocalDB(id, config);
   if (!transportId) {
     return null;
   }
@@ -197,16 +214,16 @@ const getTransportIds = async (id, config, models, position=null) => {
   };
 }
 
-const getTransport = async (id, config, models) => {
+const getTransport = async (id, config, models, transactionInstance) => {
   const transports = isArray(id)
-    ? await Promise.all(id.map(async (value, index) => await getTransportIds(value, config, models, index)))
+    ? await Promise.all(id.map(async (value, index) => await getTransportIds(value, config, models, transactionInstance, index)))
     : await getTransportIds(id, config, models);
   return transports;
 };
 
 const setDyanamicConfigurations = (args, configurations) => {
-  const model = getModel(args, configurations.model_key);
-  const arrayProp = configurations.array_prop;
+  const model = getModel(args, configurations.entity_field);
+  const arrayProp = configurations.fields_key;
   const data = get(args, arrayProp);
   const field = configurations.field;
   const transports = data.map((obj, index) => {
@@ -218,7 +235,7 @@ const setDyanamicConfigurations = (args, configurations) => {
   set(configurations, 'transports', transports);
 };
 
-const getArgsWithTransports = async (args, configurations, models) => {
+const getArgsWithTransports = async (args, configurations, models, transactionInstance) => {
   const results = await Promise.all(
     configurations.map(async (config) => {
       const id = get(args, config.field);
@@ -231,12 +248,11 @@ const getArgsWithTransports = async (args, configurations, models) => {
         return;
       }
       if (id) {
-        const transport = await getTransport(id, config, models);
+        const transport = await getTransport(id, config, models, transactionInstance);
         return transport;
       }
     })
   );
-  console.log(results);
   const transports = flattenDeep(filter(results, result => result));
   
   if(!transports.length){
@@ -258,7 +274,7 @@ const checkForEntities = (args, configurations) => {
   }
 };
 
-const reMapTransports = async (args, result, operation, models) => {
+const reMapTransports = async (args, result, operation, models, transactionInstance) => {
   const configurations = JSON.parse(JSON.stringify(get(config, operation)));
   const hasIncludedFlag = get(configurations, 'include_entities');
   if(!configurations) {
@@ -277,11 +293,11 @@ const reMapTransports = async (args, result, operation, models) => {
   }
 
   if (configurations.has_child) {
-    return getCompositeArgsWithTransports(configurations, args, result, models);
+    return getCompositeArgsWithTransports(configurations, args, result, models, transactionInstance);
   }
 
   reMapArgsAndConfigurations(configurations, args, result, operation);
-  const data = await getArgsWithTransports(args, configurations.transports, models);
+  const data = await getArgsWithTransports(args, configurations.transports, models, transactionInstance);
   return excludeProps(data, configurations);
 };
 
