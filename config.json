@@ -202,6 +202,10 @@
                 "field": "id",
                 "where_field": "fa_entity_id",
                 "bulk": true
+            },
+            {
+                "field": "parent_id",
+                "model": "fa_entity_config"
             }
         ]
     },
