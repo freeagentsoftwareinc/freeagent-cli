@@ -202,15 +202,21 @@ const getTransportIdFromDB = async (id, config, models, transactionInstance) => 
 const getTransportIds = async (id, config, models, transactionInstance, position=null) => {
   const model = config.model;
   const field = get(config, 'transport_field') ? 'transport_id' : config.field;
+  const setAttribute = get(config, 'set_attribute')
   const transportId = models ? await getTransportIdFromDB(id, config, models, transactionInstance) : await getTransportIdFromLocalDB(id, config);
   if (!transportId) {
     return null;
   }
-  return {
+  const transport = {
     id: transportId,
     field: position !==null ? `${field}[${position}]` : field,
     model,
   };
+
+  if (setAttribute) {
+    set(transport, 'attribute', setAttribute);
+  }
+  return transport;
 }
 
 const getTransport = async (id, config, models, transactionInstance) => {
@@ -257,10 +263,11 @@ const getArgsWithTransports = async (args, configurations, models, transactionIn
       if(!id || (isArray(id) && !id.length)){
         return;
       }
-      const acceptString = get(config, 'accept_string');
-      if (acceptString && !validate(id)){
+      const isNonUuid = get(config, 'is_non_uuid')
+      if ((!isNonUuid && !validate(id)) || (isNonUuid && validate(id))){
         return;
       }
+
       if (id && !config.set_field) {
         const transport = await getTransport(id, config, models, transactionInstance);
         return transport;
@@ -291,6 +298,10 @@ const checkForEntities = (args, configurations) => {
 };
 
 const reMapTransports = async (args, result, operation, models, transactionInstance) => {
+
+  if(!get(config, operation)){
+    return;
+  }
   const configurations = JSON.parse(JSON.stringify(get(config, operation)));
   const hasIncludedFlag = get(configurations, 'include_entities');
   if(!configurations) {
