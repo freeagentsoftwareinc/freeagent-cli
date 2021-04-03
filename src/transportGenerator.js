@@ -264,7 +264,7 @@ const getArgsWithTransports = async (args, configurations, models, transactionIn
         return;
       }
       const isNonUuid = get(config, 'is_non_uuid')
-      if ((!isNonUuid && !validate(id)) || (isNonUuid && validate(id))){
+      if (config.field !== 'id' && (!isNonUuid && !validate(id)) || (isNonUuid && validate(id))){
         return;
       }
 
