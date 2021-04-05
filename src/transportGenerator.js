@@ -2,7 +2,9 @@ const { validate } = require('uuid');
 const { get, set, isArray, omit, find, fromPairs, has, filter, flattenDeep, indexOf, keys } = require('lodash');
 const { entities, parentRefKeys }  = require('../utils/constants.js');
 const config = require('../config.json');
-const { valid } = require('joi');
+const { argsToFindOptions } = require('graphql-sequelize');
+const { condition } = require('sequelize');
+const { assertUnionType } = require('graphql');
 
 // const findAllTransportIdsFromLocal = (modelName, where) => {
 //   const instances = findAll(modelName);
@@ -142,13 +144,25 @@ const getCompositeArgsWithTransports = async (configurations, args, result, mode
   };
 };
 
-const reMapArgsAndConfigurations = (configurations, args, result) => {
-  const resultObj = { ...result.dataValues, ...result }
+const reMapArgsAndConfigurations = async (configurations, args, result, models) => {
+  const result_path = get(configurations, 'result_path');
+  const result_value_path = get(result, result_path);
+  const result_dataValues = get(result_value_path, 'dataValues');
+  const resultObj = result_path 
+    ? { ...result, ...result_value_path, ...result_dataValues }
+    : { ...result.dataValues, ...result }
+    
   const field = get(configurations, 'id');
   const modelKey = get(configurations, 'entity_field');
+  const parsePath = get(configurations, 'args_parse_path');
+
   if (field) {
     const id = get(resultObj, field);
     set(args, 'id', id);
+  }
+
+  if (parsePath) {
+    set(args, parsePath, JSON.parse(args[parsePath]));
   }
 
   if (modelKey) {
@@ -160,24 +174,33 @@ const reMapArgsAndConfigurations = (configurations, args, result) => {
         }
       })
     }
-  }
+  };
 };
 
 const findTransportId = async (models, modelName, where, transactionInstance, attribute = null) => {
-  if(models[modelName]) {
+  try {
+    if (!models[modelName]) {
+      return;
+    }
     const attributes = attribute ? attribute : 'transport_id';
     const result = await models[modelName].findOne({
       where,
       attributes: [attributes],
       raw: true,
-      transaction: transactionInstance
+      transaction: transactionInstance,
     });
     return get(result, attributes);
+  } catch (err) {
+    console.log(err);
+    return err;
   }
 };
 
 const findAllTransportIds = async (models, modelName, where, transactionInstance) => {
-  if(models[modelName]) {
+  try {
+    if (!models[modelName]) {
+      return;
+    }
     const results = await models[modelName].findAll({
       raw: true,
       attributes: ['transport_id'],
@@ -185,25 +208,57 @@ const findAllTransportIds = async (models, modelName, where, transactionInstance
       transaction: transactionInstance
     });
     return results.map((result) => get(result, 'transport_id'));
+  } catch (err) {
+    console.log(err);
+    return err;
   }
 };
 
-const getTransportIdFromDB = async (id, config, models, transactionInstance) => {
-  const whereField = get(config, 'where_field') || 'id';
+const getTransportIdFromDB = async (where, config, models, transactionInstance, instance) => {
   const modelName = get(config, 'model');
-  const where = set({}, whereField, id);
-
   const transports = config.bulk 
     ? await findAllTransportIds(models, modelName, where, transactionInstance)
     : await findTransportId(models, modelName, where, transactionInstance);
-    return transports;
+  return transports;
 };
 
-const getTransportIds = async (id, config, models, transactionInstance, position=null) => {
-  const model = config.model;
-  const field = get(config, 'transport_field') ? 'transport_id' : config.field;
+const generateWhere = (id, args, config, field, instance) => {
+  const where = {};
+  const whereField = get(config, 'where_field');
+  if(!whereField) {
+    set(where, 'id', id);
+    return where;
+  };
+
+  if(typeof whereField === 'string'){
+    set(where, whereField, id);
+    return where;
+  }
+
+  config.where_field.forEach(whereConfig => {
+    const value = whereConfig.root ? get(args, whereConfig.value) : get(instance, whereConfig.value);
+    set(where, whereConfig.key, value);
+  });
+  return where;
+};
+
+const getModelValue = (args, config) => {
+  if(config.model){
+    return config.model;
+  }
+  const modelValue = get(args, config.model_key);
+  if(!validate(modelValue)){
+    return modelValue;
+  }
+  const model = get(entities, modelValue);
+  return model;
+}
+
+const getTransportIds = async (id, args, config, models, field, transactionInstance, position=null, instance) => {
+  const model = getModelValue(args, config) ;
   const setAttribute = get(config, 'set_attribute')
-  const transportId = models ? await getTransportIdFromDB(id, config, models, transactionInstance) : await getTransportIdFromLocalDB(id, config);
+  const where = generateWhere(id, args, config, field, instance);
+  const transportId = models ? await getTransportIdFromDB(where, config, models, transactionInstance) : await getTransportIdFromLocalDB(id, config);
   if (!transportId) {
     return null;
   }
@@ -219,10 +274,10 @@ const getTransportIds = async (id, config, models, transactionInstance, position
   return transport;
 }
 
-const getTransport = async (id, config, models, transactionInstance) => {
+const getTransport = async (id, args, config, models, field, transactionInstance, instance) => {
   const transports = isArray(id)
-    ? await Promise.all(id.map(async (value, index) => await getTransportIds(value, config, models, transactionInstance, index)))
-    : await getTransportIds(id, config, models, transactionInstance);
+    ? await Promise.all(id.map(async (value, index) => await getTransportIds(value, args, config, models, field, transactionInstance, index, instance)))
+    : await getTransportIds(id, args, config, models, field, transactionInstance, null, instance);
   return transports;
 };
 
@@ -255,29 +310,48 @@ const setArgsFromDB = async (id, args, config, models, transactionInstance) => {
   set(args, setField, result)
 };
 
+const getMappedTransport = async (args, config, models, field, transactionInstance, instance=null) => {
+  const id = get(args, field) || get(args, config.field); 
+  if(!id || (isArray(id) && !id.length)){
+    return;
+  }
+  const isNonUuid = get(config, 'non_uuid')
+  if ((config.field !== 'id' || config.skip_non_uuid_check) && (!isNonUuid && !validate(id)) || (isNonUuid && validate(id))){
+    return;
+  }
+
+  if (id && !config.set_field) {
+    return getTransport(id, args, config, models, field, transactionInstance, instance);
+  }
+  
+  await setArgsFromDB(id, args, config, models, transactionInstance);
+};
+
+const getMappedTransports = async (args, config, models, transactionInstance) => {
+  const instances = get(args, config.array_path);
+  if (!isArray(instances)) {
+    return;
+  }
+  const transports = await Promise.all(
+    instances.map(async (instance, index) => {
+    const field = `${config.array_path}[${index}].${config.field}`;
+    const transport = await getMappedTransport(args, config, models, field, transactionInstance, instance);
+    return transport;
+  }));
+  return flattenDeep(filter(transports, transport => transport));
+};
+
 const getArgsWithTransports = async (args, configurations, models, transactionInstance) => {
   const results = await Promise.all(
     configurations.map(async (config) => {
-      const id = get(args, config.field);
-      
-      if(!id || (isArray(id) && !id.length)){
-        return;
-      }
-      const isNonUuid = get(config, 'is_non_uuid')
-      if (config.field !== 'id' && (!isNonUuid && !validate(id)) || (isNonUuid && validate(id))){
-        return;
-      }
-
-      if (id && !config.set_field) {
-        const transport = await getTransport(id, config, models, transactionInstance);
+      const field = get(config, 'transport_field') ? 'transport_id' : config.field;
+      const transport = !config.array_path
+        ? await getMappedTransport(args, config, models, field, transactionInstance)
+        : await getMappedTransports(args, config, models, transactionInstance);
         return transport;
-      }
-      
-      await setArgsFromDB(id, args, config, models, transactionInstance);
     })
   );
   const transports = flattenDeep(filter(results, result => result));
-  
   if(!transports.length){
     throw new Error('could not find transport_id');
   }
