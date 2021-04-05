@@ -72,7 +72,7 @@
             {
                 "field": "reference_qualifier_value",
                 "model": "fa_role",
-                "is_non_uuid": true
+                "non_uuid": true
             },
             {
                 "field": "reference_qualifier_value",
@@ -157,7 +157,7 @@
             {
                 "field": "reference_qualifier_value",
                 "model": "fa_role",
-                "is_non_uuid": true
+                "non_uuid": true
             },
             {
                 "field": "reference_qualifier_value",
@@ -219,7 +219,11 @@
             {
                 "model": "fa_role",
                 "field": "roles",
-                "is_non_uuid": true
+                "non_uuid": true
+            },
+            {
+                "field": "primary_action",
+                "model": "app_action"
             }
         ]
     },
@@ -265,12 +269,12 @@
         {
             "model": "fa_role",
             "field": "field_values.roles",
-            "is_non_uuid": true
+            "non_uuid": true
         },
         {
             "model": "fa_role",
             "field": "field_values.fa_acl_field_roles",
-            "is_non_uuid": true
+            "non_uuid": true
         },
         {
             "model": "rule_set",
@@ -306,12 +310,12 @@
         {
             "model": "fa_role",
             "field": "field_values.roles",
-            "is_non_uuid": true
+            "non_uuid": true
         },
         {
             "model": "fa_role",
             "field": "field_values.fa_acl_field_roles",
-            "is_non_uuid": true
+            "non_uuid": true
         },
         {
             "model": "rule_set",
@@ -322,10 +326,11 @@
     "updateEntityValue": {
         "id": "id",
         "entity_field": "entity",
-        "include_entities": ["layout", "fa_acl", "app_action", "fa_role", "rule_set", "catalog", "catalog_type", "rule_action", "form_rule"],
+        "include_entities": ["layout", "fa_acl", "app_action", "fa_role", "rule_set", "catalog", "catalog_type", "rule_action", "form_rule", "menu_item"],
         "exclude_field": ["id", "entity_value_id"],
         "transports": [{
-            "field": "entity_value_id"
+            "field": "entity_value_id",
+            "skip_non_uuid_check": true
         }] 
     },
 
@@ -347,7 +352,7 @@
         {
             "field": "roles",
             "model": "fa_role",
-            "is_non_uuid": true,
+            "non_uuid": true,
             "comma_separated_values": true
         },
         {
@@ -370,5 +375,25 @@
             "field": "field_name",
             "model": "fa_field_config"
         }] 
+    },
+    "saveView": {
+        "result_path": "view",
+        "args_parse_path": "value",
+        "args_entity_name": "entity",
+        "id": "id",
+        "transport_id": "transport_id",
+        "transports": [
+            {
+                "model": "fa_field_config",
+                "array_path": "value.list.columns",
+                "field": "key",
+                "where_field": [
+                    {
+                        "value": "id",
+                        "key": "id"
+                    }
+                ]
+            }
+        ]
     }
 }
