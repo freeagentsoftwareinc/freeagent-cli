@@ -54,10 +54,8 @@
                 "set_attribute":  "custom_field_id"
             },
             {
-                "model": "fa_related_field_config_id",
-                "field": "fa_field_config",
-                "where_field": "fa_field_id",
-                "set_attribute":  "fa_field_id"
+                "model": "fa_field_config",
+                "field": "fa_related_field_config_id"
             },
             {
                 "field": "parent_custom_field_id",
@@ -139,10 +137,8 @@
                 "set_attribute":  "custom_field_id"
             },
             {
-                "model": "fa_related_field_config_id",
-                "field": "fa_field_config",
-                "where_field": "fa_field_id",
-                "set_attribute":  "fa_field_id"
+                "model": "fa_field_config",
+                "field": "fa_related_field_config_id"            
             },
             {
                 "field": "parent_custom_field_id",
@@ -198,6 +194,13 @@
             },
             {
                 "model": "fa_field_config",
+                "transport_field": true,
+                "field": "id",
+                "where_field": "fa_entity_id",
+                "bulk": true
+            },
+            {
+                "model": "menu_item",
                 "transport_field": true,
                 "field": "id",
                 "where_field": "fa_entity_id",

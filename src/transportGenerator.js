@@ -119,7 +119,6 @@ const childrensCompositeTransports = async (childInfo, configurations, transport
   };
 };
 
-
 const getCompositeArgsWithTransports = async (configurations, args, result, models, transactionInstance) => {
   const transports = [];
   const newInstanceTrasports = []
@@ -316,8 +315,10 @@ const getMappedTransport = async (args, config, models, field, transactionInstan
     return;
   }
   const isNonUuid = get(config, 'non_uuid')
-  if ((config.field !== 'id' || config.skip_non_uuid_check) && (!isNonUuid && !validate(id)) || (isNonUuid && validate(id))){
-    return;
+  if(!config.skip_non_uuid_check) {
+    if (config.field !== 'id' && (!isNonUuid && !validate(id)) || (isNonUuid && validate(id))){
+      return;
+    }
   }
 
   if (id && !config.set_field) {
