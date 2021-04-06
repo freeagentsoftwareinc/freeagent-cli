@@ -39,40 +39,6 @@ const excludeProps = (data, configurations) => {
   return data;
 };
 
-const getCompositeTransports = async (info, configurations, transports, models, transactionInstance) => {
-  await Promise.all(info.props.map(async(field, index) => {
-    const fieldName = field[0];
-    let fieldValue = field[1];
-    let filedConfig = find(configurations.transports, { field: fieldName });
-    if (!fieldValue || !filedConfig || !validate(fieldValue)) {
-      return;
-    }
-    const attribute = get(filedConfig, 'attribute') || null;
-    const setField = get(filedConfig, 'set_field');
-    if(get(filedConfig, 'comma_separated_values') && fieldValue) {
-      const arrayValues = fieldValue.split(',');
-      fieldValue = arrayValues[0];
-    }
-    const where = set({}, 'id', fieldValue);
-    const transportId = await findTransportId(models, filedConfig.model, where, transactionInstance, attribute);
-    if(!transportId){
-      return;
-    }
-
-    if (attribute && transportId) {
-      field[0] = setField;
-      field[1] = transportId;
-      return;
-    }
-   
-    transports.push({
-      id: transportId,
-      field: `${info.key}[${index}][1]`,
-      model: filedConfig.model
-    });
-  }));
-};
-
 const reMapArgsAndConfigurations = async (configurations, args, result, models) => {
   const result_path = get(configurations, 'result_path');
   const result_value_path = get(result, result_path);
@@ -114,20 +80,17 @@ const reMapArgsAndConfigurations = async (configurations, args, result, models) 
   };
 };
 
-const findTransportId = async (models, modelName, where, scope, transactionInstance, attribute = null) => {
+const findTransportId = async (models, modelName, where, transactionInstance, attribute = null) => {
   try {
     if (!models[modelName]) {
       return;
     }
-    set(where, 'scopes', { '$overlap':  scope });
     const attributes = attribute ? attribute : 'transport_id';
     const result = await models[modelName].findOne({
       where,
       attributes: [attributes],
       raw: true,
       transaction: transactionInstance,
-      skipScopes: true,
-      hooks: false,
     });
     return get(result, attributes);
   } catch (err) {
@@ -136,12 +99,11 @@ const findTransportId = async (models, modelName, where, scope, transactionInsta
   }
 };
 
-const findAllTransportIds = async (models, modelName, where, scope, transactionInstance) => {
+const findAllTransportIds = async (models, modelName, where, transactionInstance) => {
   try {
     if (!models[modelName]) {
       return;
     }
-    set(where, 'scopes', { '$overlap':  scope });
     const results = await models[modelName].findAll({
       raw: true,
       attributes: ['transport_id'],
@@ -155,11 +117,11 @@ const findAllTransportIds = async (models, modelName, where, scope, transactionI
   }
 };
 
-const getTransportIdFromDB = async (where, config, models, scope, transactionInstance) => {
+const getTransportIdFromDB = async (where, config, models, transactionInstance) => {
   const modelName = get(config, 'model');
   const transports = config.bulk 
-    ? await findAllTransportIds(models, modelName, where, scope, transactionInstance)
-    : await findTransportId(models, modelName, where, scope, transactionInstance);
+    ? await findAllTransportIds(models, modelName, where, transactionInstance)
+    : await findTransportId(models, modelName, where, transactionInstance);
   return transports;
 };
 
@@ -194,11 +156,11 @@ const getModelValue = (args, config) => {
   return model;
 }
 
-const getTransportIds = async (id, args, config, models, field, scope, transactionInstance, position=null, instance) => {
+const getTransportIds = async (id, args, config, models, field, transactionInstance, position=null, instance) => {
   const model = getModelValue(args, config) ;
   const setAttribute = get(config, 'set_attribute')
   const where = generateWhere(id, args, config, field, instance);
-  const transportId = models ? await getTransportIdFromDB(where, config, models, scope, transactionInstance) : await getTransportIdFromLocalDB(id, config);
+  const transportId = models ? await getTransportIdFromDB(where, config, models, transactionInstance) : await getTransportIdFromLocalDB(id, config);
   if (!transportId) {
     return null;
   }
@@ -214,10 +176,10 @@ const getTransportIds = async (id, args, config, models, field, scope, transacti
   return transport;
 }
 
-const getTransport = async (id, args, config, models, field, scope, transactionInstance, instance) => {
+const getTransport = async (id, args, config, models, field, transactionInstance, instance) => {
   const transports = isArray(id)
-    ? await Promise.all(id.map(async (value, index) => await getTransportIds(value, args, config, models, field, scope, transactionInstance, index, instance)))
-    : await getTransportIds(id, args, config, models, field, scope, transactionInstance, null, instance);
+    ? await Promise.all(id.map(async (value, index) => await getTransportIds(value, args, config, models, field, transactionInstance, index, instance)))
+    : await getTransportIds(id, args, config, models, field, transactionInstance, null, instance);
   return transports;
 };
 
@@ -250,7 +212,7 @@ const setArgsFromDB = async (id, args, config, models, transactionInstance) => {
   set(args, setField, result)
 };
 
-const getMappedTransport = async (args, config, models, field, scope, transactionInstance, instance=null) => {
+const getMappedTransport = async (args, config, models, field, transactionInstance, instance=null) => {
   const id = get(args, field) || get(args, config.field); 
   if(!id || (isArray(id) && !id.length)){
     return;
@@ -263,12 +225,12 @@ const getMappedTransport = async (args, config, models, field, scope, transactio
   }
 
   if (id && !config.set_field) {
-    return getTransport(id, args, config, models, field, scope, transactionInstance, instance);
+    return getTransport(id, args, config, models, field, transactionInstance, instance);
   }
   await setArgsFromDB(id, args, config, models, transactionInstance);
 };
 
-const getMappedTransports = async (args, config, models, scope, transactionInstance) => {
+const getMappedTransports = async (args, config, models, transactionInstance) => {
   const instances = get(args, config.array_path);
   if (!isArray(instances)) {
     return;
@@ -276,19 +238,19 @@ const getMappedTransports = async (args, config, models, scope, transactionInsta
   const transports = await Promise.all(
     instances.map(async (instance, index) => {
     const field = `${config.array_path}[${index}].${config.field}`;
-    const transport = await getMappedTransport(args, config, models, field, scope, transactionInstance, instance);
+    const transport = await getMappedTransport(args, config, models, field, transactionInstance, instance);
     return transport;
   }));
   return flattenDeep(filter(transports, transport => transport));
 };
 
-const getArgsWithTransports = async (args, configurations, models, scope, transactionInstance) => {
+const getArgsWithTransports = async (args, configurations, models, transactionInstance) => {
   const results = await Promise.all(
     configurations.map(async (config) => {
       const field = get(config, 'transport_field') ? 'transport_id' : config.field;
       const transport = !config.array_path
-        ? await getMappedTransport(args, config, models, field, scope, transactionInstance)
-        : await getMappedTransports(args, config, models, scope, transactionInstance);
+        ? await getMappedTransport(args, config, models, field, transactionInstance)
+        : await getMappedTransports(args, config, models, transactionInstance);
         return transport;
     })
   );
@@ -312,7 +274,7 @@ const checkForEntities = (args, configurations) => {
   }
 };
 
-const reMapTransports = async (args, result, operation, models, scope, transactionInstance) => {
+const reMapTransports = async (args, result, operation, models, transactionInstance) => {
 
   if(!get(config, operation)){
     return;
@@ -335,7 +297,7 @@ const reMapTransports = async (args, result, operation, models, scope, transacti
   }
 
   reMapArgsAndConfigurations(configurations, args, result, operation);
-  const data = await getArgsWithTransports(args, configurations.transports, models, scope, transactionInstance);
+  const data = await getArgsWithTransports(args, configurations.transports, models, transactionInstance);
   return excludeProps(data, configurations);
 };
 
