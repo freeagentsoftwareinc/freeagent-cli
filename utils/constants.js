@@ -519,6 +519,12 @@ const entities = {
     '101328d1-3b44-4f19-a19e-9a645776761b': 'form_action'
 };
 
+const parentEntitiesMap = {
+    'catalog_type' : 'catalog',
+    'rule_set': 'rule_action',
+    'form_rule': 'form_action'
+};
+
 const parentRefKeys = {
     catalog_type: 'catalog_type_id',
     rule_set: 'parent_entity_reference_id',
@@ -552,5 +558,6 @@ module.exports = {
     defaultFields,
     teamAccess,
     entities,
-    parentRefKeys
+    parentRefKeys,
+    parentEntitiesMap
 };

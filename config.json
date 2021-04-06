@@ -340,31 +340,36 @@
     "saveCompositeEntity": {
         "id": "instance_id",
         "entity_field": "parent_entity_id",
-        "has_child": true,
         "include_entities": ["layout", "fa_acl", "app_action", "fa_role", "rule_set", "catalog", "catalog_type", "rule_action", "form_rule"],
-        "parent_model_key": "parent_entity_id",
-        "child_model_key": "entity_id",
         "exclude_from_where_condition": ["icon", "delay", "working_calendar", "due_date_field", "color"],
         "transports": [
         {
-            "field": "fa_entity_id",
-            "model": "fa_entity",
-            "set_field": "entityName",
-            "attribute": "model_name" 
+            "field": "instance_id",
+            "transport_field": true
+        },
+        {
+            "field": "id",
+            "array_path": "children",
+            "inner_array_path": "custom_fields",
+            "has_parent": true
         },
         {
             "field": "roles",
             "model": "fa_role",
             "non_uuid": true,
-            "comma_separated_values": true
+            "comma_separated_values": true,
+            "array_path": "parent_fields"
         },
         {
             "field": "on_update_field",
-            "model": "fa_field_config"
+            "model": "fa_field_config",
+            "array_path": "parent_fields",
+            "array_of_array": true
         },
         {
             "field": "schedule_datetime_field",
-            "model": "fa_field_config"
+            "model": "fa_field_config",
+            "array_path": "parent_fields"
         },
         {
             "field": "app_action_id",
@@ -382,18 +387,28 @@
     "saveView": {
         "result_path": "view",
         "args_parse_path": "value",
-        "args_entity_name": "entity",
         "id": "id",
         "transport_id": "transport_id",
         "transports": [
             {
+                "field": "id",
+                "transport_field": true,
+                "model": "view"
+            },
+            {
                 "model": "fa_field_config",
                 "array_path": "value.list.columns",
                 "field": "key",
+                "non_uuid": true,
                 "where_field": [
                     {
-                        "value": "id",
-                        "key": "id"
+                        "value": "entity",
+                        "key": "model_name",
+                        "root": true
+                    },
+                    {
+                        "value": "key",
+                        "key": "field_name"
                     }
                 ]
             }
