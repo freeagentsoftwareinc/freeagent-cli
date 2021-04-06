@@ -1,10 +1,7 @@
 const { validate } = require('uuid');
 const { get, set, isArray, omit, find, fromPairs, has, filter, flattenDeep, indexOf, keys } = require('lodash');
-const { entities, parentRefKeys, parentEntitiesMap }  = require('../utils/constants.js');
+const { entities, }  = require('../utils/constants.js');
 const config = require('../config.json');
-const { argsToFindOptions } = require('graphql-sequelize');
-const { condition } = require('sequelize');
-const { assertUnionType } = require('graphql');
 
 // const findAllTransportIdsFromLocal = (modelName, where) => {
 //   const instances = findAll(modelName);
@@ -49,27 +46,36 @@ const reMapArgsAndConfigurations = async (configurations, args, result, models) 
     
   const field = get(configurations, 'id');
   const modelKey = get(configurations, 'entity_field');
-  const parsePath = get(configurations, 'args_parse_path');
+  const children  = get(configurations, 'children_path');
+  const childEntityField = get(configurations, 'child_entity_field');
+  const childModel = get(args, `${children}[0].${childEntityField}`);
 
   if (field) {
     const id = get(resultObj, field);
     set(args, 'id', id);
   }
 
-  if (parsePath) {
-    set(args, parsePath, JSON.parse(args[parsePath]));
+  if(children){
+    const mappedChildren = (get(args, children) || []).map((child, index) => {
+      const valuePath = `${children}[${index}].id`;
+      const id = get(resultObj, valuePath);
+      id && set(child, 'id', id);
+      return child;
+    });
+    set(args, children, mappedChildren);
+  }
+
+  if (configurations.args_parse_path) {
+    const stringVlaue = get(args,configurations.args_parse_path);
+    set(args, configurations.args_parse_path, JSON.parse(stringVlaue));
   }
 
   if (modelKey) {
-    let model = get(args, modelKey);
-    if(validate(model)) {
-      model = get(entities, model);
-    }
+    const model = get(args, modelKey);
     if(configurations.transports.length && model){
       configurations.transports.forEach((transport) => {
         if(!transport.model) {
-          if(transport.has_parent){
-            const childModel = get(parentEntitiesMap, model);
+          if(transport.array_path && children){
             set(transport, 'model', childModel);
             return;
           }
@@ -237,17 +243,22 @@ const getMappedTransports = async (args, config, models, transactionInstance) =>
   }
   const transports = await Promise.all(
     instances.map(async (instance, index) => {
-    const field = `${config.array_path}[${index}].${config.field}`;
-    const transport = await getMappedTransport(args, config, models, field, transactionInstance, instance);
-    return transport;
-  }));
+      const field = `${config.array_path}[${index}].${config.field}`;
+      const transport = await getMappedTransport(args, config, models, field, transactionInstance, instance);
+      return transport;
+    })
+  );
   return flattenDeep(filter(transports, transport => transport));
 };
 
 const getArgsWithTransports = async (args, configurations, models, transactionInstance) => {
   const results = await Promise.all(
     configurations.map(async (config) => {
-      const field = get(config, 'transport_field') ? 'transport_id' : config.field;
+      let field = get(config, 'transport_field') ? 'transport_id' : config.field;
+      if(config.upsert){
+        const isUpdate = !!get(args, config.field);
+        field = isUpdate ? config.field : field;
+      }
       const transport = !config.array_path
         ? await getMappedTransport(args, config, models, field, transactionInstance)
         : await getMappedTransports(args, config, models, transactionInstance);
