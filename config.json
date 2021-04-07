@@ -440,6 +440,179 @@
             },
             {
                 "model": "fa_field_config",
+                "array_path": "value.common.sorts",
+                "field": "[0]",
+                "non_uuid": true,
+                "set_attribute": "field_name",
+                "where_field": [
+                    {
+                        "value": "entity",
+                        "key": "model_name",
+                        "root": true
+                    },
+                    {
+                        "value": "[0]",
+                        "key": "field_name"
+                    }
+                ]
+            },
+            {
+                "model": "fa_field_config",
+                "array_path": "value.list.columns",
+                "field": "key",
+                "non_uuid": true,
+                "set_attribute": "field_name",
+                "where_field": [
+                    {
+                        "value": "entity",
+                        "key": "model_name",
+                        "root": true
+                    },
+                    {
+                        "value": "key",
+                        "key": "field_name"
+                    }
+                ]
+            },
+            {
+                "model": "fa_field_config",
+                "array_path": "value.common.filters",
+                "field": "field_name",
+                "non_uuid": true,
+                "set_attribute": "field_name",
+                "where_field": [
+                    {
+                        "value": "entity",
+                        "key": "model_name",
+                        "root": true
+                    },
+                    {
+                        "value": "field_name",
+                        "key": "field_name"
+                    }
+                ]
+            },
+            {
+                "model": "fa_field_config",
+                "array_path": "value.common.groups",
+                "field": "field_name",
+                "non_uuid": true,
+                "set_attribute": "field_name",
+                "where_field": [
+                    {
+                        "value": "entity",
+                        "key": "model_name",
+                        "root": true
+                    },
+                    {
+                        "value": "field_name",
+                        "key": "field_name"
+                    }
+                ]
+            },
+            {
+                "model": "fa_field_config",
+                "array_path": "value.common.aggregates",
+                "field": "field_name",
+                "non_uuid": true,
+                "set_attribute": "field_name",
+                "where_field": [
+                    {
+                        "value": "entity",
+                        "key": "model_name",
+                        "root": true
+                    },
+                    {
+                        "value": "field_name",
+                        "key": "field_name"
+                    }
+                ]
+            },
+            {
+                "field": "value.rolodex.detailReference",
+                "model": "fa_field_config",
+                "non_uuid": true,
+                "set_attribute": "field_name",
+                "where_field": [
+                    {
+                        "value": "entity",
+                        "key": "model_name",
+                        "root": true
+                    },
+                    {
+                        "value": "value.rolodex.detailReference",
+                        "key": "field_name",
+                        "root": true
+                    }
+                ]
+            },
+            {
+                "field": "value.calendar.dateField",
+                "model": "fa_field_config",
+                "non_uuid": true,
+                "set_attribute": "field_name",
+                "where_field": [
+                    {
+                        "value": "entity",
+                        "key": "model_name",
+                        "root": true
+                    },
+                    {
+                        "value": "value.calendar.dateField",
+                        "key": "field_name",
+                        "root": true
+                    }
+                ]
+            },
+            {
+                "field": "value.calendar.resourceField",
+                "model": "fa_field_config",
+                "non_uuid": true,
+                "set_attribute": "field_name",
+                "where_field": [
+                    {
+                        "value": "entity",
+                        "key": "model_name",
+                        "root": true
+                    },
+                    {
+                        "value": "value.calendar.resourceField",
+                        "key": "field_name",
+                        "root": true
+                    }
+                ]
+            }
+        ]
+    },
+
+    "updateView": {
+        "args_parse_path": "value",
+        "exclude_fields": ["id"],
+        "transports": [
+            {
+                "field": "id",
+                "model": "view"
+            },
+            {
+                "model": "fa_field_config",
+                "array_path": "value.common.sorts",
+                "field": "[0]",
+                "non_uuid": true,
+                "set_attribute": "field_name",
+                "where_field": [
+                    {
+                        "value": "entity",
+                        "key": "model_name",
+                        "root": true
+                    },
+                    {
+                        "value": "[0]",
+                        "key": "field_name"
+                    }
+                ]
+            },
+            {
+                "model": "fa_field_config",
                 "array_path": "value.list.columns",
                 "field": "key",
                 "non_uuid": true,
