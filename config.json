@@ -4,13 +4,13 @@
         "exclude_fields": ["id"],
         "transports": [
             {
-                "model": "fa_field_config",
                 "field": "id",
+                "model": "fa_field_config",
                 "transport_field": true
             },
             {
-                "model": "catalog_type",
-                "field": "catalog_type_id"
+                "field": "catalog_type_id",
+                "model": "catalog_type"
             },
             {
                 "field": "default_value",
@@ -19,31 +19,30 @@
             {
                 "field": "default_value",
                 "model": "fa_entity_config",
-                "where_field": "fa_entity_id"
+                "where_field": "fa_entity_id",
+                "set_attribute": "fa_entity_id"
             },
             { 
-                "model": "layout",
-                "field": "layout_id"
+                "field": "layout_id",
+                "model": "layout"
             },
             {
-                "model": "fa_entity_config",
-                "field": "fa_entity_config_id"
+                "field": "fa_entity_config_id",
+                "model": "fa_entity_config"
             },
             {
-                "model": "parent_field_id",
-                "field": "fa_field_config",
+                "field": "parent_field_id",
+                "model": "fa_field_config"
+            },
+            {
+                "field": "parent_fa_field_id",
+                "model": "fa_field_config",
                 "where_field": "fa_field_id",
                 "set_attribute":  "fa_field_id"
             },
             {
-                "model": "parent_fa_field_id",
-                "field": "fa_field_config",
-                "where_field": "fa_field_id",
-                "set_attribute":  "fa_field_id"
-            },
-            {
-                "model": "reference_fa_field_id",
-                "field": "fa_field_config",
+                "field": "reference_fa_field_id",
+                "model": "fa_field_config",
                 "where_field": "fa_field_id",
                 "set_attribute":  "fa_field_id"
             },
@@ -54,8 +53,8 @@
                 "set_attribute":  "custom_field_id"
             },
             {
-                "model": "fa_field_config",
-                "field": "fa_related_field_config_id"
+                "field": "fa_related_field_config_id",
+                "model": "fa_field_config"
             },
             {
                 "field": "parent_custom_field_id",
@@ -64,8 +63,8 @@
                 "set_attribute":  "custom_field_id"
             },
             {
-                "model": "fa_field_config",
-                "field": "reference_qualifier"
+                "field": "reference_qualifier",
+                "model": "fa_field_config"
             },
             {
                 "field": "reference_qualifier_value",
@@ -92,62 +91,22 @@
                 "field": "id"
             },
             {
-                "model": "catalog_type",
-                "field": "catalog_type_id"
-            },
-            {
                 "field": "default_value",
                 "model": "catalog"
             },
             {
                 "field": "default_value",
                 "model": "fa_entity_config",
-                "where_field": "fa_entity_id"
+                "where_field": "fa_entity_id",
+                "set_attribute": "fa_entity_id"
             },
             { 
-                "model": "layout",
-                "field": "layout_id"
+                "field": "layout_id",
+                "model": "layout"
             },
             {
-                "model": "fa_entity_config",
-                "field": "fa_entity_config_id"
-            },
-            {
-                "model": "parent_field_id",
-                "field": "fa_field_config",
-                "where_field": "fa_field_id",
-                "set_attribute":  "fa_field_id"
-            },
-            {
-                "model": "parent_fa_field_id",
-                "field": "fa_field_config",
-                "where_field": "fa_field_id",
-                "set_attribute":  "fa_field_id"
-            },
-            {
-                "model": "reference_fa_field_id",
-                "field": "fa_field_config",
-                "where_field": "fa_field_id",
-                "set_attribute":  "fa_field_id"
-            },
-            {
-                "field": "reference_custom_field_id",
-                "model": "fa_field_config",
-                "where_field": "custom_field_id",
-                "set_attribute":  "custom_field_id"
-            },
-            {
-                "model": "fa_field_config",
-                "field": "fa_related_field_config_id"            },
-            {
-                "field": "parent_custom_field_id",
-                "model": "fa_field_config",
-                "where_field": "custom_field_id",
-                "set_attribute":  "custom_field_id"
-            },
-            {
-                "model": "fa_field_config",
-                "field": "reference_qualifier"
+                "field": "reference_qualifier",
+                "model": "fa_field_config"
             },
             {
                 "field": "reference_qualifier_value",
