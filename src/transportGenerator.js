@@ -205,9 +205,9 @@ const getTransport = async (id, args, config, models, field, transactionInstance
 
 const setDyanamicConfigurations = (args, configurations) => {
   const model = getModel(args, configurations.entity_field);
-  const arrayProp = configurations.fields_key;
+  const arrayProp = configurations.transports;
   const data = get(args, arrayProp);
-  const field = configurations.field;
+  const field = configurations.id;
   const transports = data.map((obj, index) => {
     return {
       field: `${arrayProp}[${index}].${field}`,

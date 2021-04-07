@@ -234,9 +234,8 @@
         "id": "id",
         "entity_field": "entity",
         "set_dyanamic_transport": true,
-        "fields_key": "entities",
         "excludes": ["id"],
-        "transports": [] 
+        "transports": "entities"
     },
 
     "addCatalog": {
@@ -281,6 +280,14 @@
         {
             "model": "rule_set",
             "field": "field_values.rule_set_id"
+        },
+        {
+            "model": "view",
+            "field": "field_values.view_id"
+        },
+        {
+            "model": "dashboard",
+            "field": "field_values.dashboard_id"
         }] 
     },
 
@@ -322,6 +329,14 @@
         {
             "model": "rule_set",
             "field": "field_values.rule_set_id"
+        },
+        {
+            "model": "view",
+            "field": "field_values.view_id"
+        },
+        {
+            "model": "dashboard",
+            "field": "field_values.dashboard_id"
         }] 
     },
 
