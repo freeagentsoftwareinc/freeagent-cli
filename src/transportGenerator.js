@@ -187,7 +187,6 @@ const getTransportIds = async (
       set(newchildrens, 'field', 'transport_id');
       set(newchildrens, 'model', model);
     }
-    omit(instance, 'isCreate');
     return;
   }
 
@@ -306,6 +305,12 @@ const getMappedTransports = async (args, config, models, transactionInstance) =>
         instance,
         newchildrens
       );
+
+      if (config.child) {
+        const updatedInstance = omit(instance, 'isCreate', 'id');
+        set(args, `${config.array_path}[${index}]`, updatedInstance);
+      }
+
       return transport;
     })
   );

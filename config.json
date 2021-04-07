@@ -300,7 +300,7 @@
     "updateEntityValue": {
         "id": "id",
         "entity_field": "entity",
-        "exclude_field": ["id", "entity_value_id"],
+        "exclude_fields": ["id", "entity_value_id"],
         "transports": [{
             "field": "entity_value_id",
             "skip_non_uuid_check": true
@@ -315,7 +315,7 @@
         "child_entity_field": "entity",
         "args_parse_path": "field_values.filter_conditions",
         "exclude_from_where_condition": ["icon", "delay", "working_calendar", "due_date_field", "color"],
-        "exclude_field":["id"],
+        "exclude_fields":["id"],
         "transports": [{
             "field": "id"
         },
@@ -340,7 +340,8 @@
         },
         {
             "field": "id",
-            "array_path": "children"
+            "array_path": "children",
+            "child": true
         },
         {
             "field": "field_values.section_name",
