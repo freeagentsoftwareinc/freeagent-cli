@@ -256,7 +256,6 @@
 
     "createEntity": {
         "id": "entity_value.id",
-        "include_entities": ["layout", "fa_acl", "app_action", "fa_role", "rule_set", "catalog", "catalog_type", "rule_action", "menu_item"],
         "entity_field": "entity",
         "exclude_fields": ["id", "cache_key", "view_id", "dashboard_id"],
         "transports": [{
@@ -294,7 +293,6 @@
     "updateEntity": {
         "id": "entity_value.id",
         "entity_field": "entity",
-        "include_entities": ["layout", "fa_acl", "app_action", "fa_role", "rule_set", "catalog", "catalog_type", "rule_action", "menu_item"],
         "exclude_fields": ["id", "cache_key", "view_id", "dashboard_id"],
         "transports": [{
             "field": "id"
@@ -343,7 +341,6 @@
     "updateEntityValue": {
         "id": "id",
         "entity_field": "entity",
-        "include_entities": ["layout", "fa_acl", "app_action", "fa_role", "rule_set", "catalog", "catalog_type", "rule_action", "form_rule", "menu_item"],
         "exclude_field": ["id", "entity_value_id"],
         "transports": [{
             "field": "entity_value_id",
@@ -358,7 +355,6 @@
         "children_path": "children", 
         "child_entity_field": "entity",
         "args_parse_path": "field_values.filter_conditions",
-        "include_entities": ["layout", "fa_acl", "app_action", "fa_role", "rule_set", "catalog", "catalog_type", "rule_action", "form_rule"],
         "exclude_from_where_condition": ["icon", "delay", "working_calendar", "due_date_field", "color"],
         "exclude_field":["id"],
         "transports": [{

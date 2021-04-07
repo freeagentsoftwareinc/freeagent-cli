@@ -333,32 +333,14 @@ const getArgsWithTransports = async (args, configurations, models, transactionIn
   };
 };
 
-const checkForEntities = (args, configurations) => {
-  const excludeEntities = get(configurations, 'include_entities');
-  const propPath = get(configurations, 'entity_field');
-  const entity = get(args, propPath);
-  const entityName = validate(entity) ? get(entities, entity) : entity;
-  if (entityName) {
-    return excludeEntities.includes(entityName);
-  }
-};
-
 const reMapTransports = async (args, result, operation, models, transactionInstance) => {
   try {
     if (!get(config, operation)) {
       return;
     }
     const configurations = JSON.parse(JSON.stringify(get(config, operation)));
-    const hasIncludedFlag = get(configurations, 'include_entities');
     if (!configurations) {
       return;
-    }
-
-    if (hasIncludedFlag) {
-      const isIncluded = checkForEntities(args, configurations);
-      if (!isIncluded) {
-        return;
-      }
     }
 
     if (configurations.set_dyanamic_transport) {
