@@ -1,5 +1,5 @@
 const { validate } = require('uuid');
-const { get, set, isArray, omit, find, fromPairs, has, filter, flattenDeep, indexOf, keys } = require('lodash');
+const { get, set, isArray, omit, filter, flattenDeep } = require('lodash');
 const { entities, }  = require('../utils/constants.js');
 const config = require('../config.json');
 
@@ -28,11 +28,13 @@ const getModel = (args, key) => {
 };
 
 const excludeProps = (data, configurations) => {
+  let omitProps = ['isCreate'];
   const excludes = get(configurations, 'exclude_fields');
   if(excludes){
-    const updatedArgs = omit(data.args, excludes);
-    set(data, 'args', updatedArgs);
+    omitProps = [...omitProps, ...excludes];
   }
+  const updatedArgs = omit(data.args, omitProps);
+  set(data, 'args', updatedArgs);
   return data;
 };
 
@@ -50,16 +52,21 @@ const reMapArgsAndConfigurations = async (configurations, args, result, models) 
   const childEntityField = get(configurations, 'child_entity_field');
   const childModel = get(args, `${children}[0].${childEntityField}`);
 
-  if (field) {
+  if (field && !get(args, 'id')) {
     const id = get(resultObj, field);
     set(args, 'id', id);
+    configurations.upsert && set(args, 'isCreate', true);
   }
 
   if(children){
     const mappedChildren = (get(args, children) || []).map((child, index) => {
+      if(child.id){
+        return child;
+      }
       const valuePath = `${children}[${index}].id`;
       const id = get(resultObj, valuePath);
       id && set(child, 'id', id);
+      configurations.upsert && set(child, 'isCreate', true);
       return child;
     });
     set(args, children, mappedChildren);
@@ -67,7 +74,7 @@ const reMapArgsAndConfigurations = async (configurations, args, result, models) 
 
   if (configurations.args_parse_path) {
     const stringVlaue = get(args,configurations.args_parse_path);
-    set(args, configurations.args_parse_path, JSON.parse(stringVlaue));
+    stringVlaue && set(args, configurations.args_parse_path, JSON.parse(stringVlaue));
   }
 
   if (modelKey) {
@@ -125,15 +132,16 @@ const findAllTransportIds = async (models, modelName, where, transactionInstance
 
 const getTransportIdFromDB = async (where, config, models, transactionInstance) => {
   const modelName = get(config, 'model');
-  const transports = config.bulk 
+  const transports = config.bulk
     ? await findAllTransportIds(models, modelName, where, transactionInstance)
     : await findTransportId(models, modelName, where, transactionInstance);
-  return transports;
+    return transports;
 };
 
-const generateWhere = (id, args, config, field, instance) => {
+const generateWhere = (id, args, config, instance) => {
   const where = {};
   const whereField = get(config, 'where_field');
+
   if(!whereField) {
     set(where, 'id', id);
     return where;
@@ -150,26 +158,31 @@ const generateWhere = (id, args, config, field, instance) => {
   return where;
 };
 
-const getModelValue = (args, config) => {
-  if(config.model){
-    return config.model;
-  }
-  const modelValue = get(args, config.model_key);
-  if(!validate(modelValue)){
-    return modelValue;
-  }
-  const model = get(entities, modelValue);
-  return model;
-}
-
-const getTransportIds = async (id, args, config, models, field, transactionInstance, position=null, instance) => {
-  const model = getModelValue(args, config) ;
+const getTransportIds = async (id, args, config, models, field, transactionInstance, position=null, instance, newchildrens) => {
+  const model = config.model;
   const setAttribute = get(config, 'set_attribute')
-  const where = generateWhere(id, args, config, field, instance);
+  const where = generateWhere(id, args, config, instance);
   const transportId = models ? await getTransportIdFromDB(where, config, models, transactionInstance) : await getTransportIdFromLocalDB(id, config);
   if (!transportId) {
     return null;
   }
+
+  if (config.array_path && instance && get(instance, 'isCreate')) {
+    if (get(newchildrens, 'id')) {
+      newchildrens.id.push(transportId)
+    } else {
+      set(newchildrens, 'id', [transportId])
+      set(newchildrens, 'field', 'transport_id')
+      set(newchildrens, 'model', model);
+    }
+    omit(instance, 'isCreate');
+    return;
+  }
+
+  if((config.field === 'id') && get(args, 'isCreate')){
+    field = 'transport_id';
+  }
+
   const transport = {
     id: transportId,
     field: position !==null ? `${field}[${position}]` : field,
@@ -179,13 +192,14 @@ const getTransportIds = async (id, args, config, models, field, transactionInsta
   if (setAttribute) {
     set(transport, 'attribute', setAttribute);
   }
+
   return transport;
 }
 
-const getTransport = async (id, args, config, models, field, transactionInstance, instance) => {
+const getTransport = async (id, args, config, models, field, transactionInstance, instance, newchildrens) => {
   const transports = isArray(id)
-    ? await Promise.all(id.map(async (value, index) => await getTransportIds(value, args, config, models, field, transactionInstance, index, instance)))
-    : await getTransportIds(id, args, config, models, field, transactionInstance, null, instance);
+    ? await Promise.all(id.map(async (value, index) => await getTransportIds(value, args, config, models, field, transactionInstance, index, instance, newchildrens)))
+    : await getTransportIds(id, args, config, models, field, transactionInstance, null, instance, newchildrens);
   return transports;
 };
 
@@ -218,7 +232,7 @@ const setArgsFromDB = async (id, args, config, models, transactionInstance) => {
   set(args, setField, result)
 };
 
-const getMappedTransport = async (args, config, models, field, transactionInstance, instance=null) => {
+const getMappedTransport = async (args, config, models, field, transactionInstance, instance=null, newchildrens) => {
   const id = get(args, field) || get(args, config.field); 
   if(!id || (isArray(id) && !id.length)){
     return;
@@ -231,34 +245,43 @@ const getMappedTransport = async (args, config, models, field, transactionInstan
   }
 
   if (id && !config.set_field) {
-    return getTransport(id, args, config, models, field, transactionInstance, instance);
+    return getTransport(id, args, config, models, field, transactionInstance, instance, newchildrens);
   }
   await setArgsFromDB(id, args, config, models, transactionInstance);
 };
 
 const getMappedTransports = async (args, config, models, transactionInstance) => {
-  const instances = get(args, config.array_path);
+  let instances = get(args, config.array_path);
+
+  if(!instances){
+    return;
+  }
+
+  if (config.parse) {
+    instances = JSON.parse(instances);
+    set(args, config.array_path, instances);
+  }
+
   if (!isArray(instances)) {
     return;
   }
+
+  const newchildrens = {};
   const transports = await Promise.all(
     instances.map(async (instance, index) => {
       const field = `${config.array_path}[${index}].${config.field}`;
-      const transport = await getMappedTransport(args, config, models, field, transactionInstance, instance);
+      const transport = await getMappedTransport(args, config, models, field, transactionInstance, instance, newchildrens);
       return transport;
     })
   );
+  get(newchildrens, 'id') && transports.push(newchildrens);
   return flattenDeep(filter(transports, transport => transport));
 };
 
 const getArgsWithTransports = async (args, configurations, models, transactionInstance) => {
   const results = await Promise.all(
     configurations.map(async (config) => {
-      let field = get(config, 'transport_field') ? 'transport_id' : config.field;
-      if(config.upsert){
-        const isUpdate = !!get(args, config.field);
-        field = isUpdate ? config.field : field;
-      }
+      const field = get(config, 'transport_field') ? 'transport_id' : config.field;
       const transport = !config.array_path
         ? await getMappedTransport(args, config, models, field, transactionInstance)
         : await getMappedTransports(args, config, models, transactionInstance);
@@ -286,30 +309,34 @@ const checkForEntities = (args, configurations) => {
 };
 
 const reMapTransports = async (args, result, operation, models, transactionInstance) => {
-
-  if(!get(config, operation)){
-    return;
-  }
-  const configurations = JSON.parse(JSON.stringify(get(config, operation)));
-  const hasIncludedFlag = get(configurations, 'include_entities');
-  if(!configurations) {
-    return;
-  }
-
-  if (hasIncludedFlag) {
-    const isIncluded = checkForEntities(args, configurations);
-    if (!isIncluded){
+  try {
+    if(!get(config, operation)){
       return;
     }
-  }
+    const configurations = JSON.parse(JSON.stringify(get(config, operation)));
+    const hasIncludedFlag = get(configurations, 'include_entities');
+    if(!configurations) {
+      return;
+    }
   
-  if (configurations.set_dyanamic_transport) {
-    setDyanamicConfigurations(args, configurations)
+    if (hasIncludedFlag) {
+      const isIncluded = checkForEntities(args, configurations);
+      if (!isIncluded){
+        return;
+      }
+    }
+    
+    if (configurations.set_dyanamic_transport) {
+      setDyanamicConfigurations(args, configurations)
+    }
+  
+    reMapArgsAndConfigurations(configurations, args, result, operation);
+    const data = await getArgsWithTransports(args, configurations.transports, models, transactionInstance);
+    return excludeProps(data, configurations);
+  } catch (err) {
+    console.log(err);
+    return err;
   }
-
-  reMapArgsAndConfigurations(configurations, args, result, operation);
-  const data = await getArgsWithTransports(args, configurations.transports, models, transactionInstance);
-  return excludeProps(data, configurations);
 };
 
 module.exports = {

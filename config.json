@@ -337,7 +337,8 @@
     },
     
     "upsertCompositeEntity": {
-        "id": "parent_id",
+        "id": "entity_value.id",
+        "upsert": true,
         "entity_field": "entity",
         "children_path": "children", 
         "child_entity_field": "entity",
@@ -346,9 +347,7 @@
         "exclude_from_where_condition": ["icon", "delay", "working_calendar", "due_date_field", "color"],
         "exclude_field":["id"],
         "transports": [{
-            "field": "id",
-            "upsert": true,
-            "transport_field": true
+            "field": "id"
         },
         {
             "field": "field_values.fa_entity_id",
@@ -359,8 +358,7 @@
         {
             "field": "field_values.roles",
             "model": "fa_role",
-            "non_uuid": true,
-            "comma_separated_values": true
+            "non_uuid": true
         },
         {
             "field": "field_values.on_update_field",
@@ -372,8 +370,6 @@
         },
         {
             "field": "id",
-            "upsert": true,
-            "transport_field": true,
             "array_path": "children"
         },
         {
@@ -395,6 +391,7 @@
             "field": "field_name",
             "model": "fa_field_config",
             "array_path": "field_values.conditions",
+            "parse": true,
             "set_attribute": "field_name",
             "non_uuid": true,
             "where_field": [
