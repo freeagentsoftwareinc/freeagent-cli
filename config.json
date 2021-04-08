@@ -791,5 +791,42 @@
                 "skip_non_uuid_check": true
             }
         ]
+    },
+
+    "upsertDashboard": {
+        "id": "id",
+        "upsert": true,
+        "exclude_fields": ["id"],
+        "transports": [
+            {
+                "model": "dashboard",
+                "field": "id"
+            },
+            {
+                "model": "view",
+                "array_path": "widgets",
+                "field": "meta.viewId",
+                "set_attribute": "id",
+                "where_field": [
+                    {
+                        "value": "meta.viewId",
+                        "key": "id"
+                    }
+                ]
+            },
+            {
+                "model": "fa_field_config",
+                "array_path": "widgets",
+                "field": "meta.aggregationField",
+                "non_uuid": true,
+                "set_attribute": "field_name",
+                "where_field": [
+                    {
+                        "value": "meta.aggregationField",
+                        "key": "field_name"
+                    }
+                ]
+            }
+        ]
     }
 }
