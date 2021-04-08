@@ -170,6 +170,7 @@
             },
             {
                 "model": "view",
+                "transport_field": true,
                 "field": "entityName",
                 "where_field": "entity",
                 "non_uuid": true
@@ -777,6 +778,17 @@
                         "key": "id"
                     }
                 ]
+            }
+        ]
+    },
+
+    "bulkDeleteEntities": {
+        "array_path": "ids",
+        "transports": [
+            {
+                "field": "ids",
+                "model": "view",
+                "skip_non_uuid_check": true
             }
         ]
     }
