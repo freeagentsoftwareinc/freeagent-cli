@@ -129,6 +129,10 @@
     "addEntity" : {
         "id": "fa_entity_id",
         "exclude_fields": ["id"],
+        "set_args_fields": [{
+            "result_field": "fa_entity.model_name",
+            "args_field": "entityName"
+        }],
         "transports": [
             {
                 "model": "fa_entity_config",
@@ -163,6 +167,12 @@
                 "field": "id",
                 "where_field": "fa_entity_id",
                 "bulk": true
+            },
+            {
+                "model": "view",
+                "field": "entityName",
+                "where_field": "entity",
+                "non_uuid": true
             },
             {
                 "field": "parent_id",
@@ -552,6 +562,36 @@
                         "root": true
                     }
                 ]
+            },
+            {
+                "model": "fa_field_config",
+                "array_path": "value.common.widgets",
+                "field": "meta.aggregationField",
+                "non_uuid": true,
+                "set_attribute": "field_name",
+                "where_field": [
+                    {
+                        "value": "entity",
+                        "key": "model_name",
+                        "root": true
+                    },
+                    {
+                        "value": "meta.aggregationField",
+                        "key": "field_name"
+                    }
+                ]
+            },
+            {
+                "model": "view",
+                "array_path": "value.common.widgets",
+                "field": "meta.viewId",
+                "set_attribute": "id",
+                "where_field": [
+                    {
+                        "value": "meta.viewId",
+                        "key": "id"
+                    }
+                ]
             }
         ]
     },
@@ -705,6 +745,36 @@
                         "value": "value.calendar.resourceField",
                         "key": "field_name",
                         "root": true
+                    }
+                ]
+            },
+            {
+                "model": "fa_field_config",
+                "array_path": "value.common.widgets",
+                "field": "meta.aggregationField",
+                "non_uuid": true,
+                "set_attribute": "field_name",
+                "where_field": [
+                    {
+                        "value": "entity",
+                        "key": "model_name",
+                        "root": true
+                    },
+                    {
+                        "value": "meta.aggregationField",
+                        "key": "field_name"
+                    }
+                ]
+            },
+            {
+                "model": "view",
+                "array_path": "value.common.widgets",
+                "field": "meta.viewId",
+                "set_attribute": "id",
+                "where_field": [
+                    {
+                        "value": "meta.viewId",
+                        "key": "id"
                     }
                 ]
             }

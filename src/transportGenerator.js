@@ -58,6 +58,15 @@ const reMapArgsAndConfigurations = async (configurations, args, result, models) 
     configurations.upsert && set(args, 'isCreate', true);
   }
 
+  if (configurations.set_args_fields) {
+    configurations.set_args_fields.map((setFieldConfig) => {
+      const value = get(resultObj, setFieldConfig.result_field);
+      if (value) {
+        set(args, setFieldConfig.args_field, value);
+      }
+    });
+  }
+
   if (children) {
     const mappedChildren = (get(args, children) || []).map((child, index) => {
       if (child.id) {
