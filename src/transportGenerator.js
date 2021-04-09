@@ -188,7 +188,7 @@ const getTransportIds = async (
     return null;
   }
 
-  if (config.array_path && instance && get(instance, 'isCreate')) {
+  if (config.child && config.array_path && instance && get(instance, 'isCreate')) {
     if (get(newchildrens, 'id')) {
       newchildrens.id.push(transportId);
     } else {
