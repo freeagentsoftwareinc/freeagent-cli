@@ -797,10 +797,17 @@
         "id": "id",
         "upsert": true,
         "exclude_fields": ["id"],
+        "children_path": "widgets", 
         "transports": [
             {
                 "model": "dashboard",
                 "field": "id"
+            },
+            {
+                "field": "id",
+                "model": "widget",
+                "array_path": "widgets",
+                "child": true
             },
             {
                 "model": "view",
