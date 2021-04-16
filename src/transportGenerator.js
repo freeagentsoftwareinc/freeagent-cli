@@ -74,10 +74,11 @@ const reMapArgsAndConfigurations = async (configurations, args, result, models) 
       if (child.id) {
         return child;
       }
+      const valuePath = `${children}[${index}].id`;
       const resultsChildren = get(resultObj, children);
       const searchQuery = set({},resultChildrenUniqueField , get(child, agrsChildrenUniqueField));
       const getResultChild = find(resultsChildren, searchQuery);
-      const id = get(getResultChild, 'id');
+      const id = get(getResultChild, 'id') || get(resultObj, valuePath);
       id && set(child, 'id', id);
       configurations.upsert && set(child, 'isCreate', true);
       return child;
