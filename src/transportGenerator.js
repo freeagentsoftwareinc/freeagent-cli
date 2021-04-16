@@ -1,5 +1,5 @@
 const { validate } = require('uuid');
-const { get, set, isArray, omit, filter, flattenDeep } = require('lodash');
+const { get, set, isArray, omit, filter, flattenDeep, find } = require('lodash');
 const { entities } = require('../utils/constants.js');
 const config = require('../config.json');
 
@@ -49,6 +49,8 @@ const reMapArgsAndConfigurations = async (configurations, args, result, models) 
   const field = get(configurations, 'id');
   const modelKey = get(configurations, 'entity_field');
   const children = get(configurations, 'children_path');
+  const agrsChildrenUniqueField = get(configurations, 'args_child_unique_field');
+  const resultChildrenUniqueField = get(configurations, 'result_child_unique_field')
   const childEntityField = get(configurations, 'child_entity_field');
   const childModel = get(args, `${children}[0].${childEntityField}`);
 
@@ -72,8 +74,10 @@ const reMapArgsAndConfigurations = async (configurations, args, result, models) 
       if (child.id) {
         return child;
       }
-      const valuePath = `${children}[${index}].id`;
-      const id = get(resultObj, valuePath);
+      const resultsChildren = get(resultObj, children);
+      const searchQuery = set({},resultChildrenUniqueField , get(child, agrsChildrenUniqueField));
+      const getResultChild = find(resultsChildren, searchQuery);
+      const id = get(getResultChild, 'id');
       id && set(child, 'id', id);
       configurations.upsert && set(child, 'isCreate', true);
       return child;
@@ -338,6 +342,7 @@ const getArgsWithTransports = async (args, configurations, models, transactionIn
     })
   );
   const transports = flattenDeep(filter(results, (result) => result));
+
   if (!transports.length) {
     throw new Error('could not find transport_id');
   }
