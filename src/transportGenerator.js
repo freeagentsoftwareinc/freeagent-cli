@@ -1,5 +1,5 @@
 const { validate } = require('uuid');
-const { get, set, isArray, omit, filter, flattenDeep, find } = require('lodash');
+const { get, set, isArray, omit, filter, flattenDeep, find, uniq } = require('lodash');
 const { entities } = require('../utils/constants.js');
 const config = require('../config.json');
 
@@ -137,7 +137,7 @@ const findAllTransportIds = async (models, modelName, where, transactionInstance
       where,
       transaction: transactionInstance,
     });
-    return results.map((result) => get(result, 'transport_id'));
+    return uniq(results.map((result) => get(result, 'transport_id')));
   } catch (err) {
     console.log(err);
     return err;
@@ -166,7 +166,7 @@ const generateWhere = (id, args, config, instance) => {
     return where;
   }
   config.where_field.forEach((whereConfig) => {
-    const value = whereConfig.root ? get(args, whereConfig.value) : get(instance, whereConfig.value);
+    const value = whereConfig.root ? get(args, whereConfig.value) : get(instance, whereConfig.value) || whereConfig.value;
     set(where, whereConfig.key, value);
   });
   return where;
@@ -358,12 +358,12 @@ const getArgsWithTransports = async (args, configurations, models, transactionIn
   };
 };
 
-const reMapTransports = async (args, result, operation, models, transactionInstance) => {
+const reMapTransports = async (args, result, operation, models, transactionInstance, customConfig = null) => {
   try {
     if (!get(config, operation)) {
       return;
     }
-    const configurations = JSON.parse(JSON.stringify(get(config, operation)));
+    const configurations =  customConfig || JSON.parse(JSON.stringify(get(config, operation)));
     if (!configurations) {
       return;
     }
