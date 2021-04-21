@@ -105,6 +105,28 @@
                 "bulk": true
             },
             {
+                "model": "view",
+                "transport_field": true,
+                "field": "label",
+                "where_field": [
+                    {
+                        "key": "entity",
+                        "value": "label",
+                        "root": true
+                    },
+                    {
+                        "key": "default",
+                        "value": true
+                    },
+                    {
+                        "key": "transport_id",
+                        "value": { "$ne": null }
+                    }
+                ],
+                "non_uuid": true,
+                "bulk": true
+            },
+            {
                 "field": "parent_id",
                 "model": "fa_entity_config"
             }]

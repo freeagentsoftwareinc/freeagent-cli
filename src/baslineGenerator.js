@@ -20,7 +20,8 @@ const createBaselinePlugin = async (models)=>  {
   });
   return {
     parent_entity_reference_id: baselinePluing.id,
-    scopes: baselinePluing.scopes
+    scopes: baselinePluing.scopes,
+    team_id: baselinePluing.team_id
   }
 };
 
@@ -35,7 +36,7 @@ const saveCustomizationToPlugin = async (models, customizations, baselinePlugin)
       4
     ),
     operation: customization.api,
-    name: `${Date.now()}_${customization.api}.json`,
+    name: customization.name,
     ...baselinePlugin
   };
   await models['changeset_customization'].create(newChangeset);
@@ -50,10 +51,15 @@ const getRecords = async (models, scopes, attributes, config) => {
   const result = await models[model].findAll({
     skipScopes: true,
     where: {
-      scopes
+      scopes: { $overlap: scopes }
     },
+    order: [
+      ['created_at', 'ASC']
+    ],
     raw: true,
     attributes,
+    
+    logging: console.log
   });
   return result
 };
@@ -101,7 +107,8 @@ const getMetaDataWithTransports = async (models, args, configuration, apiConfig)
   const data = await reMapTransports(args, {}, configuration.api, models, null, customConfig);
   return {
     data,
-    api: configuration.api
+    api: configuration.api,
+    name: `${Date.now()}_${configuration.api}.json`
   };
 };
 
