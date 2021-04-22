@@ -228,6 +228,7 @@
         "id": "entity_value.id",
         "entity_field": "entity",
         "exclude_fields": ["id", "cache_key", "view_id", "dashboard_id"],
+        "args_parse_path": "field_values.conditions",
         "transports": [{
             "field": "id",
             "transport_field": true
@@ -257,6 +258,36 @@
         {
             "model": "dashboard",
             "field": "field_values.dashboard_id"
+        },
+        {
+            "field": "field_name",
+            "model": "fa_field_config",
+            "array_path": "field_values.conditions",
+            "set_attribute": "field_name",
+            "non_uuid": true,
+            "where_field": [
+                {
+                    "value": "field_values.fa_entity_id",
+                    "key": "fa_entity_id",
+                    "root": true
+                },
+                {
+                    "value": "field_name",
+                    "key": "field_name"
+                }
+            ]
+        },
+        {
+            "field": "values",
+            "model": "catalog",
+            "array_path": "field_values.conditions"
+        },
+        {
+            "field": "values",
+            "model": "fa_entity_config",
+            "array_path": "field_values.conditions",
+            "where_field": "fa_entity_id",
+            "set_attribute": "fa_entity_id"
         }] 
     },
 
@@ -264,6 +295,7 @@
         "id": "entity_value.id",
         "entity_field": "entity",
         "exclude_fields": ["id", "cache_key", "view_id", "dashboard_id"],
+        "args_parse_path": "field_values.conditions",
         "transports": [{
             "field": "id"
         },
@@ -305,6 +337,36 @@
         {
             "model": "dashboard",
             "field": "field_values.dashboard_id"
+        },
+        {
+            "field": "field_name",
+            "model": "fa_field_config",
+            "array_path": "field_values.conditions",
+            "set_attribute": "field_name",
+            "non_uuid": true,
+            "where_field": [
+                {
+                    "value": "field_values.fa_entity_id",
+                    "key": "fa_entity_id",
+                    "root": true
+                },
+                {
+                    "value": "field_name",
+                    "key": "field_name"
+                }
+            ]
+        },
+        {
+            "field": "values",
+            "model": "catalog",
+            "array_path": "field_values.conditions"
+        },
+        {
+            "field": "values",
+            "model": "fa_entity_config",
+            "array_path": "field_values.conditions",
+            "where_field": "fa_entity_id",
+            "set_attribute": "fa_entity_id"
         }] 
     },
 
@@ -391,6 +453,18 @@
             ]
         },
         {
+            "field": "values",
+            "model": "catalog",
+            "array_path": "field_values.conditions"
+        },
+        {
+            "field": "values",
+            "model": "fa_entity_config",
+            "array_path": "field_values.conditions",
+            "where_field": "fa_entity_id",
+            "set_attribute": "fa_entity_id"
+        },
+        {
             "field": "field_name",
             "model": "fa_field_config",
             "array_path": "field_values.filter_conditions",
@@ -407,6 +481,18 @@
                     "key": "field_name"
                 }
             ]
+        },
+        {
+            "field": "values",
+            "model": "catalog",
+            "array_path": "field_values.filter_conditions"
+        },
+        {
+            "field": "values",
+            "model": "fa_entity_config",
+            "array_path": "field_values.filter_conditions",
+            "where_field": "fa_entity_id",
+            "set_attribute": "fa_entity_id"
         }]
     },
 
@@ -595,6 +681,36 @@
                         "key": "id"
                     }
                 ]
+            },
+            {
+                "field": "field_name",
+                "model": "fa_field_config",
+                "array_path": "value.common.filters",
+                "set_attribute": "field_name",
+                "non_uuid": true,
+                "where_field": [
+                    {
+                        "value": "field_values.fa_entity_id",
+                        "key": "fa_entity_id",
+                        "root": true
+                    },
+                    {
+                        "value": "field_name",
+                        "key": "field_name"
+                    }
+                ]
+            },
+            {
+                "field": "values",
+                "model": "catalog",
+                "array_path": "value.common.filters"
+            },
+            {
+                "field": "values",
+                "model": "fa_entity_config",
+                "array_path": "value.common.filters",
+                "where_field": "fa_entity_id",
+                "set_attribute": "fa_entity_id"
             }
         ]
     },
@@ -780,6 +896,36 @@
                         "key": "id"
                     }
                 ]
+            },
+            {
+                "field": "field_name",
+                "model": "fa_field_config",
+                "array_path": "value.common.filters",
+                "set_attribute": "field_name",
+                "non_uuid": true,
+                "where_field": [
+                    {
+                        "value": "field_values.fa_entity_id",
+                        "key": "fa_entity_id",
+                        "root": true
+                    },
+                    {
+                        "value": "field_name",
+                        "key": "field_name"
+                    }
+                ]
+            },
+            {
+                "field": "values",
+                "model": "catalog",
+                "array_path": "value.common.filters"
+            },
+            {
+                "field": "values",
+                "model": "fa_entity_config",
+                "array_path": "value.common.filters",
+                "where_field": "fa_entity_id",
+                "set_attribute": "fa_entity_id"
             }
         ]
     },
