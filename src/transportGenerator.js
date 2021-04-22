@@ -279,7 +279,12 @@ const getMappedTransport = async (args, config, models, field, transactionInstan
   }
   const isNonUuid = get(config, 'non_uuid');
   if (!config.skip_non_uuid_check) {
-    if ((config.field !== 'id' && !isNonUuid && !validate(id)) || (isNonUuid && validate(id))) {
+    let value = id;
+    if(isArray(id)){
+      value = id[0];
+    };
+
+    if ((config.field !== 'id' && !isNonUuid && !validate(value)) || (isNonUuid && validate(value))) {
       return;
     }
   }
@@ -329,7 +334,7 @@ const getMappedTransports = async (args, config, models, transactionInstance) =>
     })
   );
   get(newchildrens, 'id') && transports.push(newchildrens);
-  return flattenDeep(filter(transports, (transport) => transport));
+  return transports;
 };
 
 const getArgsWithTransports = async (args, configurations, models, transactionInstance) => {
@@ -342,7 +347,7 @@ const getArgsWithTransports = async (args, configurations, models, transactionIn
       return transport;
     })
   );
-  const transports = flattenDeep(filter(results, (result) => result));
+  const transports = filter(flattenDeep(results), (result) => result);
 
   if (!transports.length) {
     throw new Error('could not find transport_id');
