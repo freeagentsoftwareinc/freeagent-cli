@@ -1,4 +1,15 @@
 {
+    "models_config": [{
+        "model": "fa_entity_config",
+        "api": "addEntity",
+        "api_config": "baseline_config"
+    },
+    {
+        "model": "fa_field_config",
+        "api": "addCustomField",
+        "api_config": "baseline_config"
+    }],
+
     "addCustomField" : {
         "id": "fa_field_config_id",
         "exclude_fields": ["id"],
@@ -81,7 +92,169 @@
                 "set_field": "reference_entity_name",
                 "attribute": "model_name" 
             }
-        ]
+        ],
+        "baseline_config": {
+            "api": "getFields",
+            "params": { "is_custom_field":true, "only_showable": true, "show_hidden": true },
+            "order_by": [["created_at"], ["asc"]],
+            "reject": {
+                "field": "custom_field.field_name",
+                "value": ["description", "owner_id", "subscribers", "roles", "fa_config_field"]
+            },
+            "args": [
+                {
+                    "set_args": [
+                    {
+                        "key": "id",
+                        "value": "id"
+                    },
+                    {
+                        "key": "name_label",
+                        "value": "custom_field.display_name"
+                    },
+                    {
+                        "key": "data_type",
+                        "value": "custom_field.data_type"
+                    },
+                    {
+                        "key": "default_value",
+                        "value": "default_value"
+                    },
+                    {
+                        "key": "is_required",
+                        "value": "is_required"
+                    },
+                    {
+                        "key": "layout_id",
+                        "value": "layout_id"
+                    },
+                    {
+                        "key": "catalog_type_id",
+                        "value": "catalog_type_id"
+                    },
+                    {
+                        "key": "reference_qualifier",
+                        "value": "reference_qualifier"
+                    },
+                    {
+                        "key": "reference_qualifier_value",
+                        "value": "reference_qualifier_value"
+                    },
+                    {
+                        "key": "reference_entity_name",
+                        "value": "reference.model_name"
+                    },
+                    {
+                        "key": "entity",
+                        "value": "entity.model_name"
+                    },
+                    {
+                        "key": "related_list_name",
+                        "value": "related_list_name"
+                    },
+                    {
+                        "key": "related_list_name_plural",
+                        "value": "related_list_name_plural"
+                    },
+                    {
+                        "key": "new_field_order",
+                        "value": "order"
+                    },
+                    {
+                        "key": "is_immutable",
+                        "value": "is_immutable"
+                    },
+                    {
+                        "key": "is_calculated",
+                        "value": "is_calculated"
+                    },
+                    {
+                        "key": "sub_data_type",
+                        "value": "sub_data_type"
+                    },
+                    {
+                        "key": "parent_custom_field_id",
+                        "value": "custom_field.parent_reference_field_id"
+                    },
+                    {
+                        "key": "fa_related_field_config_id",
+                        "value": "custom_field.fa_related_field_config_id"
+                    },
+                    {
+                        "key": "calculated_function",
+                        "value": "custom_field.calculated_function"
+                    },
+                    {
+                        "key": "reference_custom_field_id",
+                        "value": "custom_field.reference_custom_field_id"
+                    },
+                    {
+                        "key": "date_field",
+                        "value": "metadata.date_field"
+                    },
+                    {
+                        "key": "guess_field",
+                        "value": "metadata.guess_field"
+                    },
+                    {
+                        "key": "track_status",
+                        "value": "metadata.track_status"
+                    },
+                    {
+                        "key": "all_day_field",
+                        "value": "metadata.all_day_field"
+                    },
+                    {
+                        "key": "all_day_field",
+                        "value": "metadata.all_day_field"
+                    },
+                    {
+                        "key": "icon_for_true",
+                        "value": "metadata.icon_for_true"
+                    },
+                    {
+                        "key": "color_for_true",
+                        "value": "metadata.color_for_true"
+                    },
+                    {
+                        "key": "icon_for_false",
+                        "value": "metadata.icon_for_false"
+                    },
+                    {
+                        "key": "start_date_field",
+                        "value": "metadata.start_date_field"
+                    },
+                    {
+                        "key": "end_date_field",
+                        "value": "metadata.end_date_field"
+                    },
+                    {
+                        "key": "label_for_true",
+                        "value": "metadata.label_for_true"
+                    },
+                    {
+                        "key": "label_for_false",
+                        "value": "metadata.label_for_false"
+                    },
+                    {
+                        "key": "resource_field",
+                        "value": "metadata.resource_field"
+                    },
+                    {
+                        "key": "parent_field_id",
+                        "value": "metadata.parent_field_id"
+                    },
+                    {
+                        "key": "advanced_formatter",
+                        "value": "metadata.advanced_formatter"
+                    },
+                    {
+                        "key": "reference_fa_entity_name",
+                        "value": "metadata.reference_fa_entity_name"
+                    }]
+                }
+            ]
+        }
     },
 
     "updateFieldConfig" :{
@@ -179,7 +352,155 @@
                 "field": "parent_id",
                 "model": "fa_entity_config"
             }
-        ]
+        ],
+        "baseline_config": {
+            "attributes": ["id", "fa_entity_id" , "parent_id", "info_segment_wide", "enforce_individual_access"],
+            "api": "getEntities",
+            "params": { "only_showable": true },
+            "order_by": [["fa_entity.created_at"], ["asc"]],
+            "args": [{
+                "where_field": "id",
+                "set_args": [{
+                    "key": "id",
+                    "value": "id"
+                },
+                {
+                    "key": "fa_entity_id",
+                    "value": "fa_entity_id"
+                },
+                {
+                    "key": "parent_id",
+                    "value": "parent_id"
+                },
+                {
+                    "key": "info_segment_wide",
+                    "value": "info_segment_wide"
+                },
+                {
+                    "key": "enforce_individual_access",
+                    "value": "enforce_individual_access"
+                },
+                {
+                    "key": "label",
+                    "value": "fa_labels[0].label"
+                },
+                {
+                    "key": "label_plural",
+                    "value": "fa_labels[1].label"
+                }]
+            }],
+            "transports": [{
+                "model": "fa_entity_config",
+                "field": "id",
+                "transport_field": true
+            },
+            {
+                "model": "fa_related_list",
+                "transport_field": true,
+                "field": "fa_entity_id",
+                "where_field": [
+                    {
+                        "key": "fa_entity_id",
+                        "value": "fa_entity_id",
+                        "root": true
+                    },
+                    {
+                        "key": "custom_field_id",
+                        "value": null
+                    },
+                    {
+                        "key": "transport_id",
+                        "value": { "$ne": null }
+                    }
+                ],
+                "bulk": true
+            },
+            {
+                "model": "app_action",
+                "transport_field": true,
+                "field": "id",
+                "where_field": [
+                    {
+                        "key": "fa_entity_id",
+                        "value": "fa_entity_id",
+                        "root": true
+                    },
+                    {
+                        "key": "system_type",
+                        "value": { "$ne": null }
+                    },
+                    {
+                        "key": "transport_id",
+                        "value": { "$ne": null }
+                    }
+                ],
+                "bulk": true
+            },
+            {
+                "model": "fa_field_config",
+                "transport_field": true,
+                "field": "id",
+                "where_field": [
+                    {
+                        "key": "fa_entity_id",
+                        "value": "fa_entity_id",
+                        "root": true
+                    },
+                    {
+                        "key": "field_name",
+                        "value": { "$or": ["seq_id", "description", "owner_id", "created_at", "updated_at", "created_by", "updated_by", "last_activity", "subteam_id", "subscribers"] }
+                    }
+                ],
+                "bulk": true
+            },
+            {
+                "model": "menu_item",
+                "transport_field": true,
+                "field": "id",
+                "where_field": [
+                    {
+                        "key": "fa_entity_id",
+                        "value": "fa_entity_id",
+                        "root": true
+                    },
+                    {
+                        "key": "type",
+                        "value": "9dc393eb-3db7-4659-90af-4b34cc03b28c"
+                    },
+                    {
+                        "key": "transport_id",
+                        "value": { "$ne": null }
+                    }
+                ],
+                "bulk": true
+            },
+            {
+                "model": "view",
+                "transport_field": true,
+                "field": "label",
+                "where_field": [
+                    {
+                        "key": "entity",
+                        "value": "label",
+                        "root": true
+                    },
+                    {
+                        "key": "default",
+                        "value": true
+                    },
+                    {
+                        "key": "transport_id",
+                        "value": { "$ne": null }
+                    }
+                ],
+                "non_uuid": true,
+                "bulk": true
+            },
+            {
+                "field": "parent_id",
+                "model": "fa_entity_config"
+            }]
+        }
     },
 
     "updateEntityConfig": {
