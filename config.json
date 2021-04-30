@@ -1611,7 +1611,36 @@
                 "where_field": "fa_entity_id",
                 "set_attribute": "fa_entity_id"
             }
-        ]
+        ],
+        "baseline_config": {
+            "api": "getViews",
+            "args": [
+                {
+                    "set_args": [
+                        {
+                            "key": "name",
+                            "value": "name"
+                        },
+                        {
+                            "key": "entity",
+                            "value": "entity"
+                        },
+                        {
+                            "key": "value",
+                            "value": "value"
+                        },
+                        {
+                            "key": "default",
+                            "value": "default"
+                        },
+                        {
+                            "key": "is_all_view",
+                            "value": "is_all_view"
+                        }
+                    ]
+                }
+            ]
+        }
     },
 
     "updateView": {
@@ -1826,36 +1855,7 @@
                 "where_field": "fa_entity_id",
                 "set_attribute": "fa_entity_id"
             }
-        ],
-        "baseline_config": {
-            "api": "getViews",
-            "args": [
-                {
-                    "set_args": [
-                        {
-                            "key": "name",
-                            "value": "name"
-                        },
-                        {
-                            "key": "entity",
-                            "value": "entity"
-                        },
-                        {
-                            "key": "value",
-                            "value": "value"
-                        },
-                        {
-                            "key": "default",
-                            "value": "default"
-                        },
-                        {
-                            "key": "is_all_view",
-                            "value": "is_all_view"
-                        }
-                    ]
-                }
-            ]
-        }
+        ]
     },
 
     "bulkDeleteEntities": {
