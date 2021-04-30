@@ -1,5 +1,20 @@
 {
     "models_config": [{
+        "model": "catalog_type",
+        "api": "upsertCompositeEntity",
+        "api_config": "baseline_config.catalog_type"
+    },
+    {
+        "model": "catalog",
+        "api": "addCatalog",
+        "api_config": "baseline_config.catalog"
+    },
+    {
+        "model": "fa_role",
+        "api": "createEntity",
+        "api_config": "aseline_config.fa_role"
+    },
+    {
         "model": "fa_entity_config",
         "api": "addEntity",
         "api_config": "baseline_config"
@@ -7,6 +22,41 @@
     {
         "model": "fa_field_config",
         "api": "addCustomField",
+        "api_config": "baseline_config"
+    },
+    {
+        "model": "layout",
+        "api": "createEntity",
+        "api_config": "baseline_config.layout"
+    },
+    {
+        "model": "app_action",
+        "api": "createEntity",
+        "api_config": "baseline_config.app_action"
+    },
+    {
+        "model": "fa_acl",
+        "api": "createEntity",
+        "api_config": "baseline_config.fa_acl"
+    },
+    {
+        "model": "rule_set",
+        "api": "upsertCompositeEntity",
+        "api_config": "baseline_config.rule_set"
+    },
+    {
+        "model": "form_rule",
+        "api": "upsertCompositeEntity",
+        "api_config": "baseline_config.form_rule"
+    },
+    {
+        "model": "view",
+        "api": "saveView",
+        "api_config": "baseline_config"
+    },
+    {
+        "model": "fa_entity_config",
+        "api": "updateEntityConfig",
         "api_config": "baseline_config"
     }],
 
@@ -354,9 +404,8 @@
             }
         ],
         "baseline_config": {
-            "attributes": ["id", "fa_entity_id" , "parent_id", "info_segment_wide", "enforce_individual_access"],
             "api": "getEntities",
-            "params": { "only_showable": true },
+            "params": { "only_showable": true, "show_hidden": true },
             "order_by": [["fa_entity.created_at"], ["asc"]],
             "args": [{
                 "where_field": "id",
@@ -518,7 +567,98 @@
                 "field": "primary_action",
                 "model": "app_action"
             }
-        ]
+        ],
+        "baseline_config": {
+            "api": "getEntities",
+            "params": { "only_showable": true, "show_hidden": true },
+            "order_by": [["fa_entity.created_at"], ["asc"]],
+            "args": [
+                {
+                    "set_args": [
+                    {
+                        "key": "id",
+                        "value": "id"
+                    },
+                    {
+                        "key": "label",
+                        "value": "label"
+                    },
+                    {
+                        "key": "label_plural",
+                        "value": "label_plural"
+                    },
+                    {
+                        "key": "is_visible",
+                        "value": "is_visible"
+                    },
+                    {
+                        "key": "show_related_list",
+                        "value": "show_related_list"
+                    },
+                    {
+                        "key": "enforce_individual_access",
+                        "value": "enforce_individual_access"
+                    },
+                    {
+                        "key": "info_segment_wide",
+                        "value": "info_segment_wide"
+                    },
+                    {
+                        "key": "landscape_mode",
+                        "value": "landscape_mode"
+                    },
+                    {
+                        "key": "template_file_url",
+                        "value": "template_file_url"
+                    },
+                    {
+                        "key": "title_field_name",
+                        "value": "display_name"
+                    },
+                    {
+                        "key": "applet_config",
+                        "value": "applet_config"
+                    },
+                    {
+                        "key": "card_layout",
+                        "value": "card_layout"
+                    },
+                    {
+                        "key": "show_app_icon",
+                        "value": "show_app_icon"
+                    },
+                    {
+                        "key": "show_seq_id",
+                        "value": "show_seq_id"
+                    },
+                    {
+                        "key": "primary_action",
+                        "value": "primary_action"
+                    },
+                    {
+                        "key": "quick_add_custom_code",
+                        "value": "quick_add_custom_code"
+                    },
+                    {
+                        "key": "description",
+                        "value": "description"
+                    },
+                    {
+                        "key": "color",
+                        "value": "color"
+                    },
+                    {
+                        "key": "is_applet",
+                        "value": "is_applet"
+                    },
+                    {
+                        "key": "parent_id",
+                        "value": "parent_id"
+                    }]
+                    
+                }
+            ]
+        }
     },
 
     "bulkUpdateOrder": {
@@ -542,7 +682,40 @@
             "field": "catalog.custom_field_id",
             "where_field": "custom_field_id",
             "set_attribute": "custom_field_id"
-        }] 
+        }],
+        "baseline_config": {
+            "catalog": {
+                "api": "listEntityValues",
+                "params": { "entity":"catalog", "order": [["created_at"], ["ASC"]] },
+                "result_path": "entity_values",
+                "args": [{
+                    "set_args": [{
+                        "key": "id",
+                        "value": "id"
+                    },
+                    {
+                        "key": "catalog.name",
+                        "value": "field_values.name.value"
+                    },
+                    {
+                        "key": "catalog.order",
+                        "value": "field_values.order.value"
+                    },
+                    {
+                        "key": "catalog.icon",
+                        "value": "field_values.icon.value"
+                    },
+                    {
+                        "key": "catalog.color",
+                        "value": "field_values.color.value"
+                    },
+                    {
+                        "key": "catalog.is_visible",
+                        "value": "field_values.is_visible.value"
+                    }]
+                }]
+            }
+        }
     },
 
     "createEntity": {
@@ -609,7 +782,195 @@
             "array_path": "field_values.conditions",
             "where_field": "fa_entity_id",
             "set_attribute": "fa_entity_id"
-        }] 
+        }],
+        "baseline_config": {
+            "fa_role":{
+                "api": "listEntityValues",
+                "params": { "entity":"catalog", "order": [["created_at"], ["ASC"]] },
+                "result_path": "entity_values",
+                "args": [{
+                    "set_args": [{
+                        "key": "id",
+                        "value": "id"
+                    },
+                    {
+                        "key": "field_values.name",
+                        "value": "field_values.name.value"
+                    },
+                    {
+                        "key": "field_values.description",
+                        "value": "field_values.description.value"
+                    },
+                    {
+                        "key": "field_values.import",
+                        "value": "field_values.import.value"
+                    },
+                    {
+                        "key": "field_values.export",
+                        "value": "field_values.export.value"
+                    },
+                    {
+                        "key": "field_values.bulk_edit",
+                        "value": "field_values.bulk_edit.value"
+                    },
+                    {
+                        "key": "field_values.bulk_delete",
+                        "value": "field_values.bulk_delete.value"
+                    },
+                    {
+                        "key": "field_values.task_delete",
+                        "value": "field_values.task_delete.value"
+                    },
+                    {
+                        "key": "field_values.is_qualifier",
+                        "value": "field_values.is_qualifier.value"
+                    },
+                    {
+                        "key": "field_values.is_visible",
+                        "value": "field_values.is_visible.value"
+                    }]
+                }]
+            },
+            "layout": {
+                "api": "listEntityValues",
+                "params": { "entity":"catalog", "order": [["created_at"], ["ASC"]] },
+                "result_path": "entity_values",
+                "args": [{
+                    "set_args": [{
+                        "key": "id",
+                        "value": "id"
+                    },
+                    {
+                        "key": "field_values.title",
+                        "value": "field_values.title.value"
+                    },
+                    {
+                        "key": "field_values.order",
+                        "value": "field_values.order.value"
+                    },
+                    {
+                        "key": "field_values.is_visible",
+                        "value": "field_values.is_visible.value"
+                    },
+                    {
+                        "key": "field_values.fa_entity_id",
+                        "value": "field_values.fa_entity_id.value"
+                    }]
+                }]
+            },
+            "app_action": {
+                "api": "listEntityValues",
+                "params": { "entity":"app_action", "order": [["created_at"], ["ASC"]] },
+                "result_path": "entity_values",
+                "args": [{
+                    "set_args": [{
+                        "key": "id",
+                        "value": "id"
+                    },
+                    {
+                        "key": "field_values.name",
+                        "value": "field_values.name.value"
+                    },
+                    {
+                        "key": "field_values.fa_entity_id",
+                        "value": "field_values.fa_entity_id.value"
+                    },
+                    {
+                        "key": "field_values.description",
+                        "value": "field_values.description.value"
+                    },
+                    {
+                        "key": "field_values.is_visible",
+                        "value": "field_values.is_visible.value"
+                    },
+                    {
+                        "key": "field_values.icon",
+                        "value": "field_values.icon.value"
+                    },
+                    {
+                        "key": "field_values.appearance_id",
+                        "value": "field_values.appearance_id.value"
+                    },
+                    {
+                        "key": "field_values.roles",
+                        "value": "field_values.roles.value"
+                    },
+                    {
+                        "key": "field_values.custom_code",
+                        "value": "field_values.custom_code.value"
+                    },
+                    {
+                        "key": "field_values.placement",
+                        "value": "field_values.placement.value"
+                    },
+                    {
+                        "key": "field_values.type",
+                        "value": "field_values.type.value"
+                    },
+                    {
+                        "key": "field_values.rule_set_id",
+                        "value": "field_values.roles.rule_set_id"
+                    },
+                    {
+                        "key": "field_values.system_type",
+                        "value": "field_values.system_type.rule_set_id"   
+                    },
+                    {
+                        "key": "field_values.order",
+                        "value": "field_values.order.rule_set_id"   
+                    },
+                    {
+                        "key": "field_values.is_visible",
+                        "value": "field_values.is_visible.rule_set_id"   
+                    }]
+                }]
+            },
+            "fa_acl": {
+                "app_action": {
+                    "api": "listEntityValues",
+                    "params": { "entity":"fa_acl", "order": [["created_at"], ["ASC"]] },
+                    "result_path": "entity_values",
+                    "args": [{
+                        "set_args": [{
+                            "key": "id",
+                            "value": "id"
+                        },
+                        {
+                            "key": "field_values.target_entity_id",
+                            "value": "field_values.target_entity_id.value"
+                        },
+                        {
+                            "key": "field_values.acl_type",
+                            "value": "field_values.acl_type.value"
+                        },
+                        {
+                            "key": "field_values.fa_field_id",
+                            "value": "field_values.fa_field_id.value"
+                        },
+                        {
+                            "key": "field_values.operation",
+                            "value": "field_values.operation.value"
+                        },
+                        {
+                            "key": "field_values.entity_operation",
+                            "value": "field_values.entity_operation.value"
+                        },
+                        {
+                            "key": "field_values.fa_acl_field_roles",
+                            "value": "field_values.fa_acl_field_roles.value"
+                        },
+                        {
+                            "key": "field_values.active",
+                            "value": "field_values.active.value"
+                        },
+                        {
+                            "key": "field_values.conditions",
+                            "value": "field_values.conditions.value"
+                        }]
+                    }]
+                }
+            }
+        }
     },
 
     "updateEntity": {
@@ -814,7 +1175,224 @@
             "array_path": "field_values.filter_conditions",
             "where_field": "fa_entity_id",
             "set_attribute": "fa_entity_id"
-        }]
+        }],
+        "baseline_config": {
+            "catalog_type": {
+                "api": "listEntityValues",
+                "params": { "entity":"catalog_type", "order": [["created_at"], ["ASC"]] },
+                "result_path": "entity_values",
+                "args": [{
+                    "set_args": [{
+                        "key": "id",
+                        "value": "id"
+                    },
+                    {
+                        "key": "entity",
+                        "value": "fa_entity.model_name"
+                    },
+                    {
+                        "key": "field_values.fa_entity_id",
+                        "value": "field_values.fa_entity_id.value"
+                    },
+                    {
+                        "key": "field_values.name",
+                        "value": "field_values.name.value"
+                    },
+                    {
+                        "key": "field_values.order_type",
+                        "value": "field_values.order_type.value"
+                    },
+                    {
+                        "key": "field_values.allow_choice_creation",
+                        "value": "field_values.allow_choice_creation.value"
+                    },
+                    {
+                        "key": "field_values.is_visible",
+                        "value": "field_values.is_visible.value"
+                    }]
+                }]
+            },
+            "rule_set": {
+                "api": "listEntityValues",
+                "params": { "entity":"rule_set", "included_lines": ["rule_action"], "order": [["created_at"], ["ASC"]] },
+                "result_path": "entity_values",
+                "args": [{
+                    "set_args": [{
+                        "key": "id",
+                        "value": "id"
+                    },
+                    {
+                        "key": "entity",
+                        "value": "fa_entity.model_name"
+                    },
+                    {
+                        "key": "field_values.fa_entity_id",
+                        "value": "field_values.fa_entity_id.value"
+                    },
+                    {
+                        "key": "field_values.name",
+                        "value": "field_values.name.value"
+                    },
+                    {
+                        "key": "field_values.trigger",
+                        "value": "field_values.trigger.value"
+                    },
+                    {
+                        "key": "field_values.on_update_field",
+                        "value": "field_values.on_update_field.value"
+                    },
+                    {
+                        "key": "field_values.filter_conditions",
+                        "value": "field_values.filter_conditions.value"
+                    },
+                    {
+                        "key": "field_values.schedule_cron",
+                        "value": "field_values.schedule_cron.value"
+                    },
+                    {
+                        "key": "field_values.schedule_datetime_field",
+                        "value": "field_values.schedule_datetime_field.value"
+                    },
+                    {
+                        "key": "field_values.is_visible",
+                        "value": "field_values.is_visible.value"
+                    }]
+                }],
+                "children": {
+                    "key": "children",
+                    "api": "listEntityValues",
+                    "result_path": "lines.rule_action",
+                    "args": [{
+                        "set_args": [{
+                            "key": "id",
+                            "value": "id"
+                        },
+                        {
+                            "key": "entity",
+                            "value": "fa_entity.model_name"
+                        },
+                        {
+                            "key": "field_values.description",
+                            "value": "field_values.description.value"
+                        },
+                        {
+                            "key": "field_values.due_date_field",
+                            "value": "field_values.due_date_field.value"
+                        },
+                        {
+                            "key": "field_values.delay",
+                            "value": "field_values.delay.value"
+                        },
+                        {
+                            "key": "field_values.type",
+                            "value": "field_values.type.value"
+                        },
+                        {
+                            "key": "field_values.working_calendar",
+                            "value": "field_values.working_calendar.value"
+                        },
+                        {
+                            "key": "field_values.calculated_type",
+                            "value": "field_values.calculated_type.value"
+                        },
+                        {
+                            "key": "field_values.calculated_assign_to_owner",
+                            "value": "field_values.calculated_assign_to_owner.value"
+                        },
+                        {
+                            "key": "field_values.calculated_schedule",
+                            "value": "field_values.calculated_schedule.value"
+                        },
+                        {
+                            "key": "field_values.custom_code",
+                            "value": "field_values.custom_code.value"
+                        }]
+                    }]
+                }
+            },
+            "form_rule": {
+                "api": "listEntityValues",
+                "params": { "entity":"form_rule", "included_lines": ["form_action"], "order": [["created_at"], ["ASC"]]  },
+                "result_path": "entity_values",
+                "args": [{
+                    "set_args": [{
+                        "key": "id",
+                        "value": "id"
+                    },
+                    {
+                        "key": "entity",
+                        "value": "fa_entity.model_name"
+                    },
+                    {
+                        "key": "field_values.description",
+                        "value": "field_values.description.value"
+                    },
+                    {
+                        "key": "field_values.fa_entity_id",
+                        "value": "field_values.fa_entity_id.value"
+                    },
+                    {
+                        "key": "field_values.conditions",
+                        "value": "field_values.conditions.value"
+                    },
+                    {
+                        "key": "field_values.roles",
+                        "value": "field_values.roles.value"
+                    },
+                    {
+                        "key": "field_values.order",
+                        "value": "field_values.order.value"
+                    },
+                    {
+                        "key": "field_values.order",
+                        "value": "field_values.order.value"
+                    }]
+                }],
+                "children": {
+                    "key": "children",
+                    "api": "listEntityValues",
+                    "result_path": "lines.form_action",
+                    "args": [{
+                        "set_args": [{
+                            "key": "id",
+                            "value": "id"
+                        },
+                        {
+                            "key": "entity",
+                            "value": "fa_entity.model_name"
+                        },
+                        {
+                            "key": "field_values.type",
+                            "value": "field_values.type.value"
+                        },
+                        {
+                            "key": "field_values.calculated_type",
+                            "value": "field_values.calculated_type.value"
+                        },
+                        {
+                            "key": "field_values.section_name",
+                            "value": "field_values.section_name.value"
+                        },
+                        {
+                            "key": "field_values.app_action_id",
+                            "value": "field_values.app_action_id.value"
+                        },
+                        {
+                            "key": "field_values.field_name",
+                            "value": "field_values.field_name.value"
+                        },
+                        {
+                            "key": "field_values.operation",
+                            "value": "field_values.operation.value"
+                        },
+                        {
+                            "key": "field_values.value",
+                            "value": "field_values.value.value"
+                        }]
+                    }]
+                }
+            }
+        }
     },
 
     "saveView": {
@@ -1248,7 +1826,36 @@
                 "where_field": "fa_entity_id",
                 "set_attribute": "fa_entity_id"
             }
-        ]
+        ],
+        "baseline_config": {
+            "api": "getViews",
+            "args": [
+                {
+                    "set_args": [
+                        {
+                            "key": "name",
+                            "value": "name"
+                        },
+                        {
+                            "key": "entity",
+                            "value": "entity"
+                        },
+                        {
+                            "key": "value",
+                            "value": "value"
+                        },
+                        {
+                            "key": "default",
+                            "value": "default"
+                        },
+                        {
+                            "key": "is_all_view",
+                            "value": "is_all_view"
+                        }
+                    ]
+                }
+            ]
+        }
     },
 
     "bulkDeleteEntities": {
