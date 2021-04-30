@@ -12,7 +12,7 @@
     {
         "model": "fa_role",
         "api": "createEntity",
-        "api_config": "aseline_config.fa_role"
+        "api_config": "baseline_config.fa_role"
     },
     {
         "model": "fa_entity_config",
