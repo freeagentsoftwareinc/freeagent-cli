@@ -50,13 +50,13 @@
         "api_config": "baseline_config.form_rule"
     },
     {
-        "model": "view",
-        "api": "saveView",
+        "model": "fa_entity_config",
+        "api": "updateEntityConfig",
         "api_config": "baseline_config"
     },
     {
-        "model": "fa_entity_config",
-        "api": "updateEntityConfig",
+        "model": "view",
+        "api": "saveView",
         "api_config": "baseline_config"
     }],
 
@@ -147,7 +147,7 @@
             "api": "getFields",
             "params": { "is_custom_field":true, "only_showable": true, "show_hidden": true },
             "resolver_param": "user",
-            "order_by": [["created_at"], ["asc"]],
+            "order": [["created_at"], ["asc"]],
             "reject": {
                 "field": "custom_field.field_name",
                 "value": ["description", "owner_id", "subscribers", "roles", "fa_config_field"]
@@ -408,7 +408,7 @@
             "api": "getEntities",
             "params": { "only_showable": true, "show_hidden": true },
             "resolver_param": "user",
-            "order_by": [["created_at"], ["asc"]],
+            "order": [["created_at"], ["asc"]],
             "args": [{
                 "where_field": "id",
                 "set_args": [{
@@ -574,7 +574,7 @@
             "api": "getEntities",
             "params": { "only_showable": true, "show_hidden": true },
             "resolver_param": "user",
-            "order_by": [["fa_entity.created_at"], ["asc"]],
+            "order": [["fa_entity.created_at"], ["asc"]],
             "args": [
                 {
                     "set_args": [
@@ -687,37 +687,40 @@
             "set_attribute": "custom_field_id"
         }],
         "baseline_config": {
-            "catalog": {
-                "api": "listEntityValues",
-                "params": { "entity":"catalog", "order": [["created_at"], ["ASC"]] },
-                "result_path": "entity_values",
-                "args": [{
-                    "set_args": [{
-                        "key": "id",
-                        "value": "id"
-                    },
-                    {
-                        "key": "catalog.name",
-                        "value": "field_values.name.value"
-                    },
-                    {
-                        "key": "catalog.order",
-                        "value": "field_values.order.value"
-                    },
-                    {
-                        "key": "catalog.icon",
-                        "value": "field_values.icon.value"
-                    },
-                    {
-                        "key": "catalog.color",
-                        "value": "field_values.color.value"
-                    },
-                    {
-                        "key": "catalog.is_visible",
-                        "value": "field_values.is_visible.value"
-                    }]
+            "api": "getCatalog",
+            "params": { "ignoreCatalogTypes": true },
+            "result_path": "elements",
+            "order": [["created_at"], ["asc"]],
+            "args": [{
+                "set_args": [{
+                    "key": "id",
+                    "value": "id"
+                },
+                {
+                    "key": "catalog.name",
+                    "value": "name"
+                },
+                {
+                    "key": "catalog.order",
+                    "value": "order"
+                }, 
+                {
+                    "key": "catalog.icon",
+                    "value": "custom_fields.icon"
+                },
+                {
+                    "key": "catalog.color",
+                    "value": "custom_fields.color"
+                },
+                {
+                    "key": "catalog.is_visible",
+                    "value": "is_visible"
+                },
+                {
+                    "key": "catalog.custom_field_id",
+                    "value": "custom_field_id"
                 }]
-            }
+            }]
         }
     },
 
@@ -1221,7 +1224,7 @@
         "baseline_config": {
             "catalog_type": {
                 "api": "listEntityValues",
-                "params": { "entity":"catalog_type", "order": [["created_at"], ["ASC"]] },
+                "params": { "entity": "catalog_type", "included_lines": ["catalog"], "order": [["created_at"], ["ASC"]] },
                 "result_path": "entity_values",
                 "is_create": true,
                 "args": [{
@@ -1232,10 +1235,6 @@
                     {
                         "key": "entity",
                         "value": "fa_entity.model_name"
-                    },
-                    {
-                        "key": "field_values.fa_entity_id",
-                        "value": "field_values.fa_entity_id.value"
                     },
                     {
                         "key": "field_values.name",
@@ -1253,7 +1252,42 @@
                         "key": "field_values.is_visible",
                         "value": "field_values.is_visible.value"
                     }]
-                }]
+                }],
+                "children": {
+                    "key": "children",
+                    "result_path": "lines.catalog",
+                    "is_create": true,
+                    "args": [{
+                        "set_args": [{
+                            "key": "id",
+                            "value": "id"
+                        },
+                        {
+                            "key": "entity",
+                            "value": "fa_entity.model_name"
+                        },
+                        {
+                            "key": "field_values.name",
+                            "value": "field_values.name.value"
+                        },
+                        {
+                            "key": "field_values.order",
+                            "value": "field_values.order.value"
+                        },
+                        {
+                            "key": "field_values.icon",
+                            "value": "field_values.icon.value"
+                        },
+                        {
+                            "key": "field_values.color",
+                            "value": "field_values.color.value"
+                        },
+                        {
+                            "key": "field_values.is_visible",
+                            "value": "field_values.is_visible.value"
+                        }]
+                    }]
+                }
             },
             "rule_set": {
                 "api": "listEntityValues",
@@ -1304,7 +1338,6 @@
                 }],
                 "children": {
                     "key": "children",
-                    "api": "listEntityValues",
                     "result_path": "lines.rule_action",
                     "is_create": true,
                     "args": [{
@@ -1396,7 +1429,6 @@
                 }],
                 "children": {
                     "key": "children",
-                    "api": "listEntityValues",
                     "result_path": "lines.form_action",
                     "is_create": true,
                     "args": [{
