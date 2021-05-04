@@ -1697,6 +1697,10 @@
         ],
         "baseline_config": {
             "api": "getViews",
+            "reject": {
+                "field": "default",
+                "value": [true]
+            },
             "args": [
                 {
                     "set_args": [
