@@ -349,9 +349,9 @@ const getArgsWithTransports = async (args, configurations, models, transactionIn
   );
   const transports = filter(flattenDeep(results), (result) => result);
 
-  // if (!transports.length) {
-  //   throw new Error('could not find transport_id');
-  // }
+  if (!transports.length) {
+    throw new Error('could not find transport_id');
+  }
   return {
     args: { ...args },
     transports,
