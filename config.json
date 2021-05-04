@@ -1249,6 +1249,10 @@
                         "value": "field_values.allow_choice_creation.value"
                     },
                     {
+                        "key": "field_values.fa_entity_id",
+                        "value": "field_values.fa_entity_id.value"
+                    },
+                    {
                         "key": "field_values.is_visible",
                         "value": "field_values.is_visible.value"
                     }]
