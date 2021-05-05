@@ -58,6 +58,11 @@
         "model": "view",
         "api": "saveView",
         "api_config": "baseline_config"
+    },
+    {
+        "model": "dashboard",
+        "api": "upsertDashboard",
+        "api_config": "baseline_config"
     }],
 
     "addCustomField" : {
@@ -1698,8 +1703,8 @@
         "baseline_config": {
             "api": "getViews",
             "reject": {
-                "field": "default",
-                "value": [true]
+                "field": "share_with_team",
+                "value": [false]
             },
             "args": [
                 {
@@ -1727,6 +1732,10 @@
                         {
                             "key": "is_all_view",
                             "value": "is_all_view"
+                        },
+                        {
+                            "key": "share_with_team",
+                            "value": "share_with_team"
                         }
                     ]
                 }
@@ -2001,6 +2010,32 @@
                     }
                 ]
             }
-        ]
+        ],
+        "baseline_config": {
+            "api": "listEntityValues",
+            "params": { "entity": "dashboard", "order": [["created_at"], ["ASC"]] },
+            "is_create": true,
+            "result_path": "entity_values",
+            "args": [{
+                "set_args": [{
+                    "key": "id",
+                    "value": "id"
+                },
+                {
+                    "key": "title",
+                    "value": "field_values.title.value"
+                },
+                {
+                    "key": "share_with_team_access",
+                    "value": "field_values.share_with_team_access.value"
+                }]
+            }],
+            "children": {
+                "key": "widgets",
+                "api": "getWidgetsByDashboard",
+                "param_key": "id",
+                "is_create": true
+            }
+        }
     }
 }
