@@ -58,6 +58,11 @@
         "model": "view",
         "api": "saveView",
         "api_config": "baseline_config"
+    },
+    {
+        "model": "dashboard",
+        "api": "upsertDashboard",
+        "api_config": "baseline_config"
     }],
 
     "addCustomField" : {
@@ -515,8 +520,8 @@
                         "root": true
                     },
                     {
-                        "key": "type",
-                        "value": "9dc393eb-3db7-4659-90af-4b34cc03b28c"
+                        "key": "subtype",
+                        "value": { "$or": ["all", "create", "import"] }
                     },
                     {
                         "key": "transport_id",
@@ -1012,6 +1017,53 @@
                     {
                         "key": "field_values.conditions",
                         "value": "field_values.conditions.value"
+                    }]
+                }]
+            },
+            "menu_item": {
+                "api": "listEntityValues",
+                "params": { "entity":"menu_item", "order": [["created_at"], ["ASC"]] },
+                "result_path": "entity_values",
+                "reject": {
+                    "field": "field_values.url.value",
+                    "value": ["entity/deal/view/all"]
+                },
+                "args": [{
+                    "set_args": [{
+                        "key": "id",
+                        "value": "id"
+                    },
+                    {
+                        "key": "entity",
+                        "value": "fa_entity.model_name"
+                    },
+                    {
+                        "key": "field_values.fa_entity_id",
+                        "value": "field_values.fa_entity_id.value"
+                    },
+                    {
+                        "key": "field_values.url",
+                        "value": "field_values.url.value"
+                    },
+                    {
+                        "key": "field_values.dashboard_id",
+                        "value": "field_values.dashboard_id.value"
+                    },
+                    {
+                        "key": "field_values.name",
+                        "value": "field_values.name.value"
+                    },
+                    {
+                        "key": "field_values.order",
+                        "value": "field_values.order.value"
+                    },
+                    {
+                        "key": "field_values.is_visible",
+                        "value": "field_values.is_visible.value"
+                    },
+                    {
+                        "key": "field_values.fa_entity_id",
+                        "value": "field_values.fa_entity_id.value"
                     }]
                 }]
             }
@@ -1698,8 +1750,8 @@
         "baseline_config": {
             "api": "getViews",
             "reject": {
-                "field": "default",
-                "value": [true]
+                "field": "share_with_team",
+                "value": [false]
             },
             "args": [
                 {
@@ -1727,6 +1779,10 @@
                         {
                             "key": "is_all_view",
                             "value": "is_all_view"
+                        },
+                        {
+                            "key": "share_with_team",
+                            "value": "share_with_team"
                         }
                     ]
                 }
@@ -2001,6 +2057,32 @@
                     }
                 ]
             }
-        ]
+        ],
+        "baseline_config": {
+            "api": "listEntityValues",
+            "params": { "entity": "dashboard", "order": [["created_at"], ["ASC"]] },
+            "is_create": true,
+            "result_path": "entity_values",
+            "args": [{
+                "set_args": [{
+                    "key": "id",
+                    "value": "id"
+                },
+                {
+                    "key": "title",
+                    "value": "field_values.title.value"
+                },
+                {
+                    "key": "share_with_team_access",
+                    "value": "field_values.share_with_team_access.value"
+                }]
+            }],
+            "children": {
+                "key": "widgets",
+                "api": "getWidgetsByDashboard",
+                "param_key": "id",
+                "is_create": true
+            }
+        }
     }
 }
