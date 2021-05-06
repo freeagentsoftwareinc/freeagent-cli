@@ -158,13 +158,15 @@
             "query_params": { "only_showable": true, "show_hidden": true },
             "request_type": "user",
             "order": [["created_at"], ["asc"]],
-            "reject": {
+            "reject": [{
                 "field": "transport_id",
+                "condition": "is",
                 "value": [null]
-            },
+            }],
             "system_entity_config": {
-                "filters":[{
+                "reject": [{
                     "field": "field_name",
+                    "condition": "is",
                     "value": ["seq_id", "description", "owner_id", "subscribers", "created_at", "created_by", "updated_by", "updated_at", "last_activity", "subteam_id"]
                 }],
                 "mutation_api": "updateFieldConfig"
@@ -540,14 +542,20 @@
                         "root": true
                     },
                     {
-                        "key": "subtype",
-                        "value": { "$or": ["all", "create", "import"] }
+                        "key": "$or",
+                        "value": [{ 
+                            "subtype": { "$or": ["all", "create", "import"] }
+                        },
+                        {
+                            "type": {  "$eq": "2ede5ec4-e76a-4105-8209-31ac3bb6387a"  }
+                        }]
                     },
                     {
                         "key": "transport_id",
                         "value": { "$ne": null }
                     }
                 ],
+                "order": [["order", "ASC NULLS FIRST"]],
                 "bulk": true
             },
             {
@@ -558,10 +566,11 @@
                     {
                         "key": "entity",
                         "value": "label",
-                        "root": true
+                        "root": true,
+                        "snake_case": true
                     },
                     {
-                        "key": "default",
+                        "key": "is_all_view",
                         "value": true
                     },
                     {
@@ -699,6 +708,7 @@
 
     "addCatalog": {
         "id": "id",
+        "args_parse_path": "field_values.catalog_mappings",
         "exclude_fields": ["id"],
         "transports": [{
             "model": "catalog",
@@ -710,6 +720,28 @@
             "field": "catalog.custom_field_id",
             "where_field": "custom_field_id",
             "set_attribute": "custom_field_id"
+        },
+        {
+            "field": "target_fa_field_config_id",
+            "model": "fa_field_config",
+            "array_path": "catalog_mappings"
+        },
+        {
+            "field": "fa_field_config_id",
+            "model": "fa_field_config",
+            "array_path": "catalog_mappings"
+        },
+        {
+            "field": "value",
+            "model": "catalog",
+            "array_path": "field_values.conditions"
+        },
+        {
+            "field": "values",
+            "model": "fa_entity_config",
+            "array_path": "field_values.conditions",
+            "where_field": "fa_entity_id",
+            "set_attribute": "fa_entity_id"
         }],
         "baseline_config": {
             "query_api": "getCatalog",
@@ -829,11 +861,13 @@
         "baseline_config": {
             "fa_role":{
                 "query_api": "listEntityValues",
+                "condition": "is",
                 "query_params": { "entity":"fa_role", "order": [["created_at"], ["ASC"]] },
-                "reject": {
+                "reject": [{
                     "field": "field_values.name.value",
+                    "condition": "is",
                     "value": ["Administrator", "App Admin", "Contractor", "Individual", "Manager", "Power User"]
-                },
+                }],
                 "result_path": "entity_values",
                 "args": [{
                     "set_args": [{
@@ -918,8 +952,9 @@
                 "query_params": { "entity":"app_action", "order": [["created_at"], ["ASC"]] },
                 "result_path": "entity_values",
                 "system_entity_config": {
-                    "filters": [{
+                    "reject": [{
                         "field": "field_values.system_type.value",
+                        "condition": "is",
                         "value": ["b2af4068-5b48-445f-9ecf-b2f5630045c0", "2de377f5-68ec-4592-807f-8d2684012d0c"]
                     }],
                     "mutation_api": "updateEntity"
@@ -1047,14 +1082,21 @@
                 "query_api": "listEntityValues",
                 "query_params": { "entity":"menu_item", "order": [["created_at"], ["ASC"]] },
                 "result_path": "entity_values",
-                "reject": {
+                "reject": [{
                     "field": "field_values.type.value",
-                    "value": ["2ede5ec4-e76a-4105-8209-31ac3bb6387a", "476fffde-47af-4f3d-9342-c026a819ac3b"]
-                },
+                    "condition": "is",
+                    "value": ["476fffde-47af-4f3d-9342-c026a819ac3b"]
+                }],
                 "system_entity_config": {
-                    "filters": [{
+                    "reject": [{
                         "field": "field_values.subtype.value",
+                        "condition": "is",
                         "value": ["all", "import", "create"]
+                    },
+                    {
+                        "field": "field_values.type.value",
+                        "condition": "is",
+                        "value":["2ede5ec4-e76a-4105-8209-31ac3bb6387a"]
                     }],
                     "mutation_api": "updateEntity"
                 },
@@ -1779,10 +1821,11 @@
         ],
         "baseline_config": {
             "query_api": "getViews",
-            "reject": {
+            "reject": [{
                 "field": "share_with_team",
+                "condition": "is",
                 "value": [false]
-            },
+            }],
             "args": [
                 {
                     "set_args": [
