@@ -1047,14 +1047,14 @@
                 "query_api": "listEntityValues",
                 "query_params": { "entity":"menu_item", "order": [["created_at"], ["ASC"]] },
                 "result_path": "entity_values",
+                "reject": {
+                    "field": "field_values.type.value",
+                    "value": ["2ede5ec4-e76a-4105-8209-31ac3bb6387a", "476fffde-47af-4f3d-9342-c026a819ac3b"]
+                },
                 "system_entity_config": {
                     "filters": [{
                         "field": "field_values.subtype.value",
                         "value": ["all", "import", "create"]
-                    },
-                    {
-                        "field": "field_values.type.value",
-                        "value": ["2ede5ec4-e76a-4105-8209-31ac3bb6387a", "476fffde-47af-4f3d-9342-c026a819ac3b"]
                     }],
                     "mutation_api": "updateEntity"
                 },
