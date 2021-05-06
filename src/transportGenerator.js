@@ -1,5 +1,5 @@
 const { validate } = require('uuid');
-const { get, set, isArray, omit, filter, flattenDeep, find, uniq } = require('lodash');
+const { get, set, isArray, omit, filter, flattenDeep, find, uniq, isEmpty, snakeCase } = require('lodash');
 const { entities } = require('../utils/constants.js');
 const config = require('../config.json');
 
@@ -126,7 +126,7 @@ const findTransportId = async (models, modelName, where, transactionInstance, at
   }
 };
 
-const findAllTransportIds = async (models, modelName, where, transactionInstance) => {
+const findAllTransportIds = async (models, modelName, where, order, transactionInstance) => {
   try {
     if (!models[modelName]) {
       return;
@@ -134,6 +134,7 @@ const findAllTransportIds = async (models, modelName, where, transactionInstance
     const results = await models[modelName].findAll({
       raw: true,
       attributes: ['transport_id'],
+      order: order ? order : [],
       where,
       transaction: transactionInstance,
     });
@@ -146,8 +147,9 @@ const findAllTransportIds = async (models, modelName, where, transactionInstance
 
 const getTransportIdFromDB = async (where, config, models, transactionInstance) => {
   const modelName = get(config, 'model');
+  const order = get(config, 'order');
   const transports = config.bulk
-    ? await findAllTransportIds(models, modelName, where, transactionInstance)
+    ? await findAllTransportIds(models, modelName, where, order, transactionInstance)
     : await findTransportId(models, modelName, where, transactionInstance);
   return transports;
 };
@@ -166,7 +168,8 @@ const generateWhere = (id, args, config, instance) => {
     return where;
   }
   config.where_field.forEach((whereConfig) => {
-    const value = whereConfig.root ? get(args, whereConfig.value) : get(instance, whereConfig.value) || whereConfig.value;
+    let value = whereConfig.root ? get(args, whereConfig.value) : get(instance, whereConfig.value) || whereConfig.value;
+    value = whereConfig.snake_case ? snakeCase(value) : value;
     set(where, whereConfig.key, value);
   });
   return where;
@@ -189,7 +192,7 @@ const getTransportIds = async (
   const transportId = models
     ? await getTransportIdFromDB(where, config, models, transactionInstance)
     : await getTransportIdFromLocalDB(id, config);
-  if (!transportId) {
+  if (!transportId || isEmpty(transportId)) {
     return null;
   }
 
