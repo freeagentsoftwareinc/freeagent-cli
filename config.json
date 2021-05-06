@@ -1,68 +1,73 @@
 {
     "models_config": [{
         "model": "catalog_type",
-        "api": "upsertCompositeEntity",
-        "api_config": "baseline_config.catalog_type"
+        "mutation_api": "upsertCompositeEntity",
+        "baseline_config": "baseline_config.catalog_type"
     },
     {
         "model": "fa_role",
-        "api": "createEntity",
-        "api_config": "baseline_config.fa_role"
+        "mutation_api": "createEntity",
+        "baseline_config": "baseline_config.fa_role"
     },
     {
         "model": "fa_entity_config",
-        "api": "addEntity",
-        "api_config": "baseline_config"
+        "mutation_api": "addEntity",
+        "baseline_config": "baseline_config"
     },
     {
         "model": "layout",
-        "api": "createEntity",
-        "api_config": "baseline_config.layout"
+        "mutation_api": "createEntity",
+        "baseline_config": "baseline_config.layout"
     },
     {
         "model": "fa_field_config",
-        "api": "addCustomField",
-        "api_config": "baseline_config"
+        "mutation_api": "addCustomField",
+        "baseline_config": "baseline_config"
     },
     {
         "model": "catalog",
-        "api": "addCatalog",
-        "api_config": "baseline_config"
+        "mutation_api": "addCatalog",
+        "baseline_config": "baseline_config"
     },
     {
         "model": "rule_set",
-        "api": "upsertCompositeEntity",
-        "api_config": "baseline_config.rule_set"
+        "mutation_api": "upsertCompositeEntity",
+        "baseline_config": "baseline_config.rule_set"
     },
     {
         "model": "app_action",
-        "api": "createEntity",
-        "api_config": "baseline_config.app_action"
+        "mutation_api": "createEntity",
+        "baseline_config": "baseline_config.app_action"
     },
     {
         "model": "fa_acl",
-        "api": "createEntity",
-        "api_config": "baseline_config.fa_acl"
+        "mutation_api": "createEntity",
+        "baseline_config": "baseline_config.fa_acl"
     },
     {
         "model": "form_rule",
-        "api": "upsertCompositeEntity",
-        "api_config": "baseline_config.form_rule"
+        "mutation_api": "upsertCompositeEntity",
+        "baseline_config": "baseline_config.form_rule"
     },
     {
         "model": "fa_entity_config",
-        "api": "updateEntityConfig",
-        "api_config": "baseline_config"
+        "mutation_api": "updateEntityConfig",
+        "baseline_config": "baseline_config"
     },
     {
         "model": "view",
-        "api": "saveView",
-        "api_config": "baseline_config"
+        "mutation_api": "saveView",
+        "baseline_config": "baseline_config"
     },
     {
         "model": "dashboard",
-        "api": "upsertDashboard",
-        "api_config": "baseline_config"
+        "mutation_api": "upsertDashboard",
+        "baseline_config": "baseline_config"
+    },
+    {
+        "model": "menu_item",
+        "mutation_api": "createEntity",
+        "baseline_config": "baseline_config.menu_item"
     }],
 
     "addCustomField" : {
@@ -149,13 +154,20 @@
             }
         ],
         "baseline_config": {
-            "api": "getFields",
-            "params": { "is_custom_field":true, "only_showable": true, "show_hidden": true },
-            "resolver_param": "user",
+            "query_api": "getFields",
+            "query_params": { "only_showable": true, "show_hidden": true },
+            "request_type": "user",
             "order": [["created_at"], ["asc"]],
             "reject": {
-                "field": "custom_field.field_name",
-                "value": ["description", "owner_id", "subscribers", "roles", "fa_config_field"]
+                "field": "transport_id",
+                "value": [null]
+            },
+            "system_entity_config": {
+                "filters":[{
+                    "field": "field_name",
+                    "value": ["seq_id", "description", "owner_id", "subscribers", "created_at", "created_by", "updated_by", "updated_at", "last_activity", "subteam_id"]
+                }],
+                "mutation_api": "updateFieldConfig"
             },
             "args": [
                 {
@@ -166,11 +178,19 @@
                     },
                     {
                         "key": "name_label",
-                        "value": "custom_field.display_name"
+                        "value": "label",
+                        "array_path": "fa_labels",
+                        "query": { "type": "label" }
+                    },
+                    {
+                        "key": "help_text",
+                        "value": "label",
+                        "array_path": "fa_labels",
+                        "query": { "type": "hint" }
                     },
                     {
                         "key": "data_type",
-                        "value": "custom_field.data_type"
+                        "value": "render_type"
                     },
                     {
                         "key": "default_value",
@@ -410,9 +430,9 @@
             }
         ],
         "baseline_config": {
-            "api": "getEntities",
-            "params": { "only_showable": true, "show_hidden": true },
-            "resolver_param": "user",
+            "query_api": "getEntities",
+            "query_params": { "only_showable": true, "show_hidden": true },
+            "request_type": "user",
             "order": [["created_at"], ["asc"]],
             "args": [{
                 "where_field": "id",
@@ -576,9 +596,9 @@
             }
         ],
         "baseline_config": {
-            "api": "getEntities",
-            "params": { "only_showable": true, "show_hidden": true },
-            "resolver_param": "user",
+            "query_api": "getEntities",
+            "query_params": { "only_showable": true, "show_hidden": true },
+            "request_type": "user",
             "order": [["fa_entity.created_at"], ["asc"]],
             "args": [
                 {
@@ -692,8 +712,8 @@
             "set_attribute": "custom_field_id"
         }],
         "baseline_config": {
-            "api": "getCatalog",
-            "params": { "ignoreCatalogTypes": true },
+            "query_api": "getCatalog",
+            "query_params": { "ignoreCatalogTypes": true },
             "result_path": "elements",
             "order": [["created_at"], ["asc"]],
             "args": [{
@@ -808,8 +828,8 @@
         }],
         "baseline_config": {
             "fa_role":{
-                "api": "listEntityValues",
-                "params": { "entity":"fa_role", "order": [["created_at"], ["ASC"]] },
+                "query_api": "listEntityValues",
+                "query_params": { "entity":"fa_role", "order": [["created_at"], ["ASC"]] },
                 "reject": {
                     "field": "field_values.name.value",
                     "value": ["Administrator", "App Admin", "Contractor", "Individual", "Manager", "Power User"]
@@ -863,8 +883,8 @@
                 }]
             },
             "layout": {
-                "api": "listEntityValues",
-                "params": { "entity":"layout", "order": [["created_at"], ["ASC"]] },
+                "query_api": "listEntityValues",
+                "query_params": { "entity":"layout", "order": [["created_at"], ["ASC"]] },
                 "result_path": "entity_values",
                 "args": [{
                     "set_args": [{
@@ -894,12 +914,15 @@
                 }]
             },
             "app_action": {
-                "api": "listEntityValues",
-                "params": { "entity":"app_action", "order": [["created_at"], ["ASC"]] },
+                "query_api": "listEntityValues",
+                "query_params": { "entity":"app_action", "order": [["created_at"], ["ASC"]] },
                 "result_path": "entity_values",
-                "reject": {
-                    "field": "field_values.description.value",
-                    "value": ["global.edit", "global.delete"]
+                "system_entity_config": {
+                    "filters": [{
+                        "field": "field_values.system_type.value",
+                        "value": ["b2af4068-5b48-445f-9ecf-b2f5630045c0", "2de377f5-68ec-4592-807f-8d2684012d0c"]
+                    }],
+                    "mutation_api": "updateEntity"
                 },
                 "args": [{
                     "set_args": [{
@@ -969,8 +992,8 @@
                 }]
             },
             "fa_acl": {
-                "api": "listEntityValues",
-                "params": { "entity":"fa_acl", "order": [["created_at"], ["ASC"]] },
+                "query_api": "listEntityValues",
+                "query_params": { "entity":"fa_acl", "order": [["created_at"], ["ASC"]] },
                 "result_path": "entity_values",
                 "args": [{
                     "set_args": [{
@@ -1021,12 +1044,19 @@
                 }]
             },
             "menu_item": {
-                "api": "listEntityValues",
-                "params": { "entity":"menu_item", "order": [["created_at"], ["ASC"]] },
+                "query_api": "listEntityValues",
+                "query_params": { "entity":"menu_item", "order": [["created_at"], ["ASC"]] },
                 "result_path": "entity_values",
-                "reject": {
-                    "field": "field_values.url.value",
-                    "value": ["entity/deal/view/all"]
+                "system_entity_config": {
+                    "filters": [{
+                        "field": "field_values.subtype.value",
+                        "value": ["all", "import", "create"]
+                    },
+                    {
+                        "field": "field_values.type.value",
+                        "value": ["2ede5ec4-e76a-4105-8209-31ac3bb6387a", "476fffde-47af-4f3d-9342-c026a819ac3b"]
+                    }],
+                    "mutation_api": "updateEntity"
                 },
                 "args": [{
                     "set_args": [{
@@ -1275,8 +1305,8 @@
         }],
         "baseline_config": {
             "catalog_type": {
-                "api": "listEntityValues",
-                "params": { "entity": "catalog_type", "included_lines": ["catalog"], "order": [["created_at"], ["ASC"]] },
+                "query_api": "listEntityValues",
+                "query_params": { "entity": "catalog_type", "included_lines": ["catalog"], "order": [["created_at"], ["ASC"]] },
                 "result_path": "entity_values",
                 "is_create": true,
                 "args": [{
@@ -1346,8 +1376,8 @@
                 }
             },
             "rule_set": {
-                "api": "listEntityValues",
-                "params": { "entity":"rule_set", "included_lines": ["rule_action"], "order": [["created_at"], ["ASC"]] },
+                "query_api": "listEntityValues",
+                "query_params": { "entity":"rule_set", "included_lines": ["rule_action"], "order": [["created_at"], ["ASC"]] },
                 "result_path": "entity_values",
                 "is_create": true,
                 "args": [{
@@ -1445,8 +1475,8 @@
                 }
             },
             "form_rule": {
-                "api": "listEntityValues",
-                "params": { "entity":"form_rule", "included_lines": ["form_action"], "order": [["created_at"], ["ASC"]]  },
+                "query_api": "listEntityValues",
+                "query_params": { "entity":"form_rule", "included_lines": ["form_action"], "order": [["created_at"], ["ASC"]]  },
                 "result_path": "entity_values",
                 "is_create": true,
                 "args": [{
@@ -1748,7 +1778,7 @@
             }
         ],
         "baseline_config": {
-            "api": "getViews",
+            "query_api": "getViews",
             "reject": {
                 "field": "share_with_team",
                 "value": [false]
@@ -2059,8 +2089,8 @@
             }
         ],
         "baseline_config": {
-            "api": "listEntityValues",
-            "params": { "entity": "dashboard", "order": [["created_at"], ["ASC"]] },
+            "query_api": "listEntityValues",
+            "query_params": { "entity": "dashboard", "order": [["created_at"], ["ASC"]] },
             "is_create": true,
             "result_path": "entity_values",
             "args": [{
@@ -2079,7 +2109,7 @@
             }],
             "children": {
                 "key": "widgets",
-                "api": "getWidgetsByDashboard",
+                "query_api": "getWidgetsByDashboard",
                 "param_key": "id",
                 "is_create": true
             }
