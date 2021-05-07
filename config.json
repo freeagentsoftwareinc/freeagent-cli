@@ -251,20 +251,24 @@
                         "value": "sub_data_type"
                     },
                     {
-                        "key": "parent_custom_field_id",
-                        "value": "custom_field.parent_reference_field_id"
+                        "key": "reference_fa_entity_id",
+                        "value": "reference_fa_entity_id"
                     },
                     {
                         "key": "fa_related_field_config_id",
-                        "value": "custom_field.fa_related_field_config_id"
+                        "value": "fa_related_field_config_id"
                     },
                     {
                         "key": "calculated_function",
-                        "value": "custom_field.calculated_function"
+                        "value": "calculated_function"
                     },
                     {
                         "key": "reference_custom_field_id",
                         "value": "custom_field.reference_custom_field_id"
+                    },
+                    {
+                        "key": "parent_custom_field_id",
+                        "value": "custom_field.parent_reference_field_id"
                     },
                     {
                         "key": "date_field",
@@ -1823,8 +1827,17 @@
             "query_api": "getViews",
             "reject": [{
                 "field": "share_with_team",
-                "condition": "is",
-                "value": [false]
+                "value": [false],
+                "condition": "is"
+            },
+            {
+                "field": "value.common.filters",
+                "condition": "isNotEmpty"
+            },
+            {
+                "field": "is_all_view",
+                "value": [true],
+                "condition": "is"
             }],
             "args": [
                 {
