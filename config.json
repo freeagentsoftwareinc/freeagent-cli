@@ -68,6 +68,11 @@
         "model": "menu_item",
         "mutation_api": "createEntity",
         "baseline_config": "baseline_config.menu_item"
+    },
+    {
+        "model": "fa_related_list",
+        "mutation_api": "updateEntityReference",
+        "baseline_config": "baseline_config"
     }],
 
     "addCustomField" : {
@@ -158,17 +163,38 @@
             "query_params": { "only_showable": true, "show_hidden": true },
             "request_type": "user",
             "order": [["created_at"], ["asc"]],
-            "reject": [{
-                "field": "transport_id",
-                "condition": "is",
-                "value": [null]
-            }],
+            "reject": {
+                "collection":[{
+                    "type": "OR",
+                    "conditions":[
+                    {
+                        "field": "transport_id",
+                        "condition": "is",
+                        "value": [null]
+                    },
+                    {
+                        "field": "model_name",
+                        "condition": "is",
+                        "value": ["import", "import_cell_error", "suggested_contact", "navigation", "sync_run", "fa_role", "rule_action", "rule_set", "changeset", "changeset_customization"]
+                    }]
+                }]
+            },
             "system_entity_config": {
-                "reject": [{
-                    "field": "field_name",
-                    "condition": "is",
-                    "value": ["seq_id", "description", "owner_id", "subscribers", "created_at", "created_by", "updated_by", "updated_at", "last_activity", "subteam_id"]
-                }],
+                "reject": {
+                    "collection":[{
+                        "type": "AND",
+                        "conditions":[{
+                                "field": "model_name",
+                                "condition": "is not",
+                                "value": ["task", "contact", "deal", "logo"]
+                            },
+                            {
+                                "field": "field_name",
+                                "condition": "is",
+                                "value": ["seq_id", "description", "owner_id", "subscribers", "created_at", "created_by", "updated_by", "updated_at", "last_activity", "subteam_id"]
+                            }]
+                        }]
+                },
                 "mutation_api": "updateFieldConfig"
             },
             "args": [
@@ -251,6 +277,10 @@
                         "value": "sub_data_type"
                     },
                     {
+                        "key": "is_unique",
+                        "value": "is_unique"
+                    },
+                    {
                         "key": "reference_fa_entity_id",
                         "value": "reference_fa_entity_id"
                     },
@@ -299,6 +329,10 @@
                         "value": "metadata.color_for_true"
                     },
                     {
+                        "key": "color_for_false",
+                        "value": "metadata.color_for_false"
+                    },
+                    {
                         "key": "icon_for_false",
                         "value": "metadata.icon_for_false"
                     },
@@ -329,10 +363,6 @@
                     {
                         "key": "advanced_formatter",
                         "value": "metadata.advanced_formatter"
-                    },
-                    {
-                        "key": "reference_fa_entity_name",
-                        "value": "metadata.reference_fa_entity_name"
                     }]
                 }
             ]
@@ -463,12 +493,20 @@
                     "value": "enforce_individual_access"
                 },
                 {
+                    "key": "entityName",
+                    "value": "fa_entity.model_name"
+                },
+                {
                     "key": "label",
-                    "value": "fa_labels[0].label"
+                    "value": "label",
+                    "array_path": "fa_labels",
+                    "query": { "type": "label" }
                 },
                 {
                     "key": "label_plural",
-                    "value": "fa_labels[1].label"
+                    "value": "label",
+                    "array_path": "fa_labels",
+                    "query": { "type": "label_plural" }
                 }]
             }],
             "transports": [{
@@ -531,6 +569,10 @@
                     {
                         "key": "field_name",
                         "value": { "$or": ["seq_id", "description", "owner_id", "created_at", "updated_at", "created_by", "updated_by", "last_activity", "subteam_id", "subscribers"] }
+                    },
+                    {
+                        "key": "model_name",
+                        "value": { "$notIn":["task", "contact", "deal", "logo"] }
                     }
                 ],
                 "bulk": true
@@ -867,11 +909,16 @@
                 "query_api": "listEntityValues",
                 "condition": "is",
                 "query_params": { "entity":"fa_role", "order": [["created_at"], ["ASC"]] },
-                "reject": [{
-                    "field": "field_values.name.value",
-                    "condition": "is",
-                    "value": ["Administrator", "App Admin", "Contractor", "Individual", "Manager", "Power User"]
-                }],
+                "reject": {
+                    "collection":[{
+                        "type": "OR",
+                        "conditions":[{
+                            "field": "field_values.name.value",
+                            "condition": "is",
+                            "value": ["Administrator", "App Admin", "Contractor", "Individual", "Manager", "Power User"]
+                        }]
+                    }]
+                },
                 "result_path": "entity_values",
                 "args": [{
                     "set_args": [{
@@ -956,11 +1003,16 @@
                 "query_params": { "entity":"app_action", "order": [["created_at"], ["ASC"]] },
                 "result_path": "entity_values",
                 "system_entity_config": {
-                    "reject": [{
-                        "field": "field_values.system_type.value",
-                        "condition": "is",
-                        "value": ["b2af4068-5b48-445f-9ecf-b2f5630045c0", "2de377f5-68ec-4592-807f-8d2684012d0c"]
-                    }],
+                    "reject": {
+                        "collection":[{
+                            "type": "AND",
+                            "conditions": [{
+                                "field": "field_values.system_type.value",
+                                "condition": "is",
+                                "value": ["b2af4068-5b48-445f-9ecf-b2f5630045c0", "2de377f5-68ec-4592-807f-8d2684012d0c"]
+                            }]
+                        }]
+                    },
                     "mutation_api": "updateEntity"
                 },
                 "args": [{
@@ -1086,22 +1138,32 @@
                 "query_api": "listEntityValues",
                 "query_params": { "entity":"menu_item", "order": [["created_at"], ["ASC"]] },
                 "result_path": "entity_values",
-                "reject": [{
-                    "field": "field_values.type.value",
-                    "condition": "is",
-                    "value": ["476fffde-47af-4f3d-9342-c026a819ac3b"]
-                }],
+                "reject": {
+                    "collection":[{
+                        "type": "OR",
+                        "conditions":[{
+                            "field": "field_values.type.value",
+                            "condition": "is",
+                            "value": ["476fffde-47af-4f3d-9342-c026a819ac3b"]
+                        }]
+                    }]
+                }, 
                 "system_entity_config": {
-                    "reject": [{
-                        "field": "field_values.subtype.value",
-                        "condition": "is",
-                        "value": ["all", "import", "create"]
+                    "reject": {
+                        "collection":[{
+                            "type": "OR",
+                            "conditions":[{
+                                "field": "field_values.subtype.value",
+                                "condition": "is",
+                                "value": ["all", "import", "create"]
+                            },
+                            {
+                                "field": "field_values.type.value",
+                                "condition": "is",
+                                "value":["2ede5ec4-e76a-4105-8209-31ac3bb6387a"]
+                            }]
+                        }]
                     },
-                    {
-                        "field": "field_values.type.value",
-                        "condition": "is",
-                        "value":["2ede5ec4-e76a-4105-8209-31ac3bb6387a"]
-                    }],
                     "mutation_api": "updateEntity"
                 },
                 "args": [{
@@ -1825,20 +1887,25 @@
         ],
         "baseline_config": {
             "query_api": "getViews",
-            "reject": [{
-                "field": "share_with_team",
-                "value": [false],
-                "condition": "is"
+            "reject": {
+                "collection":[{
+                    "type": "OR",
+                    "conditions": [{
+                        "field": "share_with_team",
+                        "value": [false],
+                        "condition": "is"
+                    },
+                    {
+                        "field": "value.common.filters",
+                        "condition": "isNotEmpty"
+                    },
+                    {
+                        "field": "is_all_view",
+                        "value": [true],
+                        "condition": "is"
+                    }]
+                }]
             },
-            {
-                "field": "value.common.filters",
-                "condition": "isNotEmpty"
-            },
-            {
-                "field": "is_all_view",
-                "value": [true],
-                "condition": "is"
-            }],
             "args": [
                 {
                     "set_args": [
@@ -2168,6 +2235,98 @@
                 "query_api": "getWidgetsByDashboard",
                 "param_key": "id",
                 "is_create": true
+            }
+        }
+    }, 
+
+    "updateEntityReference": {
+        "args_parse_path": "mappings",
+        "transports": [{
+            "field": "fa_related_list_id",
+            "model": "fa_related_list"
+        },
+        {
+            "field": "fa_field_parent_id",
+            "model": "fa_field_config",
+            "array_path": "mappings",
+            "where_field": "fa_field_id",
+            "set_attribute":  "fa_field_id"
+        },
+        {
+            "field": "fa_field_child_id",
+            "model": "fa_field_config",
+            "array_path": "mappings",
+            "where_field": "fa_field_id",
+            "set_attribute":  "fa_field_id"
+        },
+        {
+            "field": "custom_field_parent_id",
+            "model": "fa_field_config",
+            "array_path": "mappings",
+            "where_field": "custom_field_id",
+            "set_attribute":  "custom_field_id"
+        },
+        {
+            "field": "custom_field_child_id",
+            "model": "fa_field_config",
+            "array_path": "mappings",
+            "where_field": "custom_field_id",
+            "set_attribute":  "custom_field_id"
+        }],
+        "baseline_config": {
+        "query_api": "getEntityReferences",
+        "query_params": {"show_hidden": true },
+        "reject": {
+            "collection":[{
+                "type": "OR",
+                "conditions": [{
+                    "field": "is_visible",
+                    "condition": "is",
+                    "value": [null]
+
+                }]
+            }]
+        },
+        "args": [{
+            "set_args": [
+                {
+                    "key": "fa_related_list_id",
+                    "value": "fa_related_list_id"
+                },
+                {
+                    "key": "reference_name",
+                    "value": "reference_name"
+                },
+                {
+                    "key": "reference_name_plural",
+                    "value": "reference_name_plural"
+                },
+                {
+                    "key": "is_visible",
+                    "value": "is_visible"
+                }]
+            }],
+            "children": {
+                "key": "mappings",
+                "result_path": "mappings",
+                "args": [{
+                    "set_args": [{
+                        "key": "fa_field_parent_id",
+                        "value": "fa_field_parent_id"
+                    },
+                    {
+                        "key": "fa_field_child_id",
+                        "value": "fa_field_parent_id"
+                    },
+                    {
+                        "key": "custom_field_parent_id",
+                        "value": "custom_field_parent_id"
+                    },
+                    {
+                        "key": "custom_field_child_id",
+                        "value": "custom_field_child_id"
+                    }]
+                }]
             }
         }
     }
