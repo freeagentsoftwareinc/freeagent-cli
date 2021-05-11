@@ -88,7 +88,7 @@ const reMapArgsAndConfigurations = async (configurations, args, result, models) 
 
   if (configurations.args_parse_path) {
     const stringVlaue = get(args, configurations.args_parse_path);
-    stringVlaue && set(args, configurations.args_parse_path, JSON.parse(stringVlaue));
+    stringVlaue && typeof stringVlaue === 'string' && set(args, configurations.args_parse_path, JSON.parse(stringVlaue));
   }
 
   if (modelKey) {
@@ -354,7 +354,7 @@ const getArgsWithTransports = async (args, configurations, models, transactionIn
   const transports = filter(flattenDeep(results), (result) => result);
 
   if (!transports.length) {
-    throw new Error('could not find transport_id',);
+    throw new Error('could not find transport_id');
   }
   return {
     args: { ...args },
