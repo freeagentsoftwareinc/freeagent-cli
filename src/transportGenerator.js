@@ -138,7 +138,8 @@ const findAllTransportIds = async (models, modelName, where, order, transactionI
       where,
       transaction: transactionInstance,
     });
-    return uniq(results.map((result) => get(result, 'transport_id')));
+    const tranpostids = uniq(results.map((result) => get(result, 'transport_id')));
+    return filter(tranpostids, (transport) => transport);
   } catch (err) {
     console.log(err);
     return err;
@@ -353,7 +354,7 @@ const getArgsWithTransports = async (args, configurations, models, transactionIn
   const transports = filter(flattenDeep(results), (result) => result);
 
   if (!transports.length) {
-    throw new Error('could not find transport_id');
+    throw new Error('could not find transport_id',);
   }
   return {
     args: { ...args },
