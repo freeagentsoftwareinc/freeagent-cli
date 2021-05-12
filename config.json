@@ -211,7 +211,7 @@
                         "query": { "type": "label" }
                     },
                     {
-                        "key": "help_text",
+                        "key": "hint_label",
                         "value": "label",
                         "array_path": "fa_labels",
                         "query": { "type": "hint" }
@@ -301,6 +301,18 @@
                         "value": "custom_field.parent_reference_field_id"
                     },
                     {
+                        "key": "reference_fa_field_id",
+                        "value": "custom_field.reference_fa_field_id"
+                    },
+                    {
+                        "key": "parent_fa_field_id",
+                        "value": "custom_field.parent_fa_field_id"
+                    },
+                    {
+                        "key": "help_text",
+                        "value": "metadata.help_text"
+                    },
+                    {
                         "key": "date_field",
                         "value": "metadata.date_field"
                     },
@@ -363,6 +375,10 @@
                     {
                         "key": "advanced_formatter",
                         "value": "metadata.advanced_formatter"
+                    },
+                    {
+                        "key": "help_text",
+                        "value": "metadata.help_text"
                     }]
                 }
             ]
@@ -696,7 +712,7 @@
                     },
                     {
                         "key": "title_field_name",
-                        "value": "display_name"
+                        "value": "title_field"
                     },
                     {
                         "key": "applet_config",
@@ -719,12 +735,24 @@
                         "value": "primary_action"
                     },
                     {
+                        "key": "enable_quick_add",
+                        "value": "enable_quick_add"
+                    },
+                    {
+                        "key": "quick_add_hint",
+                        "value": "quick_add_hint"
+                    },
+                    {
                         "key": "quick_add_custom_code",
                         "value": "quick_add_custom_code"
                     },
                     {
                         "key": "description",
                         "value": "description"
+                    },
+                    {
+                        "key": "icon",
+                        "value": "icon"
                     },
                     {
                         "key": "color",
@@ -737,8 +765,16 @@
                     {
                         "key": "parent_id",
                         "value": "parent_id"
+                    },
+                    {
+                        "key": "default_sorts",
+                        "value": "metadata.default_sorts"
+                    }, 
+                    {
+                        "key": "roles",
+                        "value": "value",
+                        "array_path": "custom_fields.roles"
                     }]
-                    
                 }
             ]
         }
@@ -1586,6 +1622,16 @@
                 "query_api": "listEntityValues",
                 "query_params": { "entity":"form_rule", "included_lines": ["form_action"], "order": [["created_at"], ["ASC"]]  },
                 "result_path": "entity_values",
+                "reject": {
+                    "collection":[{
+                        "type": "OR",
+                        "conditions": [{
+                            "field": "field_values.fa_entity_id.value",
+                            "condition": "is",
+                            "value": ["06470721-1125-5abb-b8e8-0d287398c0bd"]
+                        }]
+                    }]
+                },
                 "is_create": true,
                 "args": [{
                     "set_args": [{

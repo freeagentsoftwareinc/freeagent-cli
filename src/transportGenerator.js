@@ -28,6 +28,9 @@ const getModel = (args, key) => {
 };
 
 const excludeProps = (data, configurations) => {
+  if(isEmpty(data)){
+    return null;
+  }
   let omitProps = ['isCreate'];
   const excludes = get(configurations, 'exclude_fields');
   if (excludes) {
@@ -353,8 +356,8 @@ const getArgsWithTransports = async (args, configurations, models, transactionIn
   );
   const transports = filter(flattenDeep(results), (result) => result);
 
-  if (!transports.length) {
-    throw new Error('could not find transport_id');
+  if (isEmpty(transports)) {
+    return null;
   }
   return {
     args: { ...args },
