@@ -175,22 +175,59 @@
                     {
                         "field": "model_name",
                         "condition": "is",
-                        "value": ["import", "import_cell_error", "suggested_contact", "navigation", "sync_run", "fa_role", "rule_action", "rule_set", "changeset", "changeset_customization"]
+                        "value": [
+                            "import",
+                            "import_cell_error",
+                            "suggested_contact",
+                            "navigation",
+                            "sync_run",
+                            "sync_run_detail",
+                            "fa_role",
+                            "rule_action",
+                            "rule_set",
+                            "changeset",
+                            "changeset_customization",
+                            "view",
+                            "agent",
+                            "menu_item",
+                            "form_rule",
+                            "app_action",
+                            "rule_set",
+                            "email_template",
+                            "job_run_detail",
+                            "layout",
+                            "fa_acl",
+                            "fa_field",
+                            "dashboard",
+                            "subteam",
+                            "catalog_type",
+                            "catalog",
+                            "menu_item",
+                            "fa_related_list",
+                            "form_action",
+                            "fa_entity_config",
+                            "fa_field_config",
+                            "fa_entity_value",
+                            "fa_acl_role",
+                            "widget",
+                            "catalog_mapping",
+                            "job_run"
+                        ]
                     }]
                 }]
             },
             "system_entity_config": {
                 "reject": {
                     "collection":[{
-                        "type": "AND",
+                        "type": "OR",
                         "conditions":[{
                                 "field": "model_name",
-                                "condition": "is not",
+                                "condition": "is",
                                 "value": ["task", "contact", "deal", "logo"]
                             },
                             {
                                 "field": "field_name",
-                                "condition": "is",
+                                "condition": "is not",
                                 "value": ["seq_id", "description", "owner_id", "subscribers", "created_at", "created_by", "updated_by", "updated_at", "last_activity", "subteam_id"]
                             }]
                         }]
@@ -563,7 +600,7 @@
                     },
                     {
                         "key": "system_type",
-                        "value": { "$ne": null }
+                        "value": { "$or": ["2de377f5-68ec-4592-807f-8d2684012d0c", "b2af4068-5b48-445f-9ecf-b2f5630045c0"]  }
                     },
                     {
                         "key": "transport_id",
@@ -1041,10 +1078,10 @@
                 "system_entity_config": {
                     "reject": {
                         "collection":[{
-                            "type": "AND",
+                            "type": "OR",
                             "conditions": [{
                                 "field": "field_values.system_type.value",
-                                "condition": "is",
+                                "condition": "is not",
                                 "value": ["b2af4068-5b48-445f-9ecf-b2f5630045c0", "2de377f5-68ec-4592-807f-8d2684012d0c"]
                             }]
                         }]
@@ -1183,20 +1220,29 @@
                             "value": ["476fffde-47af-4f3d-9342-c026a819ac3b"]
                         }]
                     }]
-                }, 
+                },
                 "system_entity_config": {
                     "reject": {
-                        "collection":[{
-                            "type": "OR",
+                        "collection":[
+                        {
+                            "type": "AND",
                             "conditions":[{
-                                "field": "field_values.subtype.value",
-                                "condition": "is",
-                                "value": ["all", "import", "create"]
+                                "field": "field_values.name.value",
+                                "condition": "is not",
+                                "value": [null]
                             },
                             {
                                 "field": "field_values.type.value",
-                                "condition": "is",
+                                "condition": "is not",
                                 "value":["2ede5ec4-e76a-4105-8209-31ac3bb6387a"]
+                            }]
+                        },
+                        {
+                            "type": "OR",
+                            "conditions":[{
+                                "field": "field_values.subtype.value",
+                                "condition": "is not",
+                                "value": ["all", "import", "create"]
                             }]
                         }]
                     },
