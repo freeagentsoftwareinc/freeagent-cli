@@ -182,15 +182,15 @@
             "system_entity_config": {
                 "reject": {
                     "collection":[{
-                        "type": "AND",
+                        "type": "OR",
                         "conditions":[{
                                 "field": "model_name",
-                                "condition": "is not",
+                                "condition": "is",
                                 "value": ["task", "contact", "deal", "logo"]
                             },
                             {
                                 "field": "field_name",
-                                "condition": "is",
+                                "condition": "is not",
                                 "value": ["seq_id", "description", "owner_id", "subscribers", "created_at", "created_by", "updated_by", "updated_at", "last_activity", "subteam_id"]
                             }]
                         }]
@@ -1041,7 +1041,7 @@
                 "system_entity_config": {
                     "reject": {
                         "collection":[{
-                            "type": "AND",
+                            "type": "OR",
                             "conditions": [{
                                 "field": "field_values.system_type.value",
                                 "condition": "is",
