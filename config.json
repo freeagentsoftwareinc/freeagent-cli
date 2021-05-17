@@ -77,7 +77,11 @@
 
     "addCustomField" : {
         "id": "fa_field_config_id",
-        "exclude_fields": ["id"],
+        "exclude_fields": ["id", "custom_field_id"],
+        "set_args_fields": [{
+            "result_field": "id",
+            "args_field": "custom_field_id"
+        }],
         "transports": [
             {
                 "field": "id",
@@ -156,6 +160,12 @@
                 "model": "fa_entity",
                 "set_field": "reference_entity_name",
                 "attribute": "model_name" 
+            },
+            {
+                "field": "custom_field_id",
+                "model": "fa_related_list",
+                "where_field": "custom_field_id",
+                "transport_field": true
             }
         ],
         "baseline_config": {
@@ -416,6 +426,10 @@
                     {
                         "key": "help_text",
                         "value": "metadata.help_text"
+                    },
+                    {
+                        "key": "custom_field_id",
+                        "value": "custom_field_id"
                     }]
                 }
             ]
