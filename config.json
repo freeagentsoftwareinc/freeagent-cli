@@ -1706,6 +1706,15 @@
                 "query_params": { "entity":"rule_set", "included_lines": ["rule_action"], "order": [["created_at"], ["ASC"]] },
                 "result_path": "entity_values",
                 "is_create": true,
+                "reject": {
+                    "collection":[{
+                        "type": "OR",
+                        "conditions": [{
+                            "field": "field_values.fa_entity_id.value",
+                            "condition": "is empty"
+                        }]
+                    }]
+                },
                 "args": [{
                     "set_args": [{
                         "key": "id",
