@@ -15,6 +15,11 @@
         "baseline_config": "baseline_config"
     },
     {
+        "model": "catalog_type",
+        "mutation_api": "upsertCompositeEntity",
+        "baseline_config": "baseline_config.catalog_type_scoped"
+    },
+    {
         "model": "layout",
         "mutation_api": "createEntity",
         "baseline_config": "baseline_config.layout"
@@ -25,8 +30,8 @@
         "baseline_config": "baseline_config"
     },
     {
-        "model": "catalog",
-        "mutation_api": "addCatalog",
+        "model": "fa_related_list",
+        "mutation_api": "updateEntityReference",
         "baseline_config": "baseline_config"
     },
     {
@@ -68,11 +73,6 @@
         "model": "menu_item",
         "mutation_api": "createEntity",
         "baseline_config": "baseline_config.menu_item"
-    },
-    {
-        "model": "fa_related_list",
-        "mutation_api": "updateEntityReference",
-        "baseline_config": "baseline_config"
     }],
 
     "addCustomField" : {
@@ -165,7 +165,9 @@
                 "field": "custom_field_id",
                 "model": "fa_related_list",
                 "where_field": "custom_field_id",
-                "transport_field": true
+                "transport_field": true,
+                "order": [["order", "ASC NULLS FIRST"]],
+                "bulk": true
             }
         ],
         "baseline_config": {
@@ -181,6 +183,11 @@
                         "field": "transport_id",
                         "condition": "is",
                         "value": [null]
+                    },
+                    {
+                        "field": "metadata.hide_in_modal",
+                        "condition": "is",
+                        "value": [true]
                     },
                     {
                         "field": "model_name",
@@ -308,7 +315,7 @@
                         "value": "related_list_name_plural"
                     },
                     {
-                        "key": "new_field_order",
+                        "key": "order",
                         "value": "order"
                     },
                     {
@@ -600,6 +607,7 @@
                         "value": { "$ne": null }
                     }
                 ],
+                "order": [["created_at", "ASC"]],
                 "bulk": true
             },
             {
@@ -1089,6 +1097,40 @@
                 "query_api": "listEntityValues",
                 "query_params": { "entity":"app_action", "order": [["created_at"], ["ASC"]] },
                 "result_path": "entity_values",
+                "reject": {
+                    "collection":[{
+                        "type": "OR",
+                        "conditions": [{
+                            "field": "field_values.fa_entity_id.value",
+                            "condition": "is",
+                            "value": [
+                                "06470721-1125-5abb-b8e8-0d287398c0bd",
+                                "7933149a-47e5-4837-a842-03f3fd836a20",
+                                "d5099a35-7c51-5de7-9253-d833b746ecbf",
+                                "93fa7b78-7488-4a18-b84c-3a50dd24a4ba",
+                                "2c05c9fa-568e-49e2-b435-b84f79fe1d32",
+                                "cf7de345-a40b-56cb-b70a-7fb707a5b4b0",
+                                "ea8839a4-0d61-569e-bbe5-a2c6d82494f9",
+                                "101328d1-3b44-4f19-a19e-9a645776761b",
+                                "37a890a4-01c4-56a7-8be0-6466b65db0dd",
+                                "208dd2e9-edbd-59dd-9357-92c54c9e57c6",
+                                "6d77d72b-6816-4957-8970-bc3af22c2ca1",
+                                "7dad2624-ee56-5f5f-8121-31024c8ebd42",
+                                "1ae368d2-bfb6-42db-a133-be813189487a",
+                                "abc60056-dc97-581b-a915-8f814554f664",
+                                "6f107e23-c56b-555f-b3af-4a63812ef9af",
+                                "92e34a17-1d9f-5a5d-b0c3-63db74134644",
+                                "ab150537-830e-55af-bfc1-060568232f0f",
+                                "57e270d8-6d51-5722-98fb-d5b319878963",
+                                "11def1da-c9a0-5d73-9f30-f839b7a4508a",
+                                "060f2642-3dbf-5ac6-8078-85e417e9a0f8",
+                                "6fc34d02-c890-5661-a157-565d99a4fe37",
+                                "10913ac7-852e-516e-a2d7-3c24c34600d4"
+
+                            ]
+                        }]
+                    }]
+                },
                 "system_entity_config": {
                     "reject": {
                         "collection":[{
@@ -1510,9 +1552,89 @@
         "baseline_config": {
             "catalog_type": {
                 "query_api": "listEntityValues",
+                "query_params": { "entity": "catalog_type", "included_lines": ["catalog"], "order": [["created_at"], ["ASC"]], "filters": [{ "field_name": "fa_entity_id", "values": [null]}]},
+                "result_path": "entity_values",
+                "is_create": true,
+                "args": [{
+                    "set_args": [{
+                        "key": "id",
+                        "value": "id"
+                    },
+                    {
+                        "key": "entity",
+                        "value": "fa_entity.model_name"
+                    },
+                    {
+                        "key": "field_values.name",
+                        "value": "field_values.name.value"
+                    },
+                    {
+                        "key": "field_values.order_type",
+                        "value": "field_values.order_type.value"
+                    },
+                    {
+                        "key": "field_values.allow_choice_creation",
+                        "value": "field_values.allow_choice_creation.value"
+                    },
+                    {
+                        "key": "field_values.fa_entity_id",
+                        "value": "field_values.fa_entity_id.value"
+                    },
+                    {
+                        "key": "field_values.is_visible",
+                        "value": "field_values.is_visible.value"
+                    }]
+                }],
+                "children": {
+                    "key": "children",
+                    "result_path": "lines.catalog",
+                    "is_create": true,
+                    "args": [{
+                        "set_args": [{
+                            "key": "id",
+                            "value": "id"
+                        },
+                        {
+                            "key": "entity",
+                            "value": "fa_entity.model_name"
+                        },
+                        {
+                            "key": "field_values.name",
+                            "value": "field_values.name.value"
+                        },
+                        {
+                            "key": "field_values.order",
+                            "value": "field_values.order.value"
+                        },
+                        {
+                            "key": "field_values.icon",
+                            "value": "field_values.icon.value"
+                        },
+                        {
+                            "key": "field_values.color",
+                            "value": "field_values.color.value"
+                        },
+                        {
+                            "key": "field_values.is_visible",
+                            "value": "field_values.is_visible.value"
+                        }]
+                    }]
+                }
+            },
+            "catalog_type_scoped": {
+                "query_api": "listEntityValues",
                 "query_params": { "entity": "catalog_type", "included_lines": ["catalog"], "order": [["created_at"], ["ASC"]] },
                 "result_path": "entity_values",
                 "is_create": true,
+                "reject": {
+                    "collection":[{
+                        "type": "AND",
+                        "conditions": [{
+                            "field": "field_values.fa_entity_id.value",
+                            "condition": "isEmpty"
+                        }]
+                    }]
+                },
                 "args": [{
                     "set_args": [{
                         "key": "id",
@@ -1688,7 +1810,30 @@
                         "conditions": [{
                             "field": "field_values.fa_entity_id.value",
                             "condition": "is",
-                            "value": ["06470721-1125-5abb-b8e8-0d287398c0bd"]
+                            "value": [
+                                "06470721-1125-5abb-b8e8-0d287398c0bd",
+                                "7933149a-47e5-4837-a842-03f3fd836a20",
+                                "d5099a35-7c51-5de7-9253-d833b746ecbf",
+                                "93fa7b78-7488-4a18-b84c-3a50dd24a4ba",
+                                "2c05c9fa-568e-49e2-b435-b84f79fe1d32",
+                                "cf7de345-a40b-56cb-b70a-7fb707a5b4b0",
+                                "ea8839a4-0d61-569e-bbe5-a2c6d82494f9",
+                                "101328d1-3b44-4f19-a19e-9a645776761b",
+                                "37a890a4-01c4-56a7-8be0-6466b65db0dd",
+                                "208dd2e9-edbd-59dd-9357-92c54c9e57c6",
+                                "6d77d72b-6816-4957-8970-bc3af22c2ca1",
+                                "7dad2624-ee56-5f5f-8121-31024c8ebd42",
+                                "1ae368d2-bfb6-42db-a133-be813189487a",
+                                "abc60056-dc97-581b-a915-8f814554f664",
+                                "6f107e23-c56b-555f-b3af-4a63812ef9af",
+                                "92e34a17-1d9f-5a5d-b0c3-63db74134644",
+                                "ab150537-830e-55af-bfc1-060568232f0f",
+                                "57e270d8-6d51-5722-98fb-d5b319878963",
+                                "11def1da-c9a0-5d73-9f30-f839b7a4508a",
+                                "060f2642-3dbf-5ac6-8078-85e417e9a0f8",
+                                "6fc34d02-c890-5661-a157-565d99a4fe37",
+                                "10913ac7-852e-516e-a2d7-3c24c34600d4"
+                            ]
                         }]
                     }]
                 },
@@ -2386,9 +2531,9 @@
             "collection":[{
                 "type": "OR",
                 "conditions": [{
-                    "field": "is_visible",
+                    "field": "related_list_fa_entity_id",
                     "condition": "is",
-                    "value": [null]
+                    "value": ["06470721-1125-5abb-b8e8-0d287398c0bd"]
 
                 }]
             }]
@@ -2406,6 +2551,10 @@
                 {
                     "key": "reference_name_plural",
                     "value": "reference_name_plural"
+                },
+                {
+                    "key": "order",
+                    "value": "order"
                 },
                 {
                     "key": "is_visible",
