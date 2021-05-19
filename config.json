@@ -118,7 +118,8 @@
                 "field": "parent_fa_field_id",
                 "model": "fa_field_config",
                 "where_field": "fa_field_id",
-                "set_attribute":  "fa_field_id"
+                "set_field": "parent_fa_field_name",
+                "attribute": "field_name"
             },
             {
                 "field": "reference_fa_field_id",
@@ -130,7 +131,8 @@
                 "field": "reference_custom_field_id",
                 "model": "fa_field_config",
                 "where_field": "custom_field_id",
-                "set_attribute":  "custom_field_id"
+                "set_field": "reference_custom_field_name",
+                "attribute": "field_name"
             },
             {
                 "field": "fa_related_field_config_id",
@@ -140,7 +142,8 @@
                 "field": "parent_custom_field_id",
                 "model": "fa_field_config",
                 "where_field": "custom_field_id",
-                "set_attribute":  "custom_field_id"
+                "attribute":  "field_name",
+                "set_field": "parent_custom_field_name"
             },
             {
                 "field": "reference_qualifier",
@@ -186,6 +189,11 @@
                     },
                     {
                         "field": "metadata.hide_in_modal",
+                        "condition": "is",
+                        "value": [true]
+                    },
+                    {
+                        "field": "is_parent_field",
                         "condition": "is",
                         "value": [true]
                     },
@@ -357,10 +365,6 @@
                     {
                         "key": "reference_fa_field_id",
                         "value": "custom_field.reference_fa_field_id"
-                    },
-                    {
-                        "key": "parent_fa_field_id",
-                        "value": "custom_field.parent_fa_field_id"
                     },
                     {
                         "key": "help_text",
