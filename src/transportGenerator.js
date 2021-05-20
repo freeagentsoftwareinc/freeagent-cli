@@ -1,4 +1,4 @@
-const { validate } = require('uuid');
+const { validate, v4 } = require('uuid');
 const { get, set, isArray, omit, filter, flattenDeep, find, uniq, isEmpty, snakeCase } = require('lodash');
 const { entities } = require('../utils/constants.js');
 const config = require('../config.json');
@@ -114,7 +114,7 @@ const findTransportId = async (models, modelName, where, transactionInstance, at
   try {
     if (!models[modelName]) {
       return;
-    }
+    }   
     const attributes = attribute || 'transport_id';
     const result = await models[modelName].findOne({
       where,
@@ -360,6 +360,7 @@ const getArgsWithTransports = async (args, configurations, models, transactionIn
     return null;
   }
   return {
+    transportId: v4(),
     args: { ...args },
     transports,
   };
