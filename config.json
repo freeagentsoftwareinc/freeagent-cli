@@ -351,10 +351,6 @@
                         "value": "fa_related_field_config_id"
                     },
                     {
-                        "key": "calculated_function",
-                        "value": "calculated_function"
-                    },
-                    {
                         "key": "reference_custom_field_id",
                         "value": "custom_field.reference_custom_field_id"
                     },
@@ -441,6 +437,24 @@
                     {
                         "key": "custom_field_id",
                         "value": "custom_field_id"
+                    },
+                    {
+                        "key": "calculated_function",
+                        "value": {},
+                        "is_static": true
+                    },
+                    {
+                        "key": "calculated_function.function",
+                        "value": "calculated_function"
+                    },
+                    {
+                        "key": "calculated_function.sandbox",
+                        "value": [],
+                        "is_static": true
+                    },
+                    {
+                        "key": "calculated_function.data_type",
+                        "value": "render_type"
                     }]
                 }
             ]
