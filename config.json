@@ -455,6 +455,14 @@
                     {
                         "key": "calculated_function.data_type",
                         "value": "render_type"
+                    },
+                    {
+                        "key": "is_visible",
+                        "value": "is_visible"
+                    },
+                    {
+                        "key": "is_custom_code_import",
+                        "value": "custom_fields.is_custom_code_import"
                     }]
                 }
             ]
@@ -1226,6 +1234,10 @@
                     {
                         "key": "field_values.is_visible",
                         "value": "field_values.is_visible.value"   
+                    },
+                    {
+                        "key": "field_values.is_custom_code_import",
+                        "value": "field_values.is_custom_code_import.value"   
                     }]
                 }]
             },
@@ -1823,6 +1835,10 @@
                         {
                             "key": "field_values.custom_code",
                             "value": "field_values.custom_code.value"
+                        },
+                        {
+                            "key": "field_values.is_custom_code_import",
+                            "value": "field_values.is_custom_code_import.value"
                         }]
                     }]
                 }
